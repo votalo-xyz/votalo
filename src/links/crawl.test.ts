@@ -39,7 +39,8 @@ const csp = async (path: string) => {
   return { status: res.status, csp: res.headers.get("content-security-policy") ?? "", xfo: res.headers.get("x-frame-options") };
 };
 
-d("link crawl", () => {
+// A crawl makes dozens of requests, so against a remote site it can pass vitest's default 5 s.
+d("link crawl", { timeout: 180_000 }, () => {
   it("follows every internal link and none of them is broken", { timeout: 180_000 }, async () => {
     const { pages, broken } = await crawl(BASE!, seeds);
     expect(pages.size, "crawled suspiciously few pages").toBeGreaterThanOrEqual(30);
@@ -89,7 +90,7 @@ d("link crawl", () => {
   });
 });
 
-d("embeddable widget", () => {
+d("embeddable widget", { timeout: 180_000 }, () => {
   it("can be framed by any site, and nothing else can", async () => {
     // The widget, including its own 404 (so a bad id still shows its message inside the frame).
     for (const path of [`/embed/p/${EMBED_ID}`, `/en/embed/p/${EMBED_ID}`, `/embed/p/${EMBED_ID}?theme=light`, "/embed/p/not-an-id", "/en/embed/p/not-an-id"]) {
