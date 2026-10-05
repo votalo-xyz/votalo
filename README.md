@@ -39,6 +39,7 @@ Run the contract tests with `cd contracts && forge test --network monad` (Foundr
 - **The relayer sees request IPs.** Identities in different groups are unlinkable on-chain, but the
   relayer is a trusted party for availability and rate limiting. It never holds user keys or funds.
 - **Votes are pseudonymous, not secret.** Each vote is public per member address inside its group.
+- **The relayer's gas key is set only for the Production environment** on Vercel, not Preview. Preview deploys cannot relay transactions until that is set separately.
 
 ## License
 

@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Foundry project and its vendored libraries
     "contracts/**",
+    // Envio indexer: separate project with its own generated types
+    "indexer/**",
     "vitest.config.ts",
   ]),
 ]);

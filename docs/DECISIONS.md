@@ -107,6 +107,187 @@ Running log of architecture decisions, deferred scope, and environment surprises
   relayer gas on testnet, so it runs only after the relayer is funded and approved.
 - **Test route.** `src/app/test-passkey` is a temporary page for the phone test. Remove before delivery.
 
+## Relayer wallet and production deploy (2026-10-05)
+
+- **Relayer wallet generated and set.** `RELAYER_PRIVATE_KEY` was generated with viem's
+  `generatePrivateKey()` inside a disposable Node script run from the deploy host, piped directly into
+  `vercel env add` over stdin, and never printed, logged, or written to any file. Set for the
+  **Production** environment. Public address: `0x1995b4702CF27a14111e3115f53640e1912071ff` (funded by
+  the user with 2 MON).
+- **Preview environment not set.** Vercel's CLI refuses to apply a secret to "all Preview branches"
+  non-interactively when it detects an agent driving the session (confirmed with `--value`, `--yes`,
+  `--force`, and `--guidance` in every combination; a specific branch cannot substitute, because `main`
+  is the Production branch and there are no other branches). This is a deliberate safety gate, not a
+  bug, so no workaround was attempted. Preview deploys do not have a relayer key. If needed later, the
+  user can run `vercel env add RELAYER_PRIVATE_KEY preview --value <value> --yes` themselves.
+- **Production deploy** at commit `78640b1`, aliased to `https://votalo-six.vercel.app` (approved by
+  the user; votalo.xyz and its DNS untouched). Includes the temporary `/test-passkey` route for the
+  phone test. Verified: `/test-passkey` returns 200, `/api/relay/vote` rejects malformed input and
+  rejects a wrong signature with `InvalidSignature` (confirms the relayer key is wired, not missing).
+- **Deploy mistake caught before shipping further:** a first production deploy attempt used a stale
+  local clone that had not pulled the latest commit, and would have shipped without the relay code.
+  Caught by checking `git log` before trusting the deploy, pulled, and redeployed.
+
+## Phase 3 end-to-end gate met (2026-10-05)
+
+Ran create group → join (x2) → create proposal → vote (x2) against the production relay
+(`https://votalo-six.vercel.app`) on Monad testnet. All six transactions confirmed successful,
+verified independently with `cast receipt` (not just the test's own assertions):
+
+| Step | Tx hash | Block | Gas used |
+|---|---|---|---|
+| createGroup | `0x8f2d82c18437e94ec1a1e8364d995d90c18e5c4a6ab3c0cbf7e6f1ac5dc49ab0` | 68476478 | 300,000 |
+| join (alice) | `0x918f029f17dacb603f741b9f5c4bbd1b01307ad6e3bf6c470d3556e2d22af088` | 68476480 | 250,000 |
+| join (bob) | `0xdbfba99531362ee129af177d571ded7a94b5aae2acf2dbd2c96b2d9934dfedde` | 68476482 | 250,000 |
+| createProposal | `0xa03999190eeaca4af23dbd1f189caecc17ba9135692618835b677d6bbeb3a66b` | 68476485 | 350,000 |
+| vote (alice) | `0xb73570ce288efcfbb924b7a3502479b788c5b05592deea069b30379991aa0444` | 68476487 | 250,000 |
+| vote (bob) | `0x43a7693a1fd2cb03022ae395dfde77c1591bb0ba86b00808b8dcb0f72e897adf` | 68476489 | 250,000 |
+
+`gasUsed` equals each configured limit in every case, consistent with Monad charging the limit. A
+second vote by alice was refused by the relay's simulation step with `AlreadyVoted`, before any
+transaction was sent (confirmed in the test; no tx hash for it, no gas spent). The group's member
+count and the proposal's per-option counts were read back from the contract and matched expectations
+(3 members; counts [1, 1]).
+
+Relayer balance after this run: 1.5206 MON (started at 2 MON; the refused duplicate vote cost
+nothing, since the relay simulates before sending).
+
+This closes the Phase 3 "end to end on testnet with real tx hashes" gate.
+
+## Correction: the end-to-end test ran 3 times, not once (2026-10-05)
+
+The Monad hub caught this by checking the relayer's nonce (17) against the single run I reported
+(6 txs). Reconstructed from the contract's own event logs (`eth_getLogs` on the Votalo address,
+deploy block to latest), not from memory:
+
+- **Run 1** (my first attempt, Vitest's default 5000ms test timeout): the test was killed client-side
+  before it finished, but the four relay requests already in flight had been sent to the production
+  relay and completed server-side regardless of the client timeout. 5 of 6 steps landed on-chain:
+  createGroup, both joins, createProposal, and alice's vote. Bob's vote was never sent.
+  - `0x951361584e61b9105edd9972fd5b116caf3c4a148dde08fb3a6606bc9fed8aaf` (createGroup, block 68476399)
+  - `0xe70b819e85f6229eb0f19f6f8d02280ec205cd4c63504a14e24b474c168e1f8e` (join alice, 68476401)
+  - `0xb8e6d9f2ccfba5f45ca7d869bb3716582e5632d907beb92158f613fbee91a656` (join bob, 68476403)
+  - `0xcf6db575a7e2ac79f0427c0b7454099be15f951b8b86fccb2987ac24d10bbeed` (createProposal, 68476406)
+  - `0xd16f6568cb787c463f02ae97b17f0c6089d54d008498e3e530852c12d0bfbd61` (vote alice, 68476409)
+- **Run 2** (retried with `--testTimeout=120000`, no verbose reporter so I did not see or report its
+  log output at the time): completed in full, 6 txs.
+  - `0x8ebb1ab4e7d103bcc862243c5e10aba85587a1b5b6149cff57d899c77c48a78e` (createGroup, 68476432)
+  - `0xced4e4c0d2a1d98fb7e53eec95a4f6359e48ee1d2f18e70af34412b80c6e1a02` (join alice, 68476434)
+  - `0x28a148b371165871b0d9f6d32cca25148e559ab992f2a968f704ffd00aac3817` (join bob, 68476436)
+  - `0x5eaaf229002d73ac742e72a34bd740539436a600ecef0b5bfc9b1e71802fd323` (createProposal, 68476438)
+  - `0x9bafea582e2fea52d1f423930dddb27f6181ef9024e3407f73dd04f2e8c09538` (vote alice, 68476441)
+  - `0x0980270b06cea190a4e1528036a0d808351324ad01e9eafb25546328d18f145a` (vote bob, 68476444)
+- **Run 3** (re-ran with `--reporter=verbose` to capture the logged tx hashes): this is the run I
+  reported earlier today. 6 txs, already listed above under "Phase 3 end-to-end gate met".
+
+**Total: 17 transactions, all status success**, matching the relayer's nonce (17) exactly. Gas: run 1
+used 1,400,000 gas (missing the last vote), runs 2 and 3 used 1,650,000 gas each; 4,700,000 gas total
+at 102 gwei = 0.4794 MON, matching the relayer's balance change exactly. Nothing reverted and no gas
+was wasted; the gap was in my reporting, not the system.
+
+**These three test groups, their members, proposals, and votes now exist permanently on Monad
+testnet** and will appear in `/stats` and any indexer once built. `totalGroups` = 3, `totalMembers` =
+9 (3 admins + 6 explicit joins), `totalProposals` = 3, `totalVotes` = 5 (not 6, because bob's vote in
+run 1 was never sent).
+
+**Going forward:** every relayed tx, including from failed or partial runs, gets reported and logged
+here, not just the last successful run.
+
+## Phase 4: Envio indexer scaffolded (2026-10-05)
+
+- **Envio has no native Windows build** (only Linux and macOS binaries for its Rust CLI). Development
+  runs in WSL (Ubuntu), with Node installed there via `nvm` (no sudo available). Local `envio dev`
+  also needs Docker for Postgres and Hasura; Docker Desktop was started, but its WSL integration for
+  Ubuntu was still off as of this entry (a GUI toggle, not something settable from here), so the
+  indexer has not yet been run locally end to end.
+- **`indexer/`**: `config.yaml` (chain 10143, start block 68466493 — the Votalo deploy block — the
+  four events, global `field_selection.transaction_fields: [hash]` since `transaction.hash` is not
+  included by default), `schema.graphql` (Group, Member, Proposal, Vote, DailyVoteCount),
+  `abis/Votalo.json` (generated from `contracts/out`), `src/EventHandlers.ts`.
+- **Handler logic**: `createGroup` emits `GroupCreated` and a `MemberJoined` for the admin in the same
+  transaction; the `GroupCreated` handler creates the admin's `Member` row directly, and the
+  `MemberJoined` handler skips a row that already exists, so the admin is never double-counted.
+  `VoteCast` updates the proposal's per-option `optionCounts` and a `DailyVoteCount` row (UTC day)
+  for the `/stats` chart, from the event data only — nothing is recomputed independently.
+- **Verified so far**: `envio codegen` runs clean in WSL and produces types matching the schema;
+  `tsc --noEmit` on the handlers passes. Not yet verified: an actual indexing run against live chain
+  data, which needs the Docker/WSL step above.
+- **Hosting decision: pending.** The production Vercel app needs a public GraphQL endpoint, which
+  points to either Envio's hosted service or a self-hosted instance. Self-hosting means running
+  Postgres, Hasura, and the indexer process continuously, which Vercel's serverless functions cannot
+  do; a separate always-on host would be needed. Envio's hosted service is the practical choice, but
+  it needs creating an Envio account, which was not done — asked the user first, per policy.
+- **`docs/FRONTEND.md`** now has the real GraphQL query shapes (group, proposal, member profile,
+  stats) against the schema above, with the endpoint URL left open until deployed.
+- Added to README Known limits: the relayer key is set only for the Production Vercel environment,
+  not Preview.
+
+## Phase 4: local indexer verified against live testnet data (2026-10-05)
+
+- **Two local-dev blockers found and fixed**, both config-only:
+  1. Envio's HyperSync data source needs an `ENVIO_API_TOKEN` even for local dev. Fixed by setting
+     `rpc.for: sync` in `config.yaml`, which makes RPC the sync source for both historical and
+     real-time indexing and skips HyperSync (and the token requirement) entirely. Fine at this scale
+     (one contract, ~10,500 blocks so far).
+  2. Monad testnet's public RPC caps `eth_getLogs` at a 100-block range. Without a hint, Envio
+     guessed a larger range, got a 413, and backed off for every new chunk — correct but slow. Fixed
+     by setting `rpc.initial_block_interval: 100` and `rpc.interval_ceiling: 100`, so it stops
+     guessing. After that fix, historical sync (68466493 to chain head) finished in under a minute.
+- **Verified against live data**, queried directly from the local GraphQL endpoint
+  (`http://localhost:8080/v1/graphql`), not just read from logs:
+  - `Group`: 3 rows, each `memberCount: 3`.
+  - `Member`: 9 rows.
+  - `Proposal`: 3 rows, `voteCount` and `optionCounts` match the Phase 3 record exactly — the first
+    proposal shows `voteCount: 1, optionCounts: [1, 0]` (bob's vote in run 1 was never sent), the
+    other two show `voteCount: 2, optionCounts: [1, 1]`.
+  - `Vote`: 5 rows. `DailyVoteCount`: `[{ id: "2026-10-05", votes: 5 }]`.
+  - `Group_by_pk` with its `proposals` and `members` relation fields resolves correctly.
+  - All of this matches the independent on-chain reconstruction logged above, so the indexer, schema,
+    and handlers are correct, not just internally consistent.
+- **`_aggregate` fields are not exposed** on this Hasura instance (confirmed by introspecting
+  `__schema.queryType.fields`: no `Group_aggregate` etc). `docs/FRONTEND.md` is updated: the four
+  global totals use the contract's own `getTotals()` (exact, no indexer lag), and GraphQL is used
+  for `DailyVoteCount` and relational queries, which the contract cannot give.
+
+## Server-side data proxy for the Envio rate limit (2026-10-05)
+
+- **Reason.** The hosted Envio indexer's free plan caps the whole project at 100 queries/minute,
+  shared across every visitor. A browser calling Envio directly could exhaust that on its own, and
+  would also require `NEXT_PUBLIC_ENVIO_GRAPHQL_URL`, exposing the endpoint to anyone.
+- **Fix:** `src/app/api/data/{group,proposal,member}/[id]` and `/votes-per-day` proxy the four
+  `docs/FRONTEND.md` queries server-side, each with a short in-memory TTL cache keyed by entity id
+  (10s for group/member/votes-per-day, 5s for proposal since its results are live). The Envio URL
+  lives only in the server env var `ENVIO_GRAPHQL_URL` (not `NEXT_PUBLIC_`), so the browser never
+  sees it and cannot call Envio directly.
+- **Cache is per server instance**, same tradeoff as the relayer's rate limiter (`src/lib/relay/limits.ts`):
+  no shared store, so a cold instance starts with an empty cache. Fine at this traffic scale; a hard
+  global cap would need shared storage, which is not built.
+- **`docs/FRONTEND.md` updated**: Monse calls `/api/data/*`, never the Envio endpoint directly.
+
+## Hosted Envio verified; production deploy bug found and fixed (2026-10-05)
+
+- **Hosted indexer** at `https://indexer.dev.hyperindex.xyz/4c1d9a7/v1/graphql` (Envio Development
+  plan, deployed from the `envio` branch, commit `8b84b2b`). Queried it directly and confirmed it
+  returns exactly the Phase 3 record: 3 groups, 9 members, 3 proposals (`voteCount` 1, 2, 2;
+  `optionCounts` `[1,0]`, `[1,1]`, `[1,1]`), 5 votes, `DailyVoteCount` `[{ "2026-10-05": 5 }]`.
+- **`ENVIO_GRAPHQL_URL` set for Vercel Production only** (not Preview, not `NEXT_PUBLIC_`), the same
+  way as the relayer key: piped via stdin into `vercel env add`, never printed or logged.
+- **Production build broke on the first redeploy attempt**: `indexer/src/EventHandlers.ts` failed
+  type-checking with implicit-`any` errors on `event`/`context`. Cause: the root `tsconfig.json`'s
+  default `include` (`**/*.ts`) was sweeping up `indexer/` too, same as it would have for
+  `contracts/` if that hadn't already been excluded. `indexer/src/EventHandlers.ts` depends on the
+  `declare module "envio"` ambient types generated into `indexer/.envio/types.d.ts` by
+  `envio codegen` — correctly gitignored as generated output, so a fresh clone (Vercel's build, or
+  any clone that hasn't run codegen) doesn't have it, and the ambient augmentation never loads.
+  Fixed by adding `indexer` to the root tsconfig's `exclude`. Verified the fix against a fresh clone
+  with no `indexer/.envio` present (matching Vercel's exact condition) before redeploying, not just
+  by trusting a green local build.
+- **Production redeploy succeeded**, aliased to `https://votalo-six.vercel.app`. Verified the
+  `/api/data/*` routes return the real data: `votes-per-day` → `DailyVoteCount` for 2026-10-05 = 5;
+  `group/:id` → `Club e2e`, 3 members, its proposal; `proposal/:id` → `voteCount: 1,
+  optionCounts: [1,0]`. An invalid id correctly returns 400. `/test-passkey` and the relay routes
+  still work after the redeploy.
+
 ## Frontend foundation (2026-10-05)
 
 - **Stack.** Tailwind CSS v4 (tokens as CSS variables in `src/app/globals.css`), Radix primitives for the
