@@ -60,7 +60,7 @@ The member's address for this group. Stable per passkey and group. Use it to sho
 Signs a 32-byte EIP-712 digest. `signature` is `{ compact: Uint8Array(64), recovery: 0 | 1 }`. Used by the
 sign-and-relay flow below. The key is derived, used, and zeroed inside the call.
 
-## Contract actions (`contracts/src/Votalo.sol`) — ready (contract); relay planned
+## Contract actions (`contracts/src/Votalo.sol`) — ready
 
 Each action needs an EIP-712 signature from the acting member. The relayer submits it and pays gas.
 Digests for signing come from the contract's view functions, so the client does not re-encode them:
@@ -88,17 +88,48 @@ strictly in the future and at most 30 days out.
 
 Show these as plain language. Never show the raw name.
 
-## Sign-and-relay (planned: Phase 3)
+## Sign-and-relay (`src/lib/flows`, `/api/relay/*`) — ready (Phase 3)
 
-Planned route: `POST /api/relay/<action>` (`createGroup`, `join`, `createProposal`, `vote`). Body: the
-action arguments plus the member signature. Response: `{ txHash }` on success, or `{ error: <code> }`.
-The relayer checks the signature off-chain, simulates with `eth_call`, then sends with an explicit gas
-limit. Rate limits apply per IP and per member; a daily cap returns a "come back later" message.
+Browser flows. Each takes `{ rpId, credential, ... }` from the passkey step and returns the tx hash.
+Each flow prompts for the passkey once (group PRF), signs the contract digest, and posts to the relay.
 
-Client flow (planned):
-1. Build the digest from the contract view function (or an identical client-side encoder, verified in tests).
-2. `signDigestAsMember(prf, digest)` after `getGroupPrfOutput`.
-3. POST to the relay route, wait for the receipt, then show the result in plain language.
+| Flow | Arguments | Returns | Relay route |
+|---|---|---|---|
+| `createGroup` | `{ rpId, credential, name, mode: 0 \| 1 }` | `{ groupId, admin, txHash }` | `/api/relay/create-group` |
+| `createInvite` (admin, INVITE groups) | `{ rpId, credential, groupId }` | `{ inviteId, adminInviteSig }` — put both in the link | none (off-chain) |
+| `joinGroup` | `{ rpId, credential, groupId, invite? }` | `{ member, txHash }` | `/api/relay/join` |
+| `createProposal` | `{ rpId, credential, groupId, title, options, deadlineSeconds }` | `{ proposalId, txHash }` | `/api/relay/create-proposal` |
+| `castVote` | `{ rpId, credential, groupId, proposalId, choice }` | `{ member, txHash }` | `/api/relay/vote` |
+
+Errors are thrown as `RelayClientError` with `code` (a contract error name, such as `AlreadyVoted`, or
+`NETWORK`, `INTERNAL`, `RATE_LIMITED`, `DAILY_CAP_REACHED`, `RELAYER_NOT_CONFIGURED`, or `INVALID_INPUT:<field>`).
+The `status` field carries the HTTP status.
+
+```ts
+import { castVote } from "@/lib/flows/votalo";
+try {
+  const { txHash } = await castVote({ rpId: currentRpId(), credential, groupId, proposalId, choice: 1 });
+} catch (e) {
+  if (e instanceof RelayClientError && e.code === "AlreadyVoted") showAlreadyVoted();
+}
+```
+
+Relay rules (server side): the signature must recover to the claimed signer (checked before any
+chain call); the call is simulated first; gas uses an explicit limit per action. Rate limits: 20 per
+IP per minute, 30 per member per hour, and a daily cap set by `RELAY_DAILY_CAP` (default 200). These
+are per server instance and best-effort.
+
+Server env: `RELAYER_PRIVATE_KEY` (server only, never `NEXT_PUBLIC_`). Without it, relay routes return
+`RELAYER_NOT_CONFIGURED` (503).
+
+Test-only route: `/test-passkey` (passkey creation and member-address check). It is marked for
+removal before delivery.
+
+## Chain reads (`src/lib/chain/read.ts`) — ready
+
+`getGroup(groupId)`, `isMember(groupId, member)`, `getProposal(proposalId)` (includes `counts`),
+`hasVoted(proposalId, member)`, `getTotals()`. Read straight from the chain; the GraphQL layer replaces
+them for lists and history.
 
 ## GraphQL (planned: Phase 4)
 

@@ -618,4 +618,31 @@ contract VotaloTest is Test {
         for (uint256 i = 0; i < n; i++) out[i] = src[0];
         return string(out);
     }
+
+    // ----- cross-language vector (matches src/lib/chain/typedData.test.ts) -----
+
+    function test_typedDataVectorsMatchClient() public {
+        address at = 0x1000000000000000000000000000000000000009;
+        vm.chainId(10143);
+        deployCodeTo("Votalo.sol:Votalo", at);
+        Votalo c = Votalo(at);
+
+        bytes32 g = 0x1111111111111111111111111111111111111111111111111111111111111111;
+        bytes32 p = 0x2222222222222222222222222222222222222222222222222222222222222222;
+        bytes32 i = 0x3333333333333333333333333333333333333333333333333333333333333333;
+        address m = 0x1000000000000000000000000000000000000001;
+        address a = 0x1000000000000000000000000000000000000002;
+
+        assertEq(c.hashCreateGroup(g, 1, a, "Club"), 0x8ab0b6dc62c9bf54f7a3b5fea23459683f1bf04a05845dafccf395328b68ba0a);
+        assertEq(c.hashJoin(g, m), 0x6f4111fc562d6487ef6ed6599f5da91061caa80d6ad1dd214e2020af95b3c1a3);
+        assertEq(c.hashInvite(g, i), 0xaadb20b988a6e2e8d93552e5a4765970ef48b324e3198fde0883ffc8a0fd6bb9);
+        string[] memory o = new string[](2);
+        o[0] = "Yes";
+        o[1] = "No";
+        assertEq(
+            c.hashCreateProposal(g, p, a, "Pizza?", o, 1700000000),
+            0x6554f5824af9e3559dce845eaafe24714f9ef611cb88cd6d30e667b6a651541f
+        );
+        assertEq(c.hashVote(p, m, 1), 0xb8499edc6a9dc44de133af2d18dd766a9ff32a8f1dce51bfc2247ca1d11c576f);
+    }
 }

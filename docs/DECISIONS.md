@@ -80,3 +80,29 @@ Running log of architecture decisions, deferred scope, and environment surprises
   link is in the README.
 - **Keystore deploys need the user's terminal.** The keystore password cannot be passed through
   Claude Code. The relayer key will come from a server env var, which does not have this limit.
+
+## Phase 3: relayer and flows (2026-10-05)
+
+- **Gas limits** (`src/lib/relay/gas.ts`), set from `forge test --network monad --gas-report`: createGroup
+  300,000 (max observed 175,904); join 250,000 (122,962); createProposal 350,000 (201,935); vote 250,000
+  (139,203). Monad charges the limit, so these are not estimates.
+- **EIP-712 parity.** One typed-data module (`src/lib/chain/typedData.ts`) is used by the client flows
+  and the relay. Five pinned digests are checked on both sides: `typedData.test.ts` (Vitest) and
+  `test_typedDataVectorsMatchClient` (Foundry).
+- **Relay order.** Parse and validate → check the signature recovers to the claimed signer → rate
+  limits → simulate (`simulateContract`) → send with the explicit gas limit → wait for the receipt. A
+  simulation revert returns the contract error name and sends nothing.
+- **Rate limits are best-effort.** They live in server memory, so on serverless hosting each instance
+  has its own counters. A hard global limit needs shared storage, which is not built.
+- **Relayer key** comes only from `RELAYER_PRIVATE_KEY` on the server. It is never logged or returned.
+  Not yet set anywhere: setting it in Vercel and funding the wallet both need the user's approval.
+- **createGroup signs with one passkey prompt.** The admin address and the signature both come from
+  the same group PRF output, so the flow does not ask twice.
+- **Contract ABI** (`src/lib/chain/votaloAbi.ts`) is generated from `contracts/out` by
+  `npm run gen:abi`. Run it after any contract change.
+- **Type-check cast.** viem cannot narrow `args` across a union of function names, so the call in
+  `chain.ts` casts once, after the parser has checked each argument list against the ABI.
+- **Test keys.** Unit tests and the e2e test generate keys at runtime. No key literals are committed.
+- **E2E test** (`src/lib/relay/e2e.testnet.test.ts`) runs only when `E2E_BASE_URL` is set. It spends
+  relayer gas on testnet, so it runs only after the relayer is funded and approved.
+- **Test route.** `src/app/test-passkey` is a temporary page for the phone test. Remove before delivery.
