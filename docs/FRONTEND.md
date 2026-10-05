@@ -131,7 +131,7 @@ removal before delivery.
 `hasVoted(proposalId, member)`, `getTotals()`. Read straight from the chain; the GraphQL layer replaces
 them for lists and history.
 
-## Data (`src/app/api/data/*`) — ready; proxies the Envio indexer
+## Data (`src/app/api/data/*`) — ready, live in production
 
 **Call these routes, never the Envio GraphQL endpoint directly.** The hosted Envio plan caps the
 whole app at 100 queries/minute, shared across every visitor; a browser calling it directly could
@@ -161,11 +161,11 @@ come from the contract directly — `getTotals()` in `src/lib/chain/read.ts`, ex
 indexer lag, and Hasura's `_aggregate` fields aren't exposed on this instance anyway (confirmed by
 introspection). Combine that with `GET /api/data/votes-per-day` for the chart.
 
-Verified against the local indexer against the real Phase 3 run: 3 groups, 9 members, 3 proposals
-(`voteCount`/`optionCounts` of `[1,0]`, `[1,1]`, `[1,1]`, correctly showing run 1's missing vote), 5
-votes, `DailyVoteCount` = `[{ id: "2026-10-05", votes: 5 }]`. The hosted Envio deployment and these
-proxy routes are not yet verified against it — see `docs/DECISIONS.md` for status. Results refresh
-within seconds of a vote, plus up to the route's cache window.
+Verified against the real Phase 3 run, at every layer — on-chain, the local indexer, the hosted
+Envio deployment, and finally the production `/api/data/*` routes themselves: 3 groups, 9 members, 3
+proposals (`voteCount`/`optionCounts` of `[1,0]`, `[1,1]`, `[1,1]`, correctly showing run 1's missing
+vote), 5 votes, `DailyVoteCount` = `[{ id: "2026-10-05", votes: 5 }]`. See `docs/DECISIONS.md` for
+each verification. Results refresh within seconds of a vote, plus up to the route's cache window.
 
 ## Copy and language
 

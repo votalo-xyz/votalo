@@ -263,3 +263,27 @@ here, not just the last successful run.
   no shared store, so a cold instance starts with an empty cache. Fine at this traffic scale; a hard
   global cap would need shared storage, which is not built.
 - **`docs/FRONTEND.md` updated**: Monse calls `/api/data/*`, never the Envio endpoint directly.
+
+## Hosted Envio verified; production deploy bug found and fixed (2026-10-05)
+
+- **Hosted indexer** at `https://indexer.dev.hyperindex.xyz/4c1d9a7/v1/graphql` (Envio Development
+  plan, deployed from the `envio` branch, commit `8b84b2b`). Queried it directly and confirmed it
+  returns exactly the Phase 3 record: 3 groups, 9 members, 3 proposals (`voteCount` 1, 2, 2;
+  `optionCounts` `[1,0]`, `[1,1]`, `[1,1]`), 5 votes, `DailyVoteCount` `[{ "2026-10-05": 5 }]`.
+- **`ENVIO_GRAPHQL_URL` set for Vercel Production only** (not Preview, not `NEXT_PUBLIC_`), the same
+  way as the relayer key: piped via stdin into `vercel env add`, never printed or logged.
+- **Production build broke on the first redeploy attempt**: `indexer/src/EventHandlers.ts` failed
+  type-checking with implicit-`any` errors on `event`/`context`. Cause: the root `tsconfig.json`'s
+  default `include` (`**/*.ts`) was sweeping up `indexer/` too, same as it would have for
+  `contracts/` if that hadn't already been excluded. `indexer/src/EventHandlers.ts` depends on the
+  `declare module "envio"` ambient types generated into `indexer/.envio/types.d.ts` by
+  `envio codegen` — correctly gitignored as generated output, so a fresh clone (Vercel's build, or
+  any clone that hasn't run codegen) doesn't have it, and the ambient augmentation never loads.
+  Fixed by adding `indexer` to the root tsconfig's `exclude`. Verified the fix against a fresh clone
+  with no `indexer/.envio` present (matching Vercel's exact condition) before redeploying, not just
+  by trusting a green local build.
+- **Production redeploy succeeded**, aliased to `https://votalo-six.vercel.app`. Verified the
+  `/api/data/*` routes return the real data: `votes-per-day` → `DailyVoteCount` for 2026-10-05 = 5;
+  `group/:id` → `Club e2e`, 3 members, its proposal; `proposal/:id` → `voteCount: 1,
+  optionCounts: [1,0]`. An invalid id correctly returns 400. `/test-passkey` and the relay routes
+  still work after the redeploy.
