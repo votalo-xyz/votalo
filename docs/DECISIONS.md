@@ -469,3 +469,23 @@ here, not just the last successful run.
 - This was not intended as a go-live. Earlier instructions said not to touch `votalo.xyz` or its DNS.
   No DNS record was changed; the action was the deploy. Decision pending with the user: keep the
   domain live on this build, or detach it from production.
+
+## Accented group names: no encoding bug in the pipeline (2026-10-05)
+
+- **Reported**: a group named "Vótalo Community" appeared as "VÃ³talo Community" on the hosted indexer.
+- **Finding**: the bytes are correct at every layer. The hosted indexer stores `56 c3 b3 74 61 6c 6f`
+  (V, UTF-8 ó, talo). On chain, the `GroupCreated` event data is `0x11` (17 bytes) followed by the same
+  UTF-8 bytes. `VÃ³talo` is exactly what those UTF-8 bytes look like when read as Latin-1 or Windows
+  cp1252, which is how the report was displayed, not how the data is stored.
+- **Round trip tested** with a fresh group named "Vótalo Ñandú Éxito Íntimo Ópera Úrsula Mañana" (all six
+  accents), through the production relay: signed on the client, sent to `/api/relay/create-group` as UTF-8
+  JSON, checked on chain (name hash equals keccak256 of the UTF-8 bytes), then read back from the hosted
+  indexer as the exact same string. Tx `0x7262b83d847cd2f1e7ccaa0905412fa2405b3b81423f6ebcf8a8f1ff6aba4dbb`,
+  group `0x0bf9b403aaa22f89dfa951fa371ccb34e43ea02d122edae5454fb997365b086f`.
+- **UI layer**: `/api/data/group/:id` returns UTF-8 (`application/json`, `c3b3` present in the bytes), and
+  localized HTML pages are served as `text/html; charset=utf-8`.
+- **Tests added**: `src/lib/relay/encoding.test.ts` (CI, offline: a UTF-8 round trip keeps the digest the same, and
+  a Latin-1 mis-decode would change it) and `src/lib/relay/accents.testnet.test.ts` (gated, runs only with
+  `E2E_BASE_URL` and `ENVIO_GRAPHQL_URL`, creates one testnet group per run).
+- **How to read the bytes correctly**: use `curl -s ... | jq` in a UTF-8 terminal, or inspect the hex. The
+  Windows PowerShell default (cp1252) displays UTF-8 bytes as Latin-1, which is what produced "VÃ³talo".
