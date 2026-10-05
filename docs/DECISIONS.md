@@ -153,3 +153,42 @@ Relayer balance after this run: 1.5206 MON (started at 2 MON; the refused duplic
 nothing, since the relay simulates before sending).
 
 This closes the Phase 3 "end to end on testnet with real tx hashes" gate.
+
+## Correction: the end-to-end test ran 3 times, not once (2026-10-05)
+
+The Monad hub caught this by checking the relayer's nonce (17) against the single run I reported
+(6 txs). Reconstructed from the contract's own event logs (`eth_getLogs` on the Votalo address,
+deploy block to latest), not from memory:
+
+- **Run 1** (my first attempt, Vitest's default 5000ms test timeout): the test was killed client-side
+  before it finished, but the four relay requests already in flight had been sent to the production
+  relay and completed server-side regardless of the client timeout. 5 of 6 steps landed on-chain:
+  createGroup, both joins, createProposal, and alice's vote. Bob's vote was never sent.
+  - `0x951361584e61b9105edd9972fd5b116caf3c4a148dde08fb3a6606bc9fed8aaf` (createGroup, block 68476399)
+  - `0xe70b819e85f6229eb0f19f6f8d02280ec205cd4c63504a14e24b474c168e1f8e` (join alice, 68476401)
+  - `0xb8e6d9f2ccfba5f45ca7d869bb3716582e5632d907beb92158f613fbee91a656` (join bob, 68476403)
+  - `0xcf6db575a7e2ac79f0427c0b7454099be15f951b8b86fccb2987ac24d10bbeed` (createProposal, 68476406)
+  - `0xd16f6568cb787c463f02ae97b17f0c6089d54d008498e3e530852c12d0bfbd61` (vote alice, 68476409)
+- **Run 2** (retried with `--testTimeout=120000`, no verbose reporter so I did not see or report its
+  log output at the time): completed in full, 6 txs.
+  - `0x8ebb1ab4e7d103bcc862243c5e10aba85587a1b5b6149cff57d899c77c48a78e` (createGroup, 68476432)
+  - `0xced4e4c0d2a1d98fb7e53eec95a4f6359e48ee1d2f18e70af34412b80c6e1a02` (join alice, 68476434)
+  - `0x28a148b371165871b0d9f6d32cca25148e559ab992f2a968f704ffd00aac3817` (join bob, 68476436)
+  - `0x5eaaf229002d73ac742e72a34bd740539436a600ecef0b5bfc9b1e71802fd323` (createProposal, 68476438)
+  - `0x9bafea582e2fea52d1f423930dddb27f6181ef9024e3407f73dd04f2e8c09538` (vote alice, 68476441)
+  - `0x0980270b06cea190a4e1528036a0d808351324ad01e9eafb25546328d18f145a` (vote bob, 68476444)
+- **Run 3** (re-ran with `--reporter=verbose` to capture the logged tx hashes): this is the run I
+  reported earlier today. 6 txs, already listed above under "Phase 3 end-to-end gate met".
+
+**Total: 17 transactions, all status success**, matching the relayer's nonce (17) exactly. Gas: run 1
+used 1,400,000 gas (missing the last vote), runs 2 and 3 used 1,650,000 gas each; 4,700,000 gas total
+at 102 gwei = 0.4794 MON, matching the relayer's balance change exactly. Nothing reverted and no gas
+was wasted; the gap was in my reporting, not the system.
+
+**These three test groups, their members, proposals, and votes now exist permanently on Monad
+testnet** and will appear in `/stats` and any indexer once built. `totalGroups` = 3, `totalMembers` =
+9 (3 admins + 6 explicit joins), `totalProposals` = 3, `totalVotes` = 5 (not 6, because bob's vote in
+run 1 was never sent).
+
+**Going forward:** every relayed tx, including from failed or partial runs, gets reported and logged
+here, not just the last successful run.
