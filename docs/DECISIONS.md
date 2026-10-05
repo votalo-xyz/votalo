@@ -248,3 +248,18 @@ here, not just the last successful run.
   `__schema.queryType.fields`: no `Group_aggregate` etc). `docs/FRONTEND.md` is updated: the four
   global totals use the contract's own `getTotals()` (exact, no indexer lag), and GraphQL is used
   for `DailyVoteCount` and relational queries, which the contract cannot give.
+
+## Server-side data proxy for the Envio rate limit (2026-10-05)
+
+- **Reason.** The hosted Envio indexer's free plan caps the whole project at 100 queries/minute,
+  shared across every visitor. A browser calling Envio directly could exhaust that on its own, and
+  would also require `NEXT_PUBLIC_ENVIO_GRAPHQL_URL`, exposing the endpoint to anyone.
+- **Fix:** `src/app/api/data/{group,proposal,member}/[id]` and `/votes-per-day` proxy the four
+  `docs/FRONTEND.md` queries server-side, each with a short in-memory TTL cache keyed by entity id
+  (10s for group/member/votes-per-day, 5s for proposal since its results are live). The Envio URL
+  lives only in the server env var `ENVIO_GRAPHQL_URL` (not `NEXT_PUBLIC_`), so the browser never
+  sees it and cannot call Envio directly.
+- **Cache is per server instance**, same tradeoff as the relayer's rate limiter (`src/lib/relay/limits.ts`):
+  no shared store, so a cold instance starts with an empty cache. Fine at this traffic scale; a hard
+  global cap would need shared storage, which is not built.
+- **`docs/FRONTEND.md` updated**: Monse calls `/api/data/*`, never the Envio endpoint directly.
