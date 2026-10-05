@@ -131,17 +131,41 @@ removal before delivery.
 `hasVoted(proposalId, member)`, `getTotals()`. Read straight from the chain; the GraphQL layer replaces
 them for lists and history.
 
-## GraphQL (planned: Phase 4)
+## Data (`src/app/api/data/*`) — ready, live in production
 
-Envio HyperIndex over the four events. Planned queries:
+**Call these routes, never the Envio GraphQL endpoint directly.** The hosted Envio plan caps the
+whole app at 100 queries/minute, shared across every visitor; a browser calling it directly could
+exhaust that on its own. The Envio URL (`ENVIO_GRAPHQL_URL`) is a server-only env var, not
+`NEXT_PUBLIC_`, so it isn't reachable from client code at all. Each route proxies one query from the
+indexer (`indexer/schema.graphql`: `Group`, `Member`, `Proposal`, `Vote`, `DailyVoteCount`) and
+caches the result in memory for a few seconds, so repeat views in that window don't add to the quota.
 
-- `group(id)`: name, mode, member count, admin.
-- `proposal(id)`: title, options, deadline, option counts, time left.
-- `proposalResults(id)`: per-option counts, refreshed within seconds of a vote.
-- `memberProfile(groupId, member)`: votes cast, proposals created, joined date. Only within that group.
-- `stats()`: total groups, members, proposals, votes, votes per day.
+| Route | Entity id | Cache | Notes |
+|---|---|---|---|
+| `GET /api/data/group/:id` | `groupId` (32-byte hex) | 10s | Name, mode, admin, member count, proposals |
+| `GET /api/data/proposal/:id` | `proposalId` (32-byte hex) | 5s | Title, options, deadline, `voteCount`, `optionCounts` — shorter cache since results are live |
+| `GET /api/data/member/:id` | `${groupId}-${address}`, address **lowercase** | 10s | Votes cast, proposals created, joined date — scoped to one group |
+| `GET /api/data/votes-per-day` | — | 10s | `/stats` chart data |
 
-Schema and endpoint will be published here when the indexer is deployed.
+Response body is the GraphQL `data` object, unchanged (e.g. `{ "Group_by_pk": { ... } }`). Errors are
+`{ "error": CODE }` with an HTTP status: `400` `INVALID_ID`, `502` `ENVIO_UNREACHABLE` /
+`ENVIO_QUERY_FAILED`, `503` `ENVIO_NOT_CONFIGURED`.
+
+```ts
+const res = await fetch(`/api/data/proposal/${proposalId}`);
+const { Proposal_by_pk: proposal } = await res.json();
+```
+
+**Public stats**: the four totals (`totalGroups`, `totalMembers`, `totalProposals`, `totalVotes`)
+come from the contract directly — `getTotals()` in `src/lib/chain/read.ts`, exact and instant, no
+indexer lag, and Hasura's `_aggregate` fields aren't exposed on this instance anyway (confirmed by
+introspection). Combine that with `GET /api/data/votes-per-day` for the chart.
+
+Verified against the real Phase 3 run, at every layer — on-chain, the local indexer, the hosted
+Envio deployment, and finally the production `/api/data/*` routes themselves: 3 groups, 9 members, 3
+proposals (`voteCount`/`optionCounts` of `[1,0]`, `[1,1]`, `[1,1]`, correctly showing run 1's missing
+vote), 5 votes, `DailyVoteCount` = `[{ id: "2026-10-05", votes: 5 }]`. See `docs/DECISIONS.md` for
+each verification. Results refresh within seconds of a vote, plus up to the route's cache window.
 
 ## Copy and language
 

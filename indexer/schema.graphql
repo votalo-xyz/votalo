@@ -1,0 +1,52 @@
+type Group {
+  id: ID! # groupId, 32-byte hex
+  mode: Int!
+  admin: String!
+  name: String!
+  memberCount: Int!
+  createdAt: BigInt!
+  txHash: String!
+  members: [Member!]! @derivedFrom(field: "group")
+  proposals: [Proposal!]! @derivedFrom(field: "group")
+}
+
+type Member {
+  id: ID! # `${groupId}-${address}`
+  group: Group!
+  address: String!
+  inviteId: String! # zero hash for the group admin and for OPEN joins
+  joinedAt: BigInt!
+  txHash: String!
+  votesCast: [Vote!]! @derivedFrom(field: "member")
+  proposalsCreated: [Proposal!]! @derivedFrom(field: "author")
+}
+
+type Proposal {
+  id: ID! # proposalId, 32-byte hex
+  group: Group!
+  author: Member!
+  title: String!
+  options: [String!]!
+  deadline: BigInt!
+  voteCount: Int!
+  optionCounts: [Int!]!
+  createdAt: BigInt!
+  txHash: String!
+  votes: [Vote!]! @derivedFrom(field: "proposal")
+}
+
+type Vote {
+  id: ID! # `${proposalId}-${address}`
+  proposal: Proposal!
+  group: Group!
+  member: Member!
+  choice: Int!
+  votedAt: BigInt!
+  txHash: String!
+}
+
+# One row per UTC day with at least one vote. Backs the /stats "votes per day" chart.
+type DailyVoteCount {
+  id: ID! # YYYY-MM-DD
+  votes: Int!
+}
