@@ -221,3 +221,30 @@ here, not just the last successful run.
   stats) against the schema above, with the endpoint URL left open until deployed.
 - Added to README Known limits: the relayer key is set only for the Production Vercel environment,
   not Preview.
+
+## Phase 4: local indexer verified against live testnet data (2026-10-05)
+
+- **Two local-dev blockers found and fixed**, both config-only:
+  1. Envio's HyperSync data source needs an `ENVIO_API_TOKEN` even for local dev. Fixed by setting
+     `rpc.for: sync` in `config.yaml`, which makes RPC the sync source for both historical and
+     real-time indexing and skips HyperSync (and the token requirement) entirely. Fine at this scale
+     (one contract, ~10,500 blocks so far).
+  2. Monad testnet's public RPC caps `eth_getLogs` at a 100-block range. Without a hint, Envio
+     guessed a larger range, got a 413, and backed off for every new chunk — correct but slow. Fixed
+     by setting `rpc.initial_block_interval: 100` and `rpc.interval_ceiling: 100`, so it stops
+     guessing. After that fix, historical sync (68466493 to chain head) finished in under a minute.
+- **Verified against live data**, queried directly from the local GraphQL endpoint
+  (`http://localhost:8080/v1/graphql`), not just read from logs:
+  - `Group`: 3 rows, each `memberCount: 3`.
+  - `Member`: 9 rows.
+  - `Proposal`: 3 rows, `voteCount` and `optionCounts` match the Phase 3 record exactly — the first
+    proposal shows `voteCount: 1, optionCounts: [1, 0]` (bob's vote in run 1 was never sent), the
+    other two show `voteCount: 2, optionCounts: [1, 1]`.
+  - `Vote`: 5 rows. `DailyVoteCount`: `[{ id: "2026-10-05", votes: 5 }]`.
+  - `Group_by_pk` with its `proposals` and `members` relation fields resolves correctly.
+  - All of this matches the independent on-chain reconstruction logged above, so the indexer, schema,
+    and handlers are correct, not just internally consistent.
+- **`_aggregate` fields are not exposed** on this Hasura instance (confirmed by introspecting
+  `__schema.queryType.fields`: no `Group_aggregate` etc). `docs/FRONTEND.md` is updated: the four
+  global totals use the contract's own `getTotals()` (exact, no indexer lag), and GraphQL is used
+  for `DailyVoteCount` and relational queries, which the contract cannot give.

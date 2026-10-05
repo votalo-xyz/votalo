@@ -131,15 +131,17 @@ removal before delivery.
 `hasVoted(proposalId, member)`, `getTotals()`. Read straight from the chain; the GraphQL layer replaces
 them for lists and history.
 
-## GraphQL (`indexer/`) — schema ready; endpoint URL pending deployment
+## GraphQL (`indexer/`) — verified against live Monad testnet data
 
 Envio HyperIndex over the four events, indexing from the deploy block (68466493). Entities:
 `Group`, `Member`, `Proposal`, `Vote`, `DailyVoteCount` (see `indexer/schema.graphql`). Hasura
-generates the query API from these, including relation fields and `_aggregate` queries for counts.
+generates the query API from these, including relation fields. **`_aggregate` fields are not
+exposed** (confirmed by introspection) — use `NEXT_PUBLIC_VOTALO_ADDRESS` + `getTotals()` from
+`src/lib/chain/read.ts` for the four global counts, and `DailyVoteCount` below for the time series.
 
-Endpoint URL: not yet published here — set once the indexer is deployed (see
-`docs/DECISIONS.md` for the hosting choice). Local dev serves GraphQL at
-`http://localhost:8080/v1/graphql` (`cd indexer && npm run dev`).
+Endpoint URL: `NEXT_PUBLIC_ENVIO_GRAPHQL_URL` (set once the hosted indexer is deployed — see
+`docs/DECISIONS.md`). Local dev serves GraphQL at `http://localhost:8080/v1/graphql`
+(`cd indexer && npm run dev`, needs Docker).
 
 **Group page** (name, mode, member count, admin, proposals):
 ```graphql
@@ -173,20 +175,17 @@ query MemberProfile($id: String!) {
 }
 ```
 
-**Public stats** (totals via Hasura's generated aggregates, plus votes per day):
+**Public stats**: the four totals come from the contract directly (`getTotals()` in
+`src/lib/chain/read.ts` — exact and instant, no indexer lag). Votes per day comes from GraphQL:
 ```graphql
-query Stats {
-  Group_aggregate { aggregate { count } }
-  Member_aggregate { aggregate { count } }
-  Proposal_aggregate { aggregate { count } }
-  Vote_aggregate { aggregate { count } }
+query VotesPerDay {
   DailyVoteCount(order_by: { id: asc }) { id votes }
 }
 ```
 
-Results refresh within seconds of a vote (Envio indexes close to chain head on Monad testnet).
-
-Schema and endpoint will be published here when the indexer is deployed.
+Verified locally against the real Phase 3 end-to-end run: 3 groups, 9 members, 3 proposals, 5 votes,
+`DailyVoteCount` = `[{ id: "2026-10-05", votes: 5 }]` — all matching the on-chain totals and the
+record in `docs/DECISIONS.md`. Results refresh within seconds of a vote.
 
 ## Copy and language
 

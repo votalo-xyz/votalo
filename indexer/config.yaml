@@ -8,6 +8,12 @@ chains:
     start_block: 68466493 # Votalo deploy block (see docs/DECISIONS.md)
     rpc:
       url: https://testnet-rpc.monad.xyz
+      for: sync # RPC for both historical sync and real-time; avoids needing an Envio API token for HyperSync
+      # Monad testnet RPC caps eth_getLogs at a 100-block range (confirmed by the 413 error it
+      # returns above that). Without this, Envio guesses a larger range, fails, and backs off for
+      # every new chunk, which is slow. Capping both bounds to 100 skips the guess-and-fail cycle.
+      initial_block_interval: 100
+      interval_ceiling: 100
     contracts:
       - name: Votalo
         address: 0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072
