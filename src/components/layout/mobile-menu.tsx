@@ -9,6 +9,7 @@ import { Button, buttonVariants } from "../ui/button";
 import { cn } from "../ui/cn";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { LanguageSwitch } from "./language-switch";
+import { NavLink } from "./nav-link";
 import { NAV_SECTIONS } from "./nav-links";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -43,12 +44,13 @@ export function MobileMenu() {
         <nav aria-label={t("menu")} className="flex flex-1 flex-col gap-1 px-3">
           {NAV_SECTIONS.map(({ key, href }) => (
             <SheetClose asChild key={key}>
-              <Link
+              <NavLink
                 href={href}
                 className="flex min-h-14 items-center rounded-2xl px-4 font-display text-2xl font-semibold tracking-tight hover:bg-surface-2"
+                activeClassName="bg-surface-2"
               >
                 {t(key)}
-              </Link>
+              </NavLink>
             </SheetClose>
           ))}
         </nav>

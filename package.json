@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "test:links": "node scripts/test-links.mjs",
     "test:contracts": "cd contracts && forge test",
     "gen:abi": "node scripts/gen-abi.mjs"
   },

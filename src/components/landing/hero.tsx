@@ -50,7 +50,7 @@ export function Hero() {
                 className="size-5 transition-transform duration-200 group-hover:translate-x-1"
               />
             </Link>
-            <Link href="/#how" className={buttonVariants({ size: "lg", variant: "secondary" })}>
+            <Link href="/how-it-works" className={buttonVariants({ size: "lg", variant: "secondary" })}>
               {c("seeHow")}
             </Link>
           </div>

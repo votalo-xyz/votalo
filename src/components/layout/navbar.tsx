@@ -5,6 +5,7 @@ import { buttonVariants } from "../ui/button";
 import { cn } from "../ui/cn";
 import { LanguageSwitch } from "./language-switch";
 import { MobileMenu } from "./mobile-menu";
+import { NavLink } from "./nav-link";
 import { NAV_SECTIONS } from "./nav-links";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -22,13 +23,14 @@ export function Navbar() {
 
         <nav aria-label={t("menu")} className="hidden items-center gap-1 lg:flex">
           {NAV_SECTIONS.map(({ key, href }) => (
-            <Link
+            <NavLink
               key={key}
               href={href}
               className="inline-flex min-h-11 items-center rounded-full px-4 text-[0.95rem] font-medium text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+              activeClassName="bg-surface-2 text-fg"
             >
               {t(key)}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 

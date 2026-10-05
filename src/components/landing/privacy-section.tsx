@@ -1,6 +1,7 @@
 import { Eye, EyeOff, Network, Unlink2, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Reveal } from "../ui/reveal";
+import { MoreLink } from "./more-link";
 
 const ITEMS: { key: "visible" | "noPersonal" | "unlinked" | "ip"; icon: LucideIcon }[] = [
   { key: "visible", icon: Eye },
@@ -11,6 +12,7 @@ const ITEMS: { key: "visible" | "noPersonal" | "unlinked" | "ip"; icon: LucideIc
 
 export function PrivacySection() {
   const t = useTranslations("Privacy");
+  const more = useTranslations("Landing.more");
 
   return (
     <section id="privacy" className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
@@ -33,6 +35,9 @@ export function PrivacySection() {
           </Reveal>
         ))}
       </ul>
+      <Reveal>
+        <MoreLink href="/privacy">{more("privacy")}</MoreLink>
+      </Reveal>
     </section>
   );
 }

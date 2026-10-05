@@ -400,3 +400,41 @@ here, not just the last successful run.
   githubstatus.com), which is why later runs still queued for minutes with `runner: null` after the
   fix was in place. Not caused by this repo's workflow or by the push volume from merging PR #1; it
   should clear once GitHub resolves the incident, with no action needed here.
+
+## Full pages, no dead links, 404 and loading states (2026-10-05)
+
+- **Real pages instead of in-page anchors.** `/how-it-works`, `/privacy`, `/proof` and `/faq` exist in Spanish
+  (root) and English (`/en/...`). The navbar, mobile menu, footer and hero link to them, with an active-page
+  indicator. The landing keeps short summaries (the three steps, the four privacy points, the proof cards and
+  four FAQ questions) that each end in a link to the full page. `/privacy` explains what is visible and what is
+  not; the legal privacy notice stays at `/legal/privacy`.
+- **Legal texts are written, not placeholders.** `/legal/privacy` and `/legal/terms` describe what the test
+  version does today (no accounts, IP seen by the host and the relay, cookies limited to language, public and
+  permanent data on Monad, known limits) and carry a last-updated date (`UPDATED` in
+  `legal/[doc]/page.tsx`). They name no vendor, only "our hosting provider" and "an indexing service", because
+  public text names only Monad. They say they are not legal advice; a lawyer should still review them before
+  anything beyond a test version.
+- **404 pages.** `experimental.globalNotFound` plus `src/app/global-not-found.tsx`: every address no page claims
+  gets a real 404 status and a branded page that is in the server HTML (no JavaScript needed). It cannot know the
+  language (it bypasses the layout), so it says the same thing in Spanish and English and links to both home
+  pages. Reason: the root layout sits under the dynamic `[locale]` segment, and in that setup Next draws
+  `not-found.tsx` only in the browser (the server sends an empty error shell). Malformed ids inside the app
+  (`/g/not-an-id`, `/legal/xyz`) use `notFound()` from a layout: the status is a real 404 and the branded page
+  (`not-found.tsx` inside the app shell or marketing layout) is drawn by the browser. Hand-typed bad ids are the
+  only case that needs JavaScript to show the message.
+- **Why ids are checked in layouts and loading files are per route.** A `loading.tsx` makes the page stream, and
+  Next then answers 200 for anything that calls `notFound()` inside it. So `g/[groupId]/layout.tsx`,
+  `g/[groupId]/p/[proposalId]/layout.tsx` and `legal/[doc]/layout.tsx` validate the id first, and no
+  `loading.tsx` sits above them: the group, new vote and standing pages share a `(views)` route group so the
+  proposal route is not under the group loading boundary. `route-skeletons.tsx` is a client module on purpose:
+  reading messages in a server `loading.tsx` makes next-intl read request headers, which turned every page
+  dynamic (all prerendered pages went dynamic until it was fixed).
+- **Loading and error states.** Every app route has a `loading.tsx` shaped like its page. `error.tsx` exists for
+  the app, the marketing pages and the locale root (plain message, retry, home), and `global-error.tsx` is a
+  self-contained bilingual page for the case where the root layout itself fails.
+- **Link tests.** `src/links/routes.test.ts` (runs in `npm test`) fails if any internal path written in the source
+  does not match a real page route, which also covers links that only appear after a client screen loads.
+  `src/links/crawl.test.ts` (run with `npm run build && npm run test:links`) starts the production build, follows
+  every internal `<a>` from the home pages and the app routes in both languages, and fails on anything that is not
+  200, on a link that switches language, and on an unknown address that is not a branded 404. CI runs it after the
+  build. Both were checked to fail on a deliberately broken link.

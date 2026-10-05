@@ -55,13 +55,80 @@
   "Legal": {
     "privacy": {
       "title": "Aviso de privacidad",
-      "body": "Este documento todavía no está redactado. Mientras tanto, la sección de privacidad de la página principal explica con claridad qué se ve y qué no."
+      "sections": [
+        {
+          "title": "Qué es Votalo",
+          "body": "Votalo es un proyecto de código abierto (licencia MIT) hecho por colaboradores de Votalo. Hoy funciona como versión de prueba, en la red de pruebas de Monad."
+        },
+        {
+          "title": "Qué datos tratamos",
+          "body": "No pedimos nombre, correo, teléfono ni contraseña. Lo que existe es esto. En tu dispositivo: el identificador de tu llave de acceso y datos públicos de tus grupos (identificadores, tu dirección de miembro en cada grupo y tus votos), guardados en el almacenamiento de tu navegador, además de tu idioma y tu tema. Tu huella y tu llave privada nunca salen de tu dispositivo. Al votar o crear algo: tu dirección de miembro en ese grupo, el texto que escribes (nombre del grupo, pregunta y opciones) y tu voto se registran en Monad. Al usar el sitio: como cualquier sitio web, nuestro proveedor de alojamiento y el servicio que envía tu acción a la red pueden ver tu dirección IP y datos técnicos de la conexión."
+        },
+        {
+          "title": "Cookies y seguimiento",
+          "body": "No usamos cookies de publicidad ni de seguimiento, ni herramientas de analítica. Guardamos tu idioma en una cookie y tu tema (claro u oscuro) en el navegador, solo para que el sitio se vea como lo dejaste."
+        },
+        {
+          "title": "Para qué usamos los datos",
+          "body": "Para que el servicio funcione: registrar tu voto, mostrar resultados y listas, y limitar el uso abusivo (por ejemplo, con límites por dirección IP)."
+        },
+        {
+          "title": "Lo que es público y permanente",
+          "body": "Lo que se registra en Monad es público y no se puede borrar ni modificar, ni siquiera a petición de quien lo escribió. Piensa antes de escribir datos personales en el nombre de un grupo, en una pregunta o en una opción. Tus votos son visibles dentro de su grupo bajo tu credencial en ese grupo: no es un voto secreto."
+        },
+        {
+          "title": "Con quién se comparten",
+          "body": "Con proveedores técnicos que hacen posible el servicio: nuestro proveedor de alojamiento, la red Monad, que es pública, y un servicio de indexación que lee la red para mostrar listas y resultados. No vendemos datos."
+        },
+        {
+          "title": "Tus opciones",
+          "body": "Puedes borrar los datos que guarda tu navegador borrando los datos del sitio. Lo registrado en Monad no se puede borrar. Para preguntas sobre esto, usa el contacto de abajo."
+        },
+        {
+          "title": "Cambios",
+          "body": "Si esto cambia, actualizaremos esta página y su fecha."
+        }
+      ]
     },
     "terms": {
       "title": "Términos de uso",
-      "body": "Este documento todavía no está redactado. Votalo es una versión de prueba y no debe usarse para decisiones que requieran garantías legales."
+      "sections": [
+        {
+          "title": "Es una versión de prueba",
+          "body": "Votalo funciona en la red de pruebas de Monad. Puede cambiar, reiniciarse o dejar de funcionar sin aviso. No lo uses para decisiones que necesiten garantías legales."
+        },
+        {
+          "title": "Uso de buena fe",
+          "body": "Úsalo de buena fe. No lo uses para acosar, engañar o publicar contenido ilegal o que dañe a otras personas. Lo que escribes es público y permanente, como explica el aviso de privacidad."
+        },
+        {
+          "title": "Tu llave de acceso",
+          "body": "Tu llave de acceso vive en tu dispositivo o en tu administrador de contraseñas. Eres responsable de cuidarla. Si la pierdes y no estaba sincronizada, no podemos recuperarla ni recuperar tus credenciales."
+        },
+        {
+          "title": "Límites del conteo",
+          "body": "Cada credencial vota una vez por votación. Pero Votalo no verifica quién eres en la vida real: en los grupos abiertos, una persona con varias llaves de acceso podría entrar más de una vez, y una invitación sirve para quien la use primero. Los resultados reflejan lo registrado, no una identidad verificada."
+        },
+        {
+          "title": "Sin garantías",
+          "body": "Votalo se ofrece tal cual, sin garantías de ningún tipo. En la medida en que la ley lo permita, quienes colaboran en el proyecto no son responsables por daños derivados de su uso."
+        },
+        {
+          "title": "Código abierto",
+          "body": "El código tiene licencia MIT. Puedes revisarlo y reutilizarlo según esa licencia."
+        },
+        {
+          "title": "Cambios",
+          "body": "Podemos actualizar estos términos. La versión vigente es la que está en esta página, con su fecha."
+        }
+      ]
     },
-    "home": "Volver al inicio"
+    "home": "Volver al inicio",
+    "updated": "Última actualización: {date}",
+    "notAdvice": "Este texto explica cómo funciona hoy la versión de prueba. No es asesoría legal.",
+    "contactTitle": "Contacto",
+    "contactBody": "Para preguntas o reportes, abre un tema en el repositorio público de GitHub.",
+    "contactLink": "Ir a GitHub"
   },
   "Hero": {
     "eyebrow": "Votaciones de grupo, sin cuentas ni contraseñas",
@@ -219,6 +286,22 @@
       "lost": {
         "q": "¿Y si pierdo mi teléfono?",
         "a": "Tu llave de acceso vive en tu administrador de contraseñas (iCloud, Google, 1Password). Si recuperas tu cuenta ahí, recuperas tu credencial en cada grupo. Si no la tenías sincronizada, no hay forma de recuperarla."
+      },
+      "passkey": {
+        "q": "¿Qué es una llave de acceso?",
+        "a": "Es la forma moderna de entrar sin contraseña: tu teléfono guarda una llave y la desbloqueas con Face ID, tu huella o el PIN. Nadie más la tiene y no sale de tu dispositivo. Votalo la usa para crear una credencial distinta en cada grupo."
+      },
+      "final": {
+        "q": "¿Puedo cambiar mi voto?",
+        "a": "No. Cada persona vota una vez por votación y el voto es definitivo, para que el resultado se pueda confiar."
+      },
+      "create": {
+        "q": "¿Quién puede crear votaciones?",
+        "a": "Cualquier persona que sea parte del grupo. Al crear una votación eliges la pregunta, de 2 a 6 opciones y cuánto tiempo estará abierta."
+      },
+      "report": {
+        "q": "¿Cómo reporto un problema?",
+        "a": "Abre un reporte en el repositorio de GitHub. Es público, así que no incluyas datos personales."
       }
     }
   },
@@ -544,6 +627,144 @@
   "NotFound": {
     "title": "No encontramos esta página",
     "body": "Puede que el enlace esté incompleto o que la página ya no exista.",
+    "home": "Ir al inicio"
+  },
+  "Landing": {
+    "more": {
+      "how": "Ver el detalle paso a paso",
+      "privacy": "Leer toda la privacidad",
+      "proof": "Ver todas las pruebas",
+      "faq": "Ver todas las preguntas"
+    }
+  },
+  "HowPage": {
+    "metaTitle": "Cómo funciona",
+    "eyebrow": "Cómo funciona",
+    "title": "De un enlace a una decisión",
+    "lead": "Así pasa, desde que alguien crea el grupo hasta que se cierran los resultados.",
+    "stepLabel": "Paso {n}",
+    "details": {
+      "create": {
+        "one": "Elige si el grupo es abierto o por invitación.",
+        "two": "Escribe la pregunta y de 2 a 6 opciones.",
+        "three": "Decide cuánto tiempo estará abierta: de 1 hora a 7 días."
+      },
+      "vote": {
+        "one": "Abre el enlace en tu teléfono.",
+        "two": "Crea tu llave de acceso una sola vez, con Face ID, tu huella o tu PIN.",
+        "three": "Elige una opción y mantén presionado el círculo para votar."
+      },
+      "results": {
+        "one": "El conteo se actualiza en vivo para todo el grupo.",
+        "two": "Es un voto por persona y por votación, y es definitivo.",
+        "three": "Al llegar la hora, la votación se cierra y el resultado queda guardado."
+      }
+    },
+    "entry": {
+      "title": "Abierto o por invitación",
+      "lead": "Tú decides cómo entra la gente al crear el grupo.",
+      "open": {
+        "title": "Abierto",
+        "body": "Cualquiera con el enlace puede entrar. Es lo más fácil para un grupo de confianza.",
+        "note": "Una persona decidida podría entrar con varias llaves de acceso."
+      },
+      "invite": {
+        "title": "Por invitación",
+        "body": "Quien creó el grupo genera invitaciones. Cada una se usa una sola vez.",
+        "note": "La invitación sirve para quien la use primero, así que compártela solo con quien quieres que entre."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para probarlo?",
+      "body": "Crear un grupo toma un minuto.",
+      "faq": "Ver las preguntas frecuentes"
+    }
+  },
+  "PrivacyPage": {
+    "metaTitle": "Privacidad",
+    "title": "Privacidad, sin letra chiquita",
+    "lead": "Votalo no es una urna secreta. Es una votación a la vista del grupo, con identidades que no revelan quién eres fuera de él. Esto es lo que se ve y lo que no.",
+    "sees": {
+      "title": "Lo que se ve",
+      "items": {
+        "votes": "Cada voto se ve dentro del grupo, bajo la credencial de quien lo emitió.",
+        "counts": "El conteo de cada opción es público y se actualiza en vivo.",
+        "public": "Que una credencial existe y a qué grupo pertenece queda registrado en Monad, una red pública."
+      }
+    },
+    "hidden": {
+      "title": "Lo que no se ve",
+      "items": {
+        "details": "Tu nombre, correo o teléfono: no los pedimos.",
+        "biometrics": "Tu huella o tu Face ID: nunca salen de tu dispositivo.",
+        "groups": "En qué otros grupos participas: las credenciales de grupos distintos no se pueden enlazar."
+      }
+    },
+    "service": {
+      "title": "Lo que el servicio sí puede ver",
+      "items": {
+        "ip": "La dirección IP de tu conexión, como cualquier sitio web, y datos técnicos como el navegador. Sirve para operar el servicio y limitar abusos.",
+        "never": "El servicio nunca ve tu huella ni tus claves: solo recibe lo que tu teléfono ya firmó."
+      }
+    },
+    "limits": {
+      "title": "Lo que no podemos garantizar",
+      "items": {
+        "secret": "No es un voto secreto: quien esté en el grupo puede ver qué credencial votó qué.",
+        "forever": "Lo que se registra en Monad no se puede borrar ni cambiar, ni siquiera a petición tuya. No escribas datos personales en el nombre de un grupo, en una pregunta o en una opción.",
+        "passkeys": "En los grupos abiertos, una persona decidida podría entrar con varias llaves de acceso."
+      }
+    },
+    "more": {
+      "title": "Más detalle",
+      "policy": "Leer el aviso de privacidad completo",
+      "faq": "Ver las preguntas frecuentes"
+    }
+  },
+  "ProofPage": {
+    "metaTitle": "Compruébalo tú mismo",
+    "title": "Compruébalo tú mismo",
+    "lead": "No tienes que creernos. Todo se puede revisar, y aquí está cómo.",
+    "contract": {
+      "title": "El contrato",
+      "body": "El código que cuenta los votos está publicado y verificado en Monad: puedes leer exactamente lo que se ejecuta.",
+      "address": "Dirección del contrato",
+      "link": "Abrir en MonadVision",
+      "network": "Red de pruebas de Monad"
+    },
+    "code": {
+      "title": "El código",
+      "body": "La aplicación y el contrato son públicos, con licencia MIT, y tienen pruebas automáticas. Cualquiera puede revisarlos, copiarlos o mejorarlos.",
+      "link": "Ver el repositorio en GitHub"
+    },
+    "steps": {
+      "title": "Verifica un resultado tú mismo",
+      "lead": "Cuatro pasos, sin pedirnos permiso.",
+      "items": {
+        "one": "Abre el contrato en MonadVision con el enlace de arriba.",
+        "two": "Busca los eventos del contrato: cada voto emitido queda registrado con la votación, la credencial de quien votó y su opción.",
+        "three": "Cuenta los votos de cada opción en esos eventos.",
+        "four": "Compara con el conteo que ves en Votalo: tienen que coincidir."
+      }
+    },
+    "live": {
+      "title": "Cifras en vivo",
+      "body": "Se leen directamente del contrato, sin retoques. Mientras no haya datos verás una raya.",
+      "link": "Ver todas las cifras"
+    },
+    "testnet": "Hoy Votalo funciona en la red de pruebas de Monad. Es una versión de prueba."
+  },
+  "FaqPage": {
+    "metaTitle": "Preguntas frecuentes",
+    "title": "Preguntas frecuentes",
+    "lead": "Lo que más nos preguntan, con respuestas directas. Si falta algo, cuéntanos.",
+    "contact": "¿No encuentras tu pregunta?",
+    "contactLink": "Escríbenos en GitHub"
+  },
+  "Error": {
+    "title": "Algo salió mal",
+    "body": "Tuvimos un problema al mostrar esta página. Puedes intentarlo otra vez.",
+    "retry": "Intentar de nuevo",
     "home": "Ir al inicio"
   }
 }

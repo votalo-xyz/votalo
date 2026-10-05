@@ -38,22 +38,22 @@ export function Footer() {
             <h2 className="text-eyebrow text-muted">{t("product")}</h2>
             <ul className="mt-3">
               <li>
-                <Link className={linkClass} href="/#how">
+                <Link className={linkClass} href="/how-it-works">
                   {n("how")}
                 </Link>
               </li>
               <li>
-                <Link className={linkClass} href="/#privacy">
+                <Link className={linkClass} href="/privacy">
                   {n("privacy")}
                 </Link>
               </li>
               <li>
-                <Link className={linkClass} href="/#proof">
+                <Link className={linkClass} href="/proof">
                   {n("proof")}
                 </Link>
               </li>
               <li>
-                <Link className={linkClass} href="/#faq">
+                <Link className={linkClass} href="/faq">
                   {n("faq")}
                 </Link>
               </li>

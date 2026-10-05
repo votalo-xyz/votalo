@@ -1,6 +1,7 @@
 import { ChartPie, Fingerprint, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Reveal } from "../ui/reveal";
+import { MoreLink } from "./more-link";
 
 const STEPS = [
   { key: "create", icon: Link2 },
@@ -10,6 +11,7 @@ const STEPS = [
 
 export function Steps() {
   const t = useTranslations("Steps");
+  const more = useTranslations("Landing.more");
 
   return (
     <section id="how" className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
@@ -35,6 +37,9 @@ export function Steps() {
           </Reveal>
         ))}
       </ol>
+      <Reveal>
+        <MoreLink href="/how-it-works">{more("how")}</MoreLink>
+      </Reveal>
     </section>
   );
 }

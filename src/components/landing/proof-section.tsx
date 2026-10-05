@@ -5,12 +5,14 @@ import { shortAddress } from "../format";
 import { CONTRACT_ADDRESS, CONTRACT_URL, GITHUB_URL } from "../site";
 import { Reveal } from "../ui/reveal";
 import { LiveStatsGrid } from "./live-stats";
+import { MoreLink } from "./more-link";
 
 const linkClass =
   "mt-5 inline-flex min-h-11 items-center gap-1.5 font-semibold text-accent-text underline-offset-4 hover:underline";
 
 export function ProofSection() {
   const t = useTranslations("Proof");
+  const more = useTranslations("Landing.more");
 
   return (
     <section id="proof" className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
@@ -61,6 +63,9 @@ export function ProofSection() {
       </div>
 
       <p className="mt-6 text-sm text-muted">{t("testnet")}</p>
+      <MoreLink href="/proof" className="mt-4">
+        {more("proof")}
+      </MoreLink>
     </section>
   );
 }

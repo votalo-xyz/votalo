@@ -39,3 +39,5 @@ jobs:
       - run: npm run lint
       - run: npx vitest run
       - run: npm run build
+      # Crawls every internal link on the built site, in both languages, and fails on any that is not 200.
+      - run: npm run test:links

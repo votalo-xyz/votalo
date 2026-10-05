@@ -55,13 +55,80 @@
   "Legal": {
     "privacy": {
       "title": "Privacy notice",
-      "body": "This document isn't written yet. Meanwhile, the privacy section on the home page explains plainly what is visible and what isn't."
+      "sections": [
+        {
+          "title": "What Votalo is",
+          "body": "Votalo is an open-source project (MIT license) made by Votalo contributors. Today it runs as a test version, on the Monad test network."
+        },
+        {
+          "title": "What data we handle",
+          "body": "We don't ask for a name, email, phone number or password. Here is what exists. On your device: your passkey's identifier and public data about your groups (identifiers, your member address in each group and your votes), kept in your browser's storage, plus your language and theme. Your fingerprint and your private key never leave your device. When you vote or create something: your member address in that group, the text you write (group name, question and options) and your vote are recorded on Monad. When you use the site: like any website, our hosting provider and the service that sends your action to the network can see your IP address and technical details of the connection."
+        },
+        {
+          "title": "Cookies and tracking",
+          "body": "We don't use advertising or tracking cookies, or analytics tools. We store your language in a cookie and your theme (light or dark) in the browser, only so the site looks the way you left it."
+        },
+        {
+          "title": "What we use the data for",
+          "body": "To make the service work: record your vote, show results and lists, and limit abusive use (for example, with limits per IP address)."
+        },
+        {
+          "title": "What is public and permanent",
+          "body": "What is recorded on Monad is public and can't be erased or changed, not even at the request of whoever wrote it. Think before writing personal details in a group name, a question or an option. Your votes are visible inside their group under your credential in that group: it is not a secret ballot."
+        },
+        {
+          "title": "Who it is shared with",
+          "body": "With technical providers that make the service possible: our hosting provider, the Monad network, which is public, and an indexing service that reads the network to show lists and results. We don't sell data."
+        },
+        {
+          "title": "Your options",
+          "body": "You can delete the data your browser keeps by clearing the site's data. What is recorded on Monad can't be deleted. For questions about this, use the contact below."
+        },
+        {
+          "title": "Changes",
+          "body": "If this changes, we'll update this page and its date."
+        }
+      ]
     },
     "terms": {
       "title": "Terms of use",
-      "body": "This document isn't written yet. Votalo is a test version and shouldn't be used for decisions that need legal guarantees."
+      "sections": [
+        {
+          "title": "This is a test version",
+          "body": "Votalo runs on the Monad test network. It may change, restart or stop working without notice. Don't use it for decisions that need legal guarantees."
+        },
+        {
+          "title": "Use it in good faith",
+          "body": "Use it in good faith. Don't use it to harass, deceive, or publish content that is illegal or harms other people. What you write is public and permanent, as the privacy notice explains."
+        },
+        {
+          "title": "Your passkey",
+          "body": "Your passkey lives on your device or in your password manager. You're responsible for looking after it. If you lose it and it wasn't synced, we can't recover it or your credentials."
+        },
+        {
+          "title": "Limits of the count",
+          "body": "Each credential votes once per vote. But Votalo doesn't verify who you are in real life: in open groups, a person with several passkeys could get in more than once, and an invite works for whoever uses it first. Results reflect what was recorded, not a verified identity."
+        },
+        {
+          "title": "No warranty",
+          "body": "Votalo is provided as is, without warranties of any kind. To the extent the law allows, the people who contribute to the project are not liable for damages arising from its use."
+        },
+        {
+          "title": "Open source",
+          "body": "The code is under the MIT license. You can review and reuse it under that license."
+        },
+        {
+          "title": "Changes",
+          "body": "We may update these terms. The current version is the one on this page, with its date."
+        }
+      ]
     },
-    "home": "Back to home"
+    "home": "Back to home",
+    "updated": "Last updated: {date}",
+    "notAdvice": "This text explains how the test version works today. It isn't legal advice.",
+    "contactTitle": "Contact",
+    "contactBody": "For questions or reports, open an issue in the public GitHub repository.",
+    "contactLink": "Go to GitHub"
   },
   "Hero": {
     "eyebrow": "Group votes, no accounts or passwords",
@@ -219,6 +286,22 @@
       "lost": {
         "q": "What if I lose my phone?",
         "a": "Your passkey lives in your password manager (iCloud, Google, 1Password). If you recover your account there, you recover your credential in every group. If it wasn't synced, there's no way to get it back."
+      },
+      "passkey": {
+        "q": "What is a passkey?",
+        "a": "It's the modern way to sign in without a password: your phone keeps a key and you unlock it with Face ID, your fingerprint or the PIN. No one else has it and it doesn't leave your device. Votalo uses it to create a different credential in every group."
+      },
+      "final": {
+        "q": "Can I change my vote?",
+        "a": "No. Each person votes once per vote and the vote is final, so the result can be trusted."
+      },
+      "create": {
+        "q": "Who can create votes?",
+        "a": "Anyone who is part of the group. When you create a vote you choose the question, 2 to 6 options and how long it stays open."
+      },
+      "report": {
+        "q": "How do I report a problem?",
+        "a": "Open a report in the GitHub repository. It's public, so don't include personal details."
       }
     }
   },
@@ -544,6 +627,144 @@
   "NotFound": {
     "title": "We couldn't find this page",
     "body": "The link may be incomplete, or the page may no longer exist.",
+    "home": "Go home"
+  },
+  "Landing": {
+    "more": {
+      "how": "See it step by step",
+      "privacy": "Read the full privacy page",
+      "proof": "See all the proof",
+      "faq": "See all the questions"
+    }
+  },
+  "HowPage": {
+    "metaTitle": "How it works",
+    "eyebrow": "How it works",
+    "title": "From a link to a decision",
+    "lead": "Here's what happens, from the moment someone creates the group until the results close.",
+    "stepLabel": "Step {n}",
+    "details": {
+      "create": {
+        "one": "Choose whether the group is open or invite-only.",
+        "two": "Write the question and 2 to 6 options.",
+        "three": "Decide how long it stays open: from 1 hour to 7 days."
+      },
+      "vote": {
+        "one": "Open the link on your phone.",
+        "two": "Create your passkey once, with Face ID, your fingerprint or your PIN.",
+        "three": "Pick an option and press and hold the circle to vote."
+      },
+      "results": {
+        "one": "The count updates live for the whole group.",
+        "two": "It's one vote per person per vote, and it's final.",
+        "three": "When time is up, the vote closes and the result stays recorded."
+      }
+    },
+    "entry": {
+      "title": "Open or invite-only",
+      "lead": "You decide how people get in when you create the group.",
+      "open": {
+        "title": "Open",
+        "body": "Anyone with the link can get in. It's the easiest option for a group you trust.",
+        "note": "A determined person could get in with several passkeys."
+      },
+      "invite": {
+        "title": "Invite-only",
+        "body": "Whoever created the group generates invites. Each one is used once.",
+        "note": "An invite works for whoever uses it first, so share it only with the person you want to let in."
+      }
+    },
+    "cta": {
+      "title": "Ready to try it?",
+      "body": "Creating a group takes a minute.",
+      "faq": "See the frequently asked questions"
+    }
+  },
+  "PrivacyPage": {
+    "metaTitle": "Privacy",
+    "title": "Privacy, no fine print",
+    "lead": "Votalo isn't a secret ballot box. It's a vote in plain sight of the group, with identities that don't reveal who you are outside it. Here's what is visible and what isn't.",
+    "sees": {
+      "title": "What is visible",
+      "items": {
+        "votes": "Each vote is visible inside the group, under the credential of whoever cast it.",
+        "counts": "The count for each option is public and updates live.",
+        "public": "That a credential exists, and which group it belongs to, is recorded on Monad, a public network."
+      }
+    },
+    "hidden": {
+      "title": "What isn't visible",
+      "items": {
+        "details": "Your name, email or phone number: we don't ask for them.",
+        "biometrics": "Your fingerprint or Face ID: they never leave your device.",
+        "groups": "Which other groups you're in: credentials from different groups can't be linked."
+      }
+    },
+    "service": {
+      "title": "What the service can see",
+      "items": {
+        "ip": "Your connection's IP address, like any website, and technical details such as your browser. It's used to run the service and limit abuse.",
+        "never": "The service never sees your fingerprint or your keys: it only receives what your phone already signed."
+      }
+    },
+    "limits": {
+      "title": "What we can't guarantee",
+      "items": {
+        "secret": "It's not a secret ballot: anyone in the group can see which credential voted what.",
+        "forever": "What is recorded on Monad can't be erased or changed, not even at your request. Don't write personal details in a group name, a question or an option.",
+        "passkeys": "In open groups, a determined person could get in with several passkeys."
+      }
+    },
+    "more": {
+      "title": "More detail",
+      "policy": "Read the full privacy notice",
+      "faq": "See the frequently asked questions"
+    }
+  },
+  "ProofPage": {
+    "metaTitle": "Check it yourself",
+    "title": "Check it yourself",
+    "lead": "You don't have to take our word for it. Everything can be checked, and here's how.",
+    "contract": {
+      "title": "The contract",
+      "body": "The code that counts the votes is published and verified on Monad: you can read exactly what runs.",
+      "address": "Contract address",
+      "link": "Open on MonadVision",
+      "network": "Monad test network"
+    },
+    "code": {
+      "title": "The code",
+      "body": "The app and the contract are public under the MIT license, and have automated tests. Anyone can review, copy or improve them.",
+      "link": "View the repository on GitHub"
+    },
+    "steps": {
+      "title": "Verify a result yourself",
+      "lead": "Four steps, without asking us for permission.",
+      "items": {
+        "one": "Open the contract on MonadVision with the link above.",
+        "two": "Look at the contract's events: each vote cast is recorded with the vote, the credential of who voted and their option.",
+        "three": "Count the votes for each option in those events.",
+        "four": "Compare with the count you see in Votalo: they have to match."
+      }
+    },
+    "live": {
+      "title": "Live numbers",
+      "body": "Read straight from the contract, untouched. Until there is data you'll see a dash.",
+      "link": "See all numbers"
+    },
+    "testnet": "Today Votalo runs on the Monad test network. This is a test version."
+  },
+  "FaqPage": {
+    "metaTitle": "Frequently asked questions",
+    "title": "Frequently asked questions",
+    "lead": "What people ask most, with direct answers. If something is missing, tell us.",
+    "contact": "Can't find your question?",
+    "contactLink": "Write to us on GitHub"
+  },
+  "Error": {
+    "title": "Something went wrong",
+    "body": "We had a problem showing this page. You can try again.",
+    "retry": "Try again",
     "home": "Go home"
   }
 }

@@ -1,11 +1,12 @@
 import { useTranslations } from "next-intl";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Reveal } from "../ui/reveal";
+import { FAQ_SUMMARY, FaqList } from "./faq-list";
+import { MoreLink } from "./more-link";
 
-const KEYS = ["secret", "devices", "unsupported", "twice", "invite", "where", "cost", "lost"] as const;
-
+/** Landing summary: the questions that matter most, then a link to all of them. */
 export function Faq() {
   const t = useTranslations("Faq");
+  const more = useTranslations("Landing.more");
 
   return (
     <section id="faq" className="mx-auto w-full max-w-3xl px-4 py-20 sm:px-6 sm:py-28">
@@ -14,14 +15,8 @@ export function Faq() {
         <h2 className="text-h2 mt-3">{t("title")}</h2>
       </Reveal>
       <Reveal delay={0.08} className="mt-10">
-        <Accordion type="single" collapsible className="border-t border-line">
-          {KEYS.map((key) => (
-            <AccordionItem key={key} value={key}>
-              <AccordionTrigger>{t(`items.${key}.q`)}</AccordionTrigger>
-              <AccordionContent>{t(`items.${key}.a`)}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <FaqList keys={FAQ_SUMMARY} />
+        <MoreLink href="/faq">{more("faq")}</MoreLink>
       </Reveal>
     </section>
   );
