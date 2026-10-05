@@ -457,3 +457,15 @@ here, not just the last successful run.
   is what GitHub Actions and Vercel use.
 - **Production.** Redeployed from the clean clone so `votalo-six.vercel.app` stops serving the page;
   see the check recorded below.
+
+## Production deploy also promoted votalo.xyz (2026-10-05)
+
+- Deployed `95a4843` to production with `vercel deploy --prod`. The deploy was aliased to
+  `votalo-six.vercel.app` and also to `www.votalo.xyz`, because the domain `votalo.xyz` was added to
+  the Vercel project (creator `diximan4-1243`) about 23 minutes before the deploy. Production deploys
+  go to every production domain on the project.
+- Result: `https://votalo-six.vercel.app/test-passkey` returns 404 (the removal is live).
+  `https://votalo.xyz` now returns 200 and serves this build. `www.votalo.xyz` did not resolve yet at check time.
+- This was not intended as a go-live. Earlier instructions said not to touch `votalo.xyz` or its DNS.
+  No DNS record was changed; the action was the deploy. Decision pending with the user: keep the
+  domain live on this build, or detach it from production.
