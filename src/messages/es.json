@@ -1,0 +1,378 @@
+{
+  "Meta": {
+    "title": "Votalo: decidan juntos, sin trampa",
+    "description": "Crea una votación, compártela en tu grupo y cada persona vota con su huella. Un voto por persona y resultados en vivo que nadie puede borrar.",
+    "template": "%s · Votalo"
+  },
+  "Common": {
+    "skipToContent": "Saltar al contenido",
+    "createGroup": "Crear un grupo",
+    "seeHow": "Ver cómo funciona",
+    "close": "Cerrar",
+    "toggleTheme": "Cambiar entre tema claro y oscuro",
+    "language": "Idioma",
+    "languageName": {
+      "es": "Español",
+      "en": "English"
+    },
+    "loading": "Cargando…",
+    "back": "Volver",
+    "copy": "Copiar enlace",
+    "copied": "Enlace copiado",
+    "share": "Compartir",
+    "tryAgain": "Intentar de nuevo",
+    "dash": "—",
+    "votes": "{count, plural, one {# voto} other {# votos}}"
+  },
+  "Nav": {
+    "home": "Votalo, ir al inicio",
+    "menu": "Menú principal",
+    "menuDescription": "Secciones de la página, idioma y tema.",
+    "openMenu": "Abrir menú",
+    "how": "Cómo funciona",
+    "privacy": "Privacidad",
+    "proof": "Compruébalo",
+    "faq": "Preguntas"
+  },
+  "Footer": {
+    "tagline": "Decisiones de grupo con tu huella y a la vista de todos.",
+    "product": "Producto",
+    "resources": "Recursos",
+    "legal": "Legal",
+    "stats": "Cifras en vivo",
+    "about": "Acerca de Votalo",
+    "contract": "Contrato en MonadVision",
+    "docs": "Documentación",
+    "newTab": "se abre en otra pestaña",
+    "privacyNotice": "Aviso de privacidad",
+    "terms": "Términos de uso",
+    "builtOn": "Hecho sobre",
+    "openSource": "Código abierto (MIT)",
+    "copyright": "© 2026 Colaboradores de Votalo"
+  },
+  "Legal": {
+    "privacy": {
+      "title": "Aviso de privacidad",
+      "body": "Este documento todavía no está redactado. Mientras tanto, la sección de privacidad de la página principal explica con claridad qué se ve y qué no."
+    },
+    "terms": {
+      "title": "Términos de uso",
+      "body": "Este documento todavía no está redactado. Votalo es una versión de prueba y no debe usarse para decisiones que requieran garantías legales."
+    },
+    "home": "Volver al inicio"
+  },
+  "Hero": {
+    "eyebrow": "Votaciones de grupo, sin cuentas ni contraseñas",
+    "title": "Decidan juntos. Que nadie haga trampa.",
+    "subtitle": "Crea una votación, compártela en tu grupo y cada persona vota con su huella. Un voto por persona y resultados en vivo que nadie puede borrar.",
+    "assurances": {
+      "noAccounts": "Sin cuentas ni contraseñas",
+      "onePerson": "Un voto por persona",
+      "noErase": "Resultados que nadie borra"
+    }
+  },
+  "Demo": {
+    "badge": "Ejemplo en vivo",
+    "question": "¿Dónde comemos el viernes?",
+    "options": {
+      "a": "Tacos al pastor",
+      "b": "Pizza",
+      "c": "Sushi"
+    },
+    "hint": "Mantén presionada una opción para votar.",
+    "hintKeyboard": "Con teclado, activa una opción para votar.",
+    "voted": "Votaste por {option}.",
+    "note": "Es solo un ejemplo: aquí no se guarda ningún voto.",
+    "total": "{count, plural, one {# voto} other {# votos}}",
+    "ringLabel": "Resultados de la votación de ejemplo"
+  },
+  "Steps": {
+    "eyebrow": "Cómo funciona",
+    "title": "Tres pasos y ya decidieron",
+    "items": {
+      "create": {
+        "title": "Crea y comparte",
+        "body": "Ponle nombre a tu grupo, escribe la pregunta y manda el enlace por WhatsApp o Telegram."
+      },
+      "vote": {
+        "title": "Cada quien vota con su huella",
+        "body": "Al abrir el enlace, cada persona confirma con Face ID, huella o el PIN de su teléfono. No hay nada que instalar."
+      },
+      "results": {
+        "title": "Resultados en vivo",
+        "body": "Cada voto cuenta una sola vez y queda a la vista de todos. Nadie puede borrarlo ni cambiarlo."
+      }
+    }
+  },
+  "Credentials": {
+    "eyebrow": "Tu credencial de grupo",
+    "title": "Una huella, muchas identidades",
+    "body": "Tu huella crea una credencial distinta en cada grupo. Dentro de un grupo siempre eres tú, así que cuentas un solo voto. Entre grupos, nadie puede saber que eres la misma persona.",
+    "fingerprint": "Tu huella",
+    "stays": "Se queda en tu teléfono",
+    "hint": "Toca un grupo para ver su credencial.",
+    "unlinked": "Sin conexión entre ellas",
+    "groups": {
+      "family": "Familia",
+      "team": "Equipo de fútbol",
+      "collective": "Colectivo vecinal"
+    },
+    "badgeLabel": "Credencial en {group}",
+    "inGroup": "En {group} eres",
+    "points": {
+      "stable": {
+        "title": "Estable dentro del grupo",
+        "body": "Misma huella, mismo grupo: siempre la misma credencial. Así se cuenta un voto por persona."
+      },
+      "different": {
+        "title": "Distinta en cada grupo",
+        "body": "La credencial de un grupo no se parece a la de otro."
+      },
+      "unlinkable": {
+        "title": "Imposible de enlazar",
+        "body": "Nadie puede comprobar que dos credenciales vienen de la misma huella."
+      }
+    }
+  },
+  "Privacy": {
+    "eyebrow": "Privacidad",
+    "title": "Privacidad, sin letra chiquita",
+    "lead": "Votalo no es una urna secreta. Es una votación a la vista del grupo, con identidades que no revelan quién eres fuera de él.",
+    "items": {
+      "visible": {
+        "title": "Los votos se ven dentro del grupo",
+        "body": "Cada voto aparece bajo la credencial de esa persona en ese grupo. No es un voto secreto: así cualquiera puede comprobar que el conteo es limpio."
+      },
+      "noPersonal": {
+        "title": "No pedimos tus datos",
+        "body": "Ni nombre, ni correo, ni teléfono. Tu huella se queda en tu dispositivo y nunca nos llega."
+      },
+      "unlinked": {
+        "title": "Tus grupos no se pueden enlazar",
+        "body": "Quien vea tu credencial en un grupo no puede saber en qué otros grupos participas."
+      },
+      "ip": {
+        "title": "Lo que sí ve el servicio",
+        "body": "El servicio que guarda tu voto puede ver la dirección IP de tu conexión, como cualquier sitio web. No ve tu huella ni tus claves."
+      }
+    }
+  },
+  "Proof": {
+    "eyebrow": "Compruébalo",
+    "title": "Compruébalo tú mismo",
+    "lead": "No tienes que creernos. Todo se puede revisar.",
+    "contract": {
+      "title": "Contrato verificado",
+      "body": "El código que cuenta los votos está publicado y verificado en Monad. Puedes leerlo tal cual funciona.",
+      "link": "Ver en MonadVision"
+    },
+    "code": {
+      "title": "Código abierto",
+      "body": "Toda la aplicación es pública y tiene licencia MIT. Cualquiera puede revisarla, copiarla o mejorarla.",
+      "link": "Ver en GitHub"
+    },
+    "stats": {
+      "title": "Cifras en vivo",
+      "body": "Se leen directamente de los registros públicos, sin retoques. Mientras no haya datos verás una raya.",
+      "link": "Ver todas las cifras",
+      "groups": "Grupos",
+      "members": "Personas",
+      "proposals": "Votaciones",
+      "votes": "Votos"
+    },
+    "testnet": "Hoy Votalo funciona en la red de pruebas de Monad. Es una versión de prueba."
+  },
+  "Faq": {
+    "eyebrow": "Preguntas",
+    "title": "Preguntas frecuentes",
+    "items": {
+      "secret": {
+        "q": "¿Es un voto secreto?",
+        "a": "No. Cada voto se ve dentro del grupo bajo la credencial de quien lo emitió. Nadie ve tu nombre, pero las demás personas del grupo sí pueden ver qué credencial votó qué. Si necesitas un voto secreto, Votalo no es la herramienta."
+      },
+      "devices": {
+        "q": "¿Funciona en mi teléfono?",
+        "a": "Depende. Funciona en iPhone con iOS 18 o superior (Safari o Chrome), en Android con Chrome, y en Chrome de escritorio si guardas la llave de acceso en el Administrador de contraseñas de Google o en 1Password. También en Windows 11 25H2 o más nuevo. No funciona con el perfil local de Chrome de escritorio, con Bitwarden ni con Dashlane."
+      },
+      "unsupported": {
+        "q": "¿Qué hago si mi navegador no lo permite?",
+        "a": "Abre el mismo enlace en un teléfono compatible. Cuando algo no funciona te mostramos un código QR para hacerlo en un momento."
+      },
+      "twice": {
+        "q": "¿Alguien puede votar dos veces?",
+        "a": "Con una misma llave de acceso, no: cada credencial vota una vez por votación. Pero en los grupos abiertos una persona decidida podría crear varias llaves de acceso y entrar más de una vez. En los grupos por invitación cada invitación se usa una sola vez, lo que lo limita a una entrada por invitación."
+      },
+      "invite": {
+        "q": "¿Quién puede usar un enlace de invitación?",
+        "a": "Quien lo use primero. La invitación no está atada a una persona en concreto, así que si el enlace llega a alguien más, esa persona puede entrar antes que tu amistad. Compártelo solo con quien quieres que entre."
+      },
+      "where": {
+        "q": "¿Dónde se guardan los votos?",
+        "a": "En Monad, una red pública. Por eso nadie, ni siquiera nosotros, puede borrar ni cambiar un resultado."
+      },
+      "cost": {
+        "q": "¿Cuesta algo? ¿Es la versión final?",
+        "a": "Votar no te cuesta nada: Votalo cubre el costo técnico. Pero hoy es una versión de prueba, que funciona en la red de pruebas de Monad. No la uses para decisiones que necesiten garantías legales."
+      },
+      "lost": {
+        "q": "¿Y si pierdo mi teléfono?",
+        "a": "Tu llave de acceso vive en tu administrador de contraseñas (iCloud, Google, 1Password). Si recuperas tu cuenta ahí, recuperas tu credencial en cada grupo. Si no la tenías sincronizada, no hay forma de recuperarla."
+      }
+    }
+  },
+  "Errors": {
+    "GroupExists": "Ese grupo ya existe. Prueba de nuevo.",
+    "GroupNotFound": "No encontramos este grupo. Revisa que el enlace esté completo.",
+    "InvalidMode": "Elige si el grupo será abierto o por invitación.",
+    "InvalidAdmin": "No pudimos preparar tu credencial. Inténtalo otra vez.",
+    "InvalidMember": "No pudimos preparar tu credencial. Inténtalo otra vez.",
+    "InvalidNameLength": "El nombre debe tener entre 1 y 80 caracteres.",
+    "NotMember": "Todavía no eres parte de este grupo. Únete primero.",
+    "AlreadyMember": "Ya eres parte de este grupo.",
+    "InvalidSignature": "No pudimos confirmar tu huella. Inténtalo otra vez.",
+    "InviteRequired": "Este grupo es por invitación. Pide un enlace de invitación a quien lo creó.",
+    "InviteNotAllowed": "Este enlace de invitación no es válido para este grupo.",
+    "InviteAlreadyUsed": "Esta invitación ya la usó alguien más. Pide una nueva.",
+    "ProposalExists": "Esa votación ya existe. Prueba de nuevo.",
+    "ProposalNotFound": "No encontramos esta votación. Revisa que el enlace esté completo.",
+    "InvalidTitleLength": "La pregunta debe tener entre 1 y 140 caracteres.",
+    "InvalidOptionCount": "Pon entre 2 y 6 opciones.",
+    "InvalidOptionLength": "Cada opción debe tener entre 1 y 40 caracteres.",
+    "InvalidDeadline": "La votación puede durar desde unos minutos hasta 30 días.",
+    "VotingClosed": "Esta votación ya cerró.",
+    "AlreadyVoted": "Ya votaste en esta votación. Tu voto cuenta una sola vez.",
+    "InvalidChoice": "Esa opción no existe. Elige otra.",
+    "NETWORK": "Parece que no hay conexión. Revisa tu internet e inténtalo de nuevo.",
+    "INTERNAL": "Algo salió mal de nuestro lado. Inténtalo otra vez en un momento.",
+    "RATE_LIMITED": "Demasiados intentos seguidos. Espera un momento y vuelve a probar.",
+    "DAILY_CAP_REACHED": "Hoy ya se alcanzó el límite de acciones. Vuelve mañana, por favor.",
+    "RELAYER_NOT_CONFIGURED": "El servicio no está disponible en este momento. Inténtalo más tarde.",
+    "INVALID_INPUT": "Revisa lo que escribiste e inténtalo otra vez.",
+    "PASSKEY_FAILED": "No pudimos confirmar con tu huella. Si lo cancelaste, puedes intentarlo otra vez.",
+    "PRF_UNAVAILABLE": "Este navegador no puede crear la llave de acceso que necesita Votalo.",
+    "UNKNOWN": "Algo no salió como esperábamos. Inténtalo otra vez."
+  },
+  "Vote": {
+    "optionsLegend": "Elige tu opción",
+    "pickOne": "Elige una opción para poder votar.",
+    "holdHint": "Mantén presionado el círculo para votar por {option}.",
+    "holdLabel": "Mantén presionado para votar por {option}",
+    "keepHolding": "Sigue presionando hasta que el círculo se cierre.",
+    "working": "Confirma con tu huella…",
+    "done": "Listo. Tu voto por {option} quedó registrado.",
+    "alreadyVoted": "Ya votaste por {option}. Tu voto cuenta una sola vez.",
+    "alreadyVotedGeneric": "Ya votaste. Tu voto cuenta una sola vez.",
+    "closed": "Esta votación ya cerró.",
+    "notMember": "Únete al grupo para poder votar.",
+    "yourVote": "Tu voto",
+    "noVotes": "Todavía no hay votos.",
+    "leading": "Va ganando {option} con {percent}%.",
+    "tie": "Van empatados.",
+    "summary": "{total, plural, one {# voto} other {# votos}} en total. {lead}",
+    "ringLabel": "Resultados en vivo. {summary}",
+    "optionResult": "{votes}, {percent}%",
+    "votesWord": "{count, plural, one {voto} other {votos}}",
+    "needsPasskey": "Crea tu llave de acceso para poder votar."
+  },
+  "Shell": {
+    "tabs": "Navegación de la aplicación",
+    "tab": {
+      "groups": "Grupos",
+      "create": "Crear",
+      "me": "Yo"
+    },
+    "settings": "Ajustes",
+    "settingsDescription": "Idioma y tema de la aplicación.",
+    "theme": "Tema",
+    "toSite": "Ir a la página principal"
+  },
+  "Onboarding": {
+    "metaTitle": "Tu llave de acceso",
+    "displayName": "Miembro de Votalo",
+    "title": "Primero, tu llave de acceso",
+    "body": "Para votar, tu teléfono crea una llave de acceso. Es como una huella privada: nadie más la tiene y nunca sale de tu dispositivo.",
+    "button": "Crear mi llave de acceso",
+    "creating": "Esperando tu confirmación…",
+    "creatingHint": "Confirma con Face ID, tu huella o el PIN del teléfono.",
+    "hint": "Te pediremos Face ID, tu huella o el PIN de tu teléfono.",
+    "privacy": "No pedimos nombre, correo ni teléfono.",
+    "haveTitle": "Ya tienes tu llave de acceso",
+    "haveBody": "Este navegador ya tiene tu llave. Puedes seguir.",
+    "continue": "Continuar"
+  },
+  "Prf": {
+    "title": "Este navegador no puede crear tu llave",
+    "body": "Votalo necesita un tipo de llave de acceso que este navegador no ofrece. Abre este mismo enlace en un teléfono compatible y listo.",
+    "qrLabel": "Código QR con el enlace de esta página",
+    "scan": "Escanéalo con la cámara de tu teléfono",
+    "scanHint": "Se abrirá esta misma página, lista para continuar.",
+    "works": "Sí funciona en",
+    "doesNot": "No funciona en",
+    "supported": {
+      "ios": "iPhone con iOS 18 o superior (Safari o Chrome)",
+      "android": "Android con Chrome",
+      "desktop": "Chrome de escritorio con el Administrador de contraseñas de Google o con 1Password",
+      "windows": "Windows 11 25H2 o más nuevo"
+    },
+    "unsupported": {
+      "chromeLocal": "El perfil local de Chrome de escritorio",
+      "bitwarden": "Bitwarden",
+      "dashlane": "Dashlane"
+    }
+  },
+  "DemoData": {
+    "group": "Cena del viernes",
+    "open": {
+      "title": "¿Dónde cenamos el viernes?",
+      "options": [
+        "Tacos al pastor",
+        "Pizza",
+        "Sushi"
+      ]
+    },
+    "closed": {
+      "title": "¿Qué día nos juntamos?",
+      "options": [
+        "Viernes",
+        "Sábado"
+      ]
+    }
+  },
+  "Time": {
+    "dh": "{d} d {h} h",
+    "hm": "{h} h {m} min",
+    "m": "{m} min",
+    "lt1": "menos de 1 min"
+  },
+  "Share": {
+    "title": "Compartir",
+    "description": "Manda el enlace por WhatsApp o Telegram, o muestra el código QR.",
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegram",
+    "more": "Más opciones",
+    "qr": "Código QR del enlace",
+    "link": "Enlace",
+    "proposalText": "Vota en “{title}” en Votalo:",
+    "groupText": "Únete a “{name}” en Votalo:",
+    "button": "Compartir"
+  },
+  "Proposal": {
+    "metaTitle": "Votación",
+    "demo": "Ejemplo",
+    "group": "Grupo {name}",
+    "timeLeft": "Cierra en {time}",
+    "closedOn": "Cerró el {date}",
+    "closedBadge": "Cerrada",
+    "openBadge": "Abierta",
+    "joinTitle": "Únete a {group} para votar",
+    "joinBody": "Tu huella crea tu credencial en este grupo. Solo sirve aquí y nadie puede enlazarla con tus otros grupos.",
+    "joinButton": "Unirme al grupo",
+    "joining": "Confirma con tu huella…",
+    "yourCredential": "Tu credencial en este grupo",
+    "notFoundTitle": "No encontramos esta votación",
+    "notFoundBody": "Revisa que el enlace esté completo o pide que te lo compartan otra vez.",
+    "toGroups": "Ir a mis grupos",
+    "ogTitle": "Votación en Votalo",
+    "ogTagline": "Un voto por persona. Resultados en vivo."
+  }
+}
