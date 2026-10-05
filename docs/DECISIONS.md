@@ -192,3 +192,32 @@ run 1 was never sent).
 
 **Going forward:** every relayed tx, including from failed or partial runs, gets reported and logged
 here, not just the last successful run.
+
+## Phase 4: Envio indexer scaffolded (2026-10-05)
+
+- **Envio has no native Windows build** (only Linux and macOS binaries for its Rust CLI). Development
+  runs in WSL (Ubuntu), with Node installed there via `nvm` (no sudo available). Local `envio dev`
+  also needs Docker for Postgres and Hasura; Docker Desktop was started, but its WSL integration for
+  Ubuntu was still off as of this entry (a GUI toggle, not something settable from here), so the
+  indexer has not yet been run locally end to end.
+- **`indexer/`**: `config.yaml` (chain 10143, start block 68466493 — the Votalo deploy block — the
+  four events, global `field_selection.transaction_fields: [hash]` since `transaction.hash` is not
+  included by default), `schema.graphql` (Group, Member, Proposal, Vote, DailyVoteCount),
+  `abis/Votalo.json` (generated from `contracts/out`), `src/EventHandlers.ts`.
+- **Handler logic**: `createGroup` emits `GroupCreated` and a `MemberJoined` for the admin in the same
+  transaction; the `GroupCreated` handler creates the admin's `Member` row directly, and the
+  `MemberJoined` handler skips a row that already exists, so the admin is never double-counted.
+  `VoteCast` updates the proposal's per-option `optionCounts` and a `DailyVoteCount` row (UTC day)
+  for the `/stats` chart, from the event data only — nothing is recomputed independently.
+- **Verified so far**: `envio codegen` runs clean in WSL and produces types matching the schema;
+  `tsc --noEmit` on the handlers passes. Not yet verified: an actual indexing run against live chain
+  data, which needs the Docker/WSL step above.
+- **Hosting decision: pending.** The production Vercel app needs a public GraphQL endpoint, which
+  points to either Envio's hosted service or a self-hosted instance. Self-hosting means running
+  Postgres, Hasura, and the indexer process continuously, which Vercel's serverless functions cannot
+  do; a separate always-on host would be needed. Envio's hosted service is the practical choice, but
+  it needs creating an Envio account, which was not done — asked the user first, per policy.
+- **`docs/FRONTEND.md`** now has the real GraphQL query shapes (group, proposal, member profile,
+  stats) against the schema above, with the endpoint URL left open until deployed.
+- Added to README Known limits: the relayer key is set only for the Production Vercel environment,
+  not Preview.

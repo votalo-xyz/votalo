@@ -131,15 +131,60 @@ removal before delivery.
 `hasVoted(proposalId, member)`, `getTotals()`. Read straight from the chain; the GraphQL layer replaces
 them for lists and history.
 
-## GraphQL (planned: Phase 4)
+## GraphQL (`indexer/`) — schema ready; endpoint URL pending deployment
 
-Envio HyperIndex over the four events. Planned queries:
+Envio HyperIndex over the four events, indexing from the deploy block (68466493). Entities:
+`Group`, `Member`, `Proposal`, `Vote`, `DailyVoteCount` (see `indexer/schema.graphql`). Hasura
+generates the query API from these, including relation fields and `_aggregate` queries for counts.
 
-- `group(id)`: name, mode, member count, admin.
-- `proposal(id)`: title, options, deadline, option counts, time left.
-- `proposalResults(id)`: per-option counts, refreshed within seconds of a vote.
-- `memberProfile(groupId, member)`: votes cast, proposals created, joined date. Only within that group.
-- `stats()`: total groups, members, proposals, votes, votes per day.
+Endpoint URL: not yet published here — set once the indexer is deployed (see
+`docs/DECISIONS.md` for the hosting choice). Local dev serves GraphQL at
+`http://localhost:8080/v1/graphql` (`cd indexer && npm run dev`).
+
+**Group page** (name, mode, member count, admin, proposals):
+```graphql
+query Group($id: String!) {
+  Group_by_pk(id: $id) {
+    name mode admin memberCount createdAt
+    proposals(order_by: { createdAt: desc }) { id title deadline voteCount }
+  }
+}
+```
+
+**Proposal + live results** (title, options, per-option counts, time left via `deadline`):
+```graphql
+query Proposal($id: String!) {
+  Proposal_by_pk(id: $id) {
+    title options deadline voteCount optionCounts
+    group { id name }
+  }
+}
+```
+
+**Member profile within one group** (votes cast, proposals created, joined date — scoped to the
+group by the composite id `${groupId}-${address}`):
+```graphql
+query MemberProfile($id: String!) {
+  Member_by_pk(id: $id) {
+    address joinedAt
+    votesCast { proposal { id title } choice votedAt }
+    proposalsCreated { id title createdAt }
+  }
+}
+```
+
+**Public stats** (totals via Hasura's generated aggregates, plus votes per day):
+```graphql
+query Stats {
+  Group_aggregate { aggregate { count } }
+  Member_aggregate { aggregate { count } }
+  Proposal_aggregate { aggregate { count } }
+  Vote_aggregate { aggregate { count } }
+  DailyVoteCount(order_by: { id: asc }) { id votes }
+}
+```
+
+Results refresh within seconds of a vote (Envio indexes close to chain head on Monad testnet).
 
 Schema and endpoint will be published here when the indexer is deployed.
 

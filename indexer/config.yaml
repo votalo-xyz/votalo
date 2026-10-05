@@ -1,0 +1,20 @@
+name: votalo-indexer
+description: Indexes Votalo groups, members, proposals, and votes on Monad testnet.
+field_selection:
+  transaction_fields:
+    - hash
+chains:
+  - id: 10143
+    start_block: 68466493 # Votalo deploy block (see docs/DECISIONS.md)
+    rpc:
+      url: https://testnet-rpc.monad.xyz
+    contracts:
+      - name: Votalo
+        address: 0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072
+        abi_file_path: abis/Votalo.json
+        handler: src/EventHandlers.ts
+        events:
+          - event: GroupCreated
+          - event: MemberJoined
+          - event: ProposalCreated
+          - event: VoteCast
