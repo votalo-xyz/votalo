@@ -5,7 +5,7 @@ import { Fingerprint, Unlink2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { CredentialBadge } from "../brand/credential-badge";
-import { shortAddress } from "../site";
+import { shortAddress } from "../format";
 import { cn } from "../ui/cn";
 import { Reveal } from "../ui/reveal";
 

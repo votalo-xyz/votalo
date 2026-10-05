@@ -35,10 +35,10 @@ export function Hero() {
           <p className="rise text-eyebrow text-accent-text" style={rise(0)}>
             {t("eyebrow")}
           </p>
-          <h1 className="rise text-display mt-5" style={rise(80)}>
+          <h1 className="slide-up text-display mt-5" style={rise(80)}>
             {t("title")}
           </h1>
-          <p className="rise text-lead mt-6 max-w-xl text-muted" style={rise(180)}>
+          <p className="slide-up text-lead mt-6 max-w-xl text-muted" style={rise(180)}>
             {t("subtitle")}
           </p>
 

@@ -271,6 +271,108 @@
     "summary": "{total, plural, one {# vote} other {# votes}} in total. {lead}",
     "ringLabel": "Live results. {summary}",
     "optionResult": "{votes}, {percent}%",
-    "votesWord": "{count, plural, one {vote} other {votes}}"
+    "votesWord": "{count, plural, one {vote} other {votes}}",
+    "needsPasskey": "Create your passkey to be able to vote."
+  },
+  "Shell": {
+    "tabs": "App navigation",
+    "tab": {
+      "groups": "Groups",
+      "create": "Create",
+      "me": "Me"
+    },
+    "settings": "Settings",
+    "settingsDescription": "Language and theme for the app.",
+    "theme": "Theme",
+    "toSite": "Go to the main page"
+  },
+  "Onboarding": {
+    "metaTitle": "Your passkey",
+    "displayName": "Votalo member",
+    "title": "First, your passkey",
+    "body": "To vote, your phone creates a passkey. It's like a private fingerprint: no one else has it and it never leaves your device.",
+    "button": "Create my passkey",
+    "creating": "Waiting for your confirmation…",
+    "creatingHint": "Confirm with Face ID, your fingerprint or your phone's PIN.",
+    "hint": "We'll ask for Face ID, your fingerprint or your phone's PIN.",
+    "privacy": "We don't ask for a name, email or phone number.",
+    "haveTitle": "You already have your passkey",
+    "haveBody": "This browser already has your passkey. You can carry on.",
+    "continue": "Continue"
+  },
+  "Prf": {
+    "title": "This browser can't create your passkey",
+    "body": "Votalo needs a kind of passkey this browser doesn't offer. Open this same link on a supported phone and you're set.",
+    "qrLabel": "QR code with the link to this page",
+    "scan": "Scan it with your phone's camera",
+    "scanHint": "It opens this same page, ready to continue.",
+    "works": "Works on",
+    "doesNot": "Doesn't work on",
+    "supported": {
+      "ios": "iPhone with iOS 18 or newer (Safari or Chrome)",
+      "android": "Android with Chrome",
+      "desktop": "Desktop Chrome with the Google Password Manager or 1Password",
+      "windows": "Windows 11 25H2 or newer"
+    },
+    "unsupported": {
+      "chromeLocal": "The desktop Chrome local profile",
+      "bitwarden": "Bitwarden",
+      "dashlane": "Dashlane"
+    }
+  },
+  "DemoData": {
+    "group": "Friday dinner",
+    "open": {
+      "title": "Where do we eat on Friday?",
+      "options": [
+        "Tacos al pastor",
+        "Pizza",
+        "Sushi"
+      ]
+    },
+    "closed": {
+      "title": "Which day do we meet?",
+      "options": [
+        "Friday",
+        "Saturday"
+      ]
+    }
+  },
+  "Time": {
+    "dh": "{d} d {h} h",
+    "hm": "{h} h {m} min",
+    "m": "{m} min",
+    "lt1": "less than 1 min"
+  },
+  "Share": {
+    "title": "Share",
+    "description": "Send the link on WhatsApp or Telegram, or show the QR code.",
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegram",
+    "more": "More options",
+    "qr": "QR code for the link",
+    "link": "Link",
+    "proposalText": "Vote on “{title}” on Votalo:",
+    "groupText": "Join “{name}” on Votalo:",
+    "button": "Share"
+  },
+  "Proposal": {
+    "metaTitle": "Vote",
+    "demo": "Example",
+    "group": "Group {name}",
+    "timeLeft": "Closes in {time}",
+    "closedOn": "Closed on {date}",
+    "closedBadge": "Closed",
+    "openBadge": "Open",
+    "joinTitle": "Join {group} to vote",
+    "joinBody": "Your fingerprint creates your credential in this group. It only works here and no one can link it to your other groups.",
+    "joinButton": "Join the group",
+    "joining": "Confirm with your fingerprint…",
+    "yourCredential": "Your credential in this group",
+    "notFoundTitle": "We couldn't find this vote",
+    "notFoundBody": "Check that the link is complete, or ask for it to be shared again.",
+    "toGroups": "Go to my groups",
+    "ogTitle": "Vote on Votalo",
+    "ogTagline": "One person, one vote. Live results."
   }
 }

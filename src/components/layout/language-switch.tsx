@@ -29,7 +29,7 @@ function Switch({ className }: { className?: string }) {
             hrefLang={locale}
             lang={locale}
             aria-current={current ? "true" : undefined}
-            aria-label={t(`languageName.${locale}`)}
+            aria-label={`${locale.toUpperCase()}, ${t(`languageName.${locale}`)}`}
             className={cn(
               "inline-flex min-h-11 min-w-12 items-center justify-center rounded-full px-3 text-sm font-semibold uppercase tracking-wide transition-colors duration-200",
               current ? "bg-fg text-bg" : "text-muted hover:text-fg",

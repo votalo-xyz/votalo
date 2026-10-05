@@ -1,7 +1,8 @@
 import { ArrowUpRight, FileCheck2, GitBranch, Radio } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { CONTRACT_ADDRESS, CONTRACT_URL, GITHUB_URL, shortAddress } from "../site";
+import { shortAddress } from "../format";
+import { CONTRACT_ADDRESS, CONTRACT_URL, GITHUB_URL } from "../site";
 import { Reveal } from "../ui/reveal";
 import { LiveStatsGrid } from "./live-stats";
 

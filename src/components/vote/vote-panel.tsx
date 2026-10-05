@@ -18,7 +18,7 @@ export type VotePanelProps = {
   /** The member's own vote, if any. */
   myChoice: number | null;
   /** `open` lets the member vote. The others explain why not. */
-  status: "open" | "closed" | "notMember";
+  status: "open" | "closed" | "notMember" | "needsPasskey";
   /** Signs and sends the vote. Throw to report a failure. */
   onCast: (choice: number) => Promise<void>;
   /** Called when the particle lands in the ring: update the counts here. */
@@ -118,6 +118,7 @@ export function VotePanel({ options, counts, myChoice, status, onCast, onConfirm
   else if (alreadyVoted) statusText = t("alreadyVoted", { option: chosenLabel });
   else if (status === "closed") statusText = t("closed");
   else if (status === "notMember") statusText = t("notMember");
+  else if (status === "needsPasskey") statusText = t("needsPasskey");
   else if (shortPress) statusText = t("keepHolding");
   else if (selected === null) statusText = t("pickOne");
   else statusText = t("holdHint", { option: chosenLabel });
@@ -132,7 +133,7 @@ export function VotePanel({ options, counts, myChoice, status, onCast, onConfirm
             : "gap-8 @2xl:grid-cols-[minmax(0,17rem)_1fr] @2xl:gap-10",
         )}
       >
-        <div ref={ringRef} className={cn("mx-auto w-full", compact ? "max-w-[11rem] @sm:max-w-none" : "max-w-[15rem] @2xl:max-w-none")}>
+        <div ref={ringRef} className={cn("mx-auto w-full", compact ? "max-w-[11rem] @sm:max-w-none" : "max-w-[12.5rem] @2xl:max-w-none")}>
           <LivingRing counts={counts} highlight={choice} pulse={pulse} label={t("ringLabel", { summary })}>
             <span className="font-display text-5xl font-extrabold leading-none tabular-nums sm:text-6xl">{total}</span>
             <span className="mt-1.5 text-sm text-muted">{t("votesWord", { count: total })}</span>
@@ -200,7 +201,7 @@ export function VotePanel({ options, counts, myChoice, status, onCast, onConfirm
             </div>
           </fieldset>
 
-          <div className="flex items-center gap-4">
+          <div className="flex scroll-mb-32 items-center gap-4">
             {showButton ? (
               <HoldButton
                 ref={buttonRef}

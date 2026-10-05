@@ -136,3 +136,28 @@ Running log of architecture decisions, deferred scope, and environment surprises
   and saves nothing. Per-group data (group, proposals, members) stays mock until Phase 4 GraphQL lands.
 - **Proposal URL.** `/g/<groupId>/p/<proposalId>`: the vote flow needs both ids, and proposal titles are not
   stored on chain (only hashes), so they come from the indexer later.
+
+## Vote flow, onboarding and shell (2026-10-05)
+
+- **Mock data layer.** `src/data/` holds the types (shaped like docs/FRONTEND.md), a localStorage store, an
+  example group, and `actions.ts`. The actions run the real passkey prompt (so the per-group member address
+  is genuine) and record the outcome in this browser. Each action throws `RelayClientError` with the same
+  codes the relay returns, so error handling does not change when the real flows replace them. Swap points
+  are the bodies of `joinGroup`, `castVote`, `createGroup`, `createProposal` in `src/data/actions.ts`.
+- **Needs from `src/lib` (to raise as an issue):** proposal and group text (title, options, group name) is
+  not on chain, only hashes, so the screens need the Phase 4 indexer to show real proposals from a shared
+  link. Until then a shared link only resolves for the example group and for content created in the same
+  browser.
+- **Mera error detection.** `src/components/errors.ts` checks `error.name === "MeraError"` instead of
+  importing Mera, because it is also used on the landing page and Mera's crypto code would add to that
+  page's JavaScript. `isPrfUnavailable` in `src/lib/identity/passkey.ts` stays the source of truth for
+  onboarding flows that already import Mera.
+- **Locale proxy matcher.** `src/proxy.ts` must keep `\.` (escaped dot) in the matcher string. With a single
+  backslash every path except `/` skips the proxy and 404s.
+- **Lighthouse (mobile, production build, local).** Performance 88–89, accessibility 100, best practices 96,
+  SEO 100, CLS 0, TBT about 110 ms. Performance is just under the 90 target. The unthrottled LCP is about
+  0.4 s; Lighthouse's simulated LCP stays at 3.6 s regardless of font display, animation and bundle changes
+  tried so far. Open item: re-measure on the Vercel preview, which serves from a CDN.
+- **Testing passkeys without a phone.** Headless Chrome with a CDP virtual authenticator (`hasPrf: true`)
+  drives the real create, join and vote flow. With `hasPrf: false` it triggers the PRF-unavailable screen.
+  A real phone check is still required before delivery.

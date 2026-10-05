@@ -271,6 +271,108 @@
     "summary": "{total, plural, one {# voto} other {# votos}} en total. {lead}",
     "ringLabel": "Resultados en vivo. {summary}",
     "optionResult": "{votes}, {percent}%",
-    "votesWord": "{count, plural, one {voto} other {votos}}"
+    "votesWord": "{count, plural, one {voto} other {votos}}",
+    "needsPasskey": "Crea tu llave de acceso para poder votar."
+  },
+  "Shell": {
+    "tabs": "Navegación de la aplicación",
+    "tab": {
+      "groups": "Grupos",
+      "create": "Crear",
+      "me": "Yo"
+    },
+    "settings": "Ajustes",
+    "settingsDescription": "Idioma y tema de la aplicación.",
+    "theme": "Tema",
+    "toSite": "Ir a la página principal"
+  },
+  "Onboarding": {
+    "metaTitle": "Tu llave de acceso",
+    "displayName": "Miembro de Votalo",
+    "title": "Primero, tu llave de acceso",
+    "body": "Para votar, tu teléfono crea una llave de acceso. Es como una huella privada: nadie más la tiene y nunca sale de tu dispositivo.",
+    "button": "Crear mi llave de acceso",
+    "creating": "Esperando tu confirmación…",
+    "creatingHint": "Confirma con Face ID, tu huella o el PIN del teléfono.",
+    "hint": "Te pediremos Face ID, tu huella o el PIN de tu teléfono.",
+    "privacy": "No pedimos nombre, correo ni teléfono.",
+    "haveTitle": "Ya tienes tu llave de acceso",
+    "haveBody": "Este navegador ya tiene tu llave. Puedes seguir.",
+    "continue": "Continuar"
+  },
+  "Prf": {
+    "title": "Este navegador no puede crear tu llave",
+    "body": "Votalo necesita un tipo de llave de acceso que este navegador no ofrece. Abre este mismo enlace en un teléfono compatible y listo.",
+    "qrLabel": "Código QR con el enlace de esta página",
+    "scan": "Escanéalo con la cámara de tu teléfono",
+    "scanHint": "Se abrirá esta misma página, lista para continuar.",
+    "works": "Sí funciona en",
+    "doesNot": "No funciona en",
+    "supported": {
+      "ios": "iPhone con iOS 18 o superior (Safari o Chrome)",
+      "android": "Android con Chrome",
+      "desktop": "Chrome de escritorio con el Administrador de contraseñas de Google o con 1Password",
+      "windows": "Windows 11 25H2 o más nuevo"
+    },
+    "unsupported": {
+      "chromeLocal": "El perfil local de Chrome de escritorio",
+      "bitwarden": "Bitwarden",
+      "dashlane": "Dashlane"
+    }
+  },
+  "DemoData": {
+    "group": "Cena del viernes",
+    "open": {
+      "title": "¿Dónde cenamos el viernes?",
+      "options": [
+        "Tacos al pastor",
+        "Pizza",
+        "Sushi"
+      ]
+    },
+    "closed": {
+      "title": "¿Qué día nos juntamos?",
+      "options": [
+        "Viernes",
+        "Sábado"
+      ]
+    }
+  },
+  "Time": {
+    "dh": "{d} d {h} h",
+    "hm": "{h} h {m} min",
+    "m": "{m} min",
+    "lt1": "menos de 1 min"
+  },
+  "Share": {
+    "title": "Compartir",
+    "description": "Manda el enlace por WhatsApp o Telegram, o muestra el código QR.",
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegram",
+    "more": "Más opciones",
+    "qr": "Código QR del enlace",
+    "link": "Enlace",
+    "proposalText": "Vota en “{title}” en Votalo:",
+    "groupText": "Únete a “{name}” en Votalo:",
+    "button": "Compartir"
+  },
+  "Proposal": {
+    "metaTitle": "Votación",
+    "demo": "Ejemplo",
+    "group": "Grupo {name}",
+    "timeLeft": "Cierra en {time}",
+    "closedOn": "Cerró el {date}",
+    "closedBadge": "Cerrada",
+    "openBadge": "Abierta",
+    "joinTitle": "Únete a {group} para votar",
+    "joinBody": "Tu huella crea tu credencial en este grupo. Solo sirve aquí y nadie puede enlazarla con tus otros grupos.",
+    "joinButton": "Unirme al grupo",
+    "joining": "Confirma con tu huella…",
+    "yourCredential": "Tu credencial en este grupo",
+    "notFoundTitle": "No encontramos esta votación",
+    "notFoundBody": "Revisa que el enlace esté completo o pide que te lo compartan otra vez.",
+    "toGroups": "Ir a mis grupos",
+    "ogTitle": "Votación en Votalo",
+    "ogTagline": "Un voto por persona. Resultados en vivo."
   }
 }

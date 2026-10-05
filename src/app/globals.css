@@ -328,6 +328,18 @@
   animation-delay: var(--d, 0ms);
 }
 
+/* Slide only, no fade: Chrome ignores fully transparent text when picking the LCP element, so the
+   headline stays opaque and counts from its first paint. */
+@keyframes slide-up {
+  from {
+    transform: translateY(18px);
+  }
+}
+@utility slide-up {
+  animation: slide-up 0.7s var(--ease-spring) both;
+  animation-delay: var(--d, 0ms);
+}
+
 @keyframes acc-down {
   from {
     height: 0;

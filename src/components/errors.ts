@@ -1,6 +1,4 @@
 import { RelayClientError } from "@/lib/flows/relayClient";
-import { isMeraError } from "@category-labs/mera";
-import { isPrfUnavailable } from "@/lib/identity/passkey";
 
 /** Contract errors the relayer can return. Each has a plain-language message under `Errors`. */
 const CONTRACT_ERRORS = [
@@ -37,10 +35,21 @@ export type ErrorKey =
   | "PASSKEY_FAILED"
   | "UNKNOWN";
 
+/**
+ * Mera errors are recognised by shape instead of importing Mera: this file is also used by the landing
+ * demo, and pulling the whole crypto package into that page would cost load time. `isMeraError` and
+ * `isPrfUnavailable` in src/lib do the same check with the class.
+ */
+function meraCode(e: unknown): string | null {
+  if (e instanceof Error && e.name === "MeraError") return (e as Error & { code?: string }).code ?? "";
+  return null;
+}
+
 /** Maps anything thrown by the flows to a message key. Never shows the raw error name. */
 export function classifyError(e: unknown): ErrorKey {
-  if (isPrfUnavailable(e)) return "PRF_UNAVAILABLE";
-  if (isMeraError(e)) return "PASSKEY_FAILED";
+  const mera = meraCode(e);
+  if (mera === "PRF_UNAVAILABLE") return "PRF_UNAVAILABLE";
+  if (mera !== null) return "PASSKEY_FAILED";
   if (e instanceof RelayClientError) {
     if (e.code.startsWith("INVALID_INPUT")) return "INVALID_INPUT";
     const known = [...CONTRACT_ERRORS, ...RELAY_ERRORS].find((code) => code === e.code);
