@@ -106,3 +106,24 @@ Running log of architecture decisions, deferred scope, and environment surprises
 - **E2E test** (`src/lib/relay/e2e.testnet.test.ts`) runs only when `E2E_BASE_URL` is set. It spends
   relayer gas on testnet, so it runs only after the relayer is funded and approved.
 - **Test route.** `src/app/test-passkey` is a temporary page for the phone test. Remove before delivery.
+
+## Relayer wallet and production deploy (2026-10-05)
+
+- **Relayer wallet generated and set.** `RELAYER_PRIVATE_KEY` was generated with viem's
+  `generatePrivateKey()` inside a disposable Node script run from the deploy host, piped directly into
+  `vercel env add` over stdin, and never printed, logged, or written to any file. Set for the
+  **Production** environment. Public address: `0x1995b4702CF27a14111e3115f53640e1912071ff` (funded by
+  the user with 2 MON).
+- **Preview environment not set.** Vercel's CLI refuses to apply a secret to "all Preview branches"
+  non-interactively when it detects an agent driving the session (confirmed with `--value`, `--yes`,
+  `--force`, and `--guidance` in every combination; a specific branch cannot substitute, because `main`
+  is the Production branch and there are no other branches). This is a deliberate safety gate, not a
+  bug, so no workaround was attempted. Preview deploys do not have a relayer key. If needed later, the
+  user can run `vercel env add RELAYER_PRIVATE_KEY preview --value <value> --yes` themselves.
+- **Production deploy** at commit `78640b1`, aliased to `https://votalo-six.vercel.app` (approved by
+  the user; votalo.xyz and its DNS untouched). Includes the temporary `/test-passkey` route for the
+  phone test. Verified: `/test-passkey` returns 200, `/api/relay/vote` rejects malformed input and
+  rejects a wrong signature with `InvalidSignature` (confirms the relayer key is wired, not missing).
+- **Deploy mistake caught before shipping further:** a first production deploy attempt used a stale
+  local clone that had not pulled the latest commit, and would have shipped without the relay code.
+  Caught by checking `git log` before trusting the deploy, pulled, and redeployed.
