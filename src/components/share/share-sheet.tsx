@@ -106,7 +106,7 @@ export function ShareSheet({ path, text, heading, open, onOpenChange, trigger }:
             </div>
             <div className="min-w-0">
               <p className="text-sm font-semibold">{t("link")}</p>
-              <p className="mt-1 break-all font-mono text-xs leading-snug text-muted">{url}</p>
+              <p className="mt-1 line-clamp-3 break-all font-mono text-xs leading-snug text-muted">{url}</p>
             </div>
           </div>
         </div>

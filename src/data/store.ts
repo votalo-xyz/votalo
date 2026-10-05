@@ -5,25 +5,30 @@ import type { Address, Hex } from "viem";
 import type { Group, Proposal } from "./types";
 
 /**
- * Local stand-in for the indexer until Phase 4 (GraphQL) lands: what this browser created, joined and
- * voted on. It keeps no key material, only public ids and member addresses.
+ * What this browser created, joined and voted on. With the indexer endpoint set it is a cache that fills
+ * the gap until the indexer catches up; without it, it is the data source. No key material, only public
+ * ids and member addresses.
  */
 export type StoreState = {
-  v: 1;
+  v: 2;
+  /** Groups created in this browser. */
   groups: Group[];
   proposals: Proposal[];
   /** Member address per group joined from this browser. */
   members: Record<Hex, { address: Address; joinedAt: number }>;
-  /** Choice per proposal voted from this browser. */
-  votes: Record<Hex, number>;
+  /**
+   * Votes cast from this browser. `baseline` is the proposal total at that moment: the vote counts on
+   * top of the shown total until the total passes it, so a vote is never counted twice.
+   */
+  votes: Record<Hex, { choice: number; baseline: number }>;
 };
 
-const KEY = "votalo.ui.v1";
+const KEY = "votalo.ui.v2";
 const listeners = new Set<() => void>();
 let cache: { raw: string | null; state: StoreState | null } = { raw: null, state: null };
 
 function fresh(): StoreState {
-  return { v: 1, groups: [], proposals: [], members: {}, votes: {} };
+  return { v: 2, groups: [], proposals: [], members: {}, votes: {} };
 }
 
 function read(): StoreState {
@@ -37,7 +42,7 @@ function read(): StoreState {
   let state: StoreState | null = null;
   try {
     const parsed = raw ? (JSON.parse(raw) as StoreState) : null;
-    if (parsed && parsed.v === 1) state = parsed;
+    if (parsed && parsed.v === 2) state = parsed;
   } catch {
     state = null;
   }

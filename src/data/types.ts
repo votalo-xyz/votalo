@@ -14,6 +14,14 @@ export type Group = {
   demo: boolean;
 };
 
+/** What a list needs to show a proposal. */
+export type ProposalSummary = {
+  id: Hex;
+  title: string;
+  deadline: number;
+  voteCount: number;
+};
+
 export type Proposal = {
   id: Hex;
   groupId: Hex;
@@ -27,9 +35,13 @@ export type Proposal = {
   demo: boolean;
 };
 
-export type MemberStanding = {
+export type GroupView = { group: Group; proposals: ProposalSummary[] };
+
+export type Standing = {
   address: Address;
-  votesCast: number;
-  proposalsCreated: number;
   joinedAt: number | null;
+  votesCast: { proposalId: Hex; title: string; options: string[]; choice: number; votedAt: number | null }[];
+  proposalsCreated: { id: Hex; title: string; createdAt: number }[];
 };
+
+export type DayVotes = { day: string; votes: number };

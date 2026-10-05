@@ -22,7 +22,9 @@
     "share": "Compartir",
     "tryAgain": "Intentar de nuevo",
     "dash": "—",
-    "votes": "{count, plural, one {# voto} other {# votos}}"
+    "votes": "{count, plural, one {# voto} other {# votos}}",
+    "loadErrorTitle": "No pudimos cargar esto",
+    "loadErrorBody": "Revisa tu conexión e inténtalo otra vez."
   },
   "Nav": {
     "home": "Votalo, ir al inicio",
@@ -364,15 +366,184 @@
     "closedOn": "Cerró el {date}",
     "closedBadge": "Cerrada",
     "openBadge": "Abierta",
-    "joinTitle": "Únete a {group} para votar",
-    "joinBody": "Tu huella crea tu credencial en este grupo. Solo sirve aquí y nadie puede enlazarla con tus otros grupos.",
-    "joinButton": "Unirme al grupo",
-    "joining": "Confirma con tu huella…",
     "yourCredential": "Tu credencial en este grupo",
     "notFoundTitle": "No encontramos esta votación",
     "notFoundBody": "Revisa que el enlace esté completo o pide que te lo compartan otra vez.",
     "toGroups": "Ir a mis grupos",
     "ogTitle": "Votación en Votalo",
-    "ogTagline": "Un voto por persona. Resultados en vivo."
+    "ogTagline": "Un voto por persona. Resultados en vivo.",
+    "seeStanding": "Ver mi historial"
+  },
+  "Join": {
+    "title": "Únete a {group} para votar",
+    "body": "Tu huella crea tu credencial en este grupo. Solo sirve aquí y nadie puede enlazarla con tus otros grupos.",
+    "button": "Unirme al grupo",
+    "joining": "Confirma con tu huella…",
+    "inviteOnlyTitle": "Este grupo es por invitación",
+    "inviteOnlyBody": "Para entrar necesitas un enlace de invitación de quien creó el grupo. Pídele uno y ábrelo en este teléfono."
+  },
+  "Groups": {
+    "metaTitle": "Mis grupos",
+    "title": "Tus grupos",
+    "lead": "Los grupos que has creado o en los que has entrado desde este navegador.",
+    "listLabel": "Lista de grupos",
+    "emptyTitle": "Aún no tienes grupos",
+    "emptyBody": "Crea uno y comparte el enlace, o abre el enlace que te mandaron.",
+    "create": "Crear un grupo",
+    "openProposals": "{count, plural, =0 {Sin votaciones abiertas} one {# votación abierta} other {# votaciones abiertas}}",
+    "members": "{count, plural, one {# persona} other {# personas}}",
+    "modeOpen": "Abierto",
+    "modeInvite": "Por invitación",
+    "demo": "Ejemplo",
+    "mine": "Lo creaste tú"
+  },
+  "Create": {
+    "metaTitle": "Crear un grupo",
+    "title": "Crea tu grupo",
+    "lead": "Ponle nombre y elige cómo entra la gente. Después compartes el enlace.",
+    "nameLabel": "Nombre del grupo",
+    "namePlaceholder": "Ej. Vecinos del 4B",
+    "nameCount": "{count} de 80",
+    "modeLegend": "¿Cómo entra la gente?",
+    "modeOpenTitle": "Abierto",
+    "modeOpenBody": "Cualquiera con el enlace puede entrar.",
+    "modeOpenNote": "Ojo: en un grupo abierto, una persona decidida podría entrar con varias llaves de acceso.",
+    "modeInviteTitle": "Por invitación",
+    "modeInviteBody": "Entran solo con una invitación que tú generas. Cada invitación se usa una sola vez.",
+    "modeInviteNote": "Ojo: la invitación sirve para quien la use primero, así que compártela solo con quien quieres que entre.",
+    "submit": "Crear grupo",
+    "creating": "Confirma con tu huella…",
+    "doneTitle": "Tu grupo está listo",
+    "doneBody": "Compártelo para que la gente entre y vote.",
+    "goToGroup": "Ir al grupo"
+  },
+  "Invite": {
+    "button": "Invitar personas",
+    "creating": "Confirma con tu huella…",
+    "sheetTitle": "Invitar a {name}"
+  },
+  "GroupPage": {
+    "metaTitle": "Grupo",
+    "members": "{count, plural, one {# persona} other {# personas}}",
+    "openSection": "Votaciones abiertas",
+    "closedSection": "Votaciones cerradas",
+    "noOpen": "No hay votaciones abiertas ahora.",
+    "noProposals": "Todavía no hay votaciones en este grupo.",
+    "newProposal": "Nueva votación",
+    "standing": "Mi credencial",
+    "notFoundTitle": "No encontramos este grupo",
+    "notFoundBody": "Revisa que el enlace esté completo o pide que te lo compartan otra vez.",
+    "demoNote": "Grupo de ejemplo: sirve para probar cómo funciona Votalo.",
+    "admin": "Tú creaste este grupo",
+    "closedBadge": "Cerrada",
+    "listLabel": "Votaciones",
+    "goToGroups": "Ir a mis grupos"
+  },
+  "NewProposal": {
+    "metaTitle": "Nueva votación",
+    "title": "Nueva votación",
+    "questionLabel": "¿Qué quieren decidir?",
+    "questionPlaceholder": "Ej. ¿Dónde hacemos la reunión?",
+    "questionCount": "{count} de 140",
+    "optionsLegend": "Opciones",
+    "optionsHint": "Entre 2 y 6 opciones, de hasta 40 caracteres cada una.",
+    "optionLabel": "Opción {n}",
+    "optionCount": "{count} de 40",
+    "addOption": "Agregar opción",
+    "removeOption": "Quitar la opción {n}",
+    "durationLegend": "¿Cuánto tiempo estará abierta?",
+    "duration": {
+      "h1": "1 hora",
+      "h24": "1 día",
+      "d3": "3 días",
+      "d7": "7 días"
+    },
+    "submit": "Publicar votación",
+    "creating": "Confirma con tu huella…",
+    "mustJoin": "Para crear una votación primero tienes que ser parte del grupo.",
+    "goToGroup": "Ir al grupo",
+    "duplicate": "Las opciones no pueden repetirse."
+  },
+  "Me": {
+    "metaTitle": "Yo",
+    "title": "Tu llave de acceso",
+    "haveKey": "Este dispositivo tiene tu llave de acceso.",
+    "explain": "Con ella creas una credencial distinta en cada grupo. Nadie puede enlazar una con otra.",
+    "groupsTitle": "Tus credenciales",
+    "noGroups": "Cuando entres a un grupo, aquí verás tu credencial en él.",
+    "openStanding": "Ver mi historial",
+    "learn": "Cómo funciona tu identidad",
+    "credentialIn": "Credencial en {group}"
+  },
+  "Standing": {
+    "metaTitle": "Mi credencial",
+    "title": "Tu credencial en {group}",
+    "lead": "Es la identidad que tu huella crea solo en este grupo.",
+    "votesCast": "Votos emitidos",
+    "proposalsCreated": "Votaciones creadas",
+    "joined": "Te uniste",
+    "historyVotes": "Tus votos",
+    "historyCreated": "Votaciones que creaste",
+    "noVotes": "Todavía no has votado en este grupo.",
+    "noCreated": "Todavía no has creado votaciones aquí.",
+    "voted": "Votaste: {option}",
+    "notMember": "Todavía no eres parte de este grupo.",
+    "verify": "Cualquiera puede verificar este historial, pero solo aparece bajo esta credencial.",
+    "toGroup": "Ir al grupo"
+  },
+  "Stats": {
+    "metaTitle": "Cifras",
+    "title": "Votalo en cifras",
+    "lead": "Cifras públicas y en vivo. Si algo no se puede leer, verás una raya, nunca un número inventado.",
+    "totalsTitle": "Totales",
+    "source": "Se leen directamente del contrato en Monad, sin retoques.",
+    "perDayTitle": "Votos por día",
+    "perDayUnavailable": "Esta gráfica aparece cuando el servicio de datos esté conectado.",
+    "perDayEmpty": "Todavía no hay votos que graficar.",
+    "perDayError": "No pudimos leer los votos por día en este momento.",
+    "utcNote": "Los días se cuentan en horario UTC.",
+    "chartLabel": "Gráfica de barras: votos por día",
+    "viewTable": "Ver como tabla",
+    "day": "Día",
+    "votes": "Votos"
+  },
+  "About": {
+    "metaTitle": "Acerca de",
+    "title": "Acerca de Votalo",
+    "lead": "Votalo deja que cualquier grupo decida junto desde un enlace, con la huella de cada persona.",
+    "what": {
+      "title": "Qué hace",
+      "body": "Alguien crea un grupo y una votación y comparte el enlace por WhatsApp o Telegram. Cada persona vota desde su teléfono con Face ID, su huella o su PIN. No hay cuentas, contraseñas ni nada que instalar."
+    },
+    "identity": {
+      "title": "Una identidad distinta en cada grupo",
+      "body": "De tu llave de acceso, que vive en tu teléfono o en tu administrador de contraseñas, salen credenciales distintas para cada grupo. Dentro de un grupo tu credencial es estable y verificable: una persona, un voto por votación. Entre grupos no hay forma de enlazarlas."
+    },
+    "monad": {
+      "title": "Los votos viven en Monad",
+      "body": "Cada acción se registra en Monad, una red pública. Por eso los resultados son en vivo y nadie puede borrarlos ni cambiarlos. Hoy Votalo funciona en la red de pruebas de Monad: es una versión de prueba.",
+      "link": "Ver el contrato en MonadVision"
+    },
+    "limits": {
+      "title": "Lo que debes saber",
+      "items": {
+        "secret": "No es un voto secreto: cada voto se ve dentro del grupo bajo la credencial de quien lo emitió.",
+        "passkeys": "En los grupos abiertos, una persona decidida podría crear varias llaves de acceso y entrar más de una vez.",
+        "invite": "Una invitación sirve para quien la use primero. No está atada a una persona en concreto.",
+        "late": "En los grupos abiertos, quien entra después todavía puede votar en las votaciones que ya estaban abiertas.",
+        "ip": "El servicio que guarda tu voto puede ver la dirección IP de tu conexión, como cualquier sitio web."
+      }
+    },
+    "open": {
+      "title": "Código abierto",
+      "body": "Todo el código es público con licencia MIT.",
+      "link": "Ver en GitHub"
+    },
+    "cta": "Crear un grupo"
+  },
+  "NotFound": {
+    "title": "No encontramos esta página",
+    "body": "Puede que el enlace esté incompleto o que la página ya no exista.",
+    "home": "Ir al inicio"
   }
 }

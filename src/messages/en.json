@@ -22,7 +22,9 @@
     "share": "Share",
     "tryAgain": "Try again",
     "dash": "—",
-    "votes": "{count, plural, one {# vote} other {# votes}}"
+    "votes": "{count, plural, one {# vote} other {# votes}}",
+    "loadErrorTitle": "We couldn't load this",
+    "loadErrorBody": "Check your connection and try again."
   },
   "Nav": {
     "home": "Votalo, go to home",
@@ -364,15 +366,184 @@
     "closedOn": "Closed on {date}",
     "closedBadge": "Closed",
     "openBadge": "Open",
-    "joinTitle": "Join {group} to vote",
-    "joinBody": "Your fingerprint creates your credential in this group. It only works here and no one can link it to your other groups.",
-    "joinButton": "Join the group",
-    "joining": "Confirm with your fingerprint…",
     "yourCredential": "Your credential in this group",
     "notFoundTitle": "We couldn't find this vote",
     "notFoundBody": "Check that the link is complete, or ask for it to be shared again.",
     "toGroups": "Go to my groups",
     "ogTitle": "Vote on Votalo",
-    "ogTagline": "One person, one vote. Live results."
+    "ogTagline": "One person, one vote. Live results.",
+    "seeStanding": "See my history"
+  },
+  "Join": {
+    "title": "Join {group} to vote",
+    "body": "Your fingerprint creates your credential in this group. It only works here and no one can link it to your other groups.",
+    "button": "Join the group",
+    "joining": "Confirm with your fingerprint…",
+    "inviteOnlyTitle": "This group is invite-only",
+    "inviteOnlyBody": "To get in you need an invite link from whoever created the group. Ask them for one and open it on this phone."
+  },
+  "Groups": {
+    "metaTitle": "My groups",
+    "title": "Your groups",
+    "lead": "The groups you created or joined from this browser.",
+    "listLabel": "List of groups",
+    "emptyTitle": "You don't have any groups yet",
+    "emptyBody": "Create one and share the link, or open the link someone sent you.",
+    "create": "Create a group",
+    "openProposals": "{count, plural, =0 {No open votes} one {# open vote} other {# open votes}}",
+    "members": "{count, plural, one {# person} other {# people}}",
+    "modeOpen": "Open",
+    "modeInvite": "Invite-only",
+    "demo": "Example",
+    "mine": "You created it"
+  },
+  "Create": {
+    "metaTitle": "Create a group",
+    "title": "Create your group",
+    "lead": "Name it and choose how people get in. Then you share the link.",
+    "nameLabel": "Group name",
+    "namePlaceholder": "E.g. Building 4B neighbors",
+    "nameCount": "{count} of 80",
+    "modeLegend": "How do people get in?",
+    "modeOpenTitle": "Open",
+    "modeOpenBody": "Anyone with the link can join.",
+    "modeOpenNote": "Heads up: in an open group, a determined person could get in with several passkeys.",
+    "modeInviteTitle": "Invite-only",
+    "modeInviteBody": "People get in only with an invite you generate. Each invite is used once.",
+    "modeInviteNote": "Heads up: an invite works for whoever uses it first, so share it only with the person you want to let in.",
+    "submit": "Create group",
+    "creating": "Confirm with your fingerprint…",
+    "doneTitle": "Your group is ready",
+    "doneBody": "Share it so people can get in and vote.",
+    "goToGroup": "Go to the group"
+  },
+  "Invite": {
+    "button": "Invite people",
+    "creating": "Confirm with your fingerprint…",
+    "sheetTitle": "Invite to {name}"
+  },
+  "GroupPage": {
+    "metaTitle": "Group",
+    "members": "{count, plural, one {# person} other {# people}}",
+    "openSection": "Open votes",
+    "closedSection": "Closed votes",
+    "noOpen": "There are no open votes right now.",
+    "noProposals": "There are no votes in this group yet.",
+    "newProposal": "New vote",
+    "standing": "My credential",
+    "notFoundTitle": "We couldn't find this group",
+    "notFoundBody": "Check that the link is complete, or ask for it to be shared again.",
+    "demoNote": "Example group: a way to try how Votalo works.",
+    "admin": "You created this group",
+    "closedBadge": "Closed",
+    "listLabel": "Votes",
+    "goToGroups": "Go to my groups"
+  },
+  "NewProposal": {
+    "metaTitle": "New vote",
+    "title": "New vote",
+    "questionLabel": "What do you want to decide?",
+    "questionPlaceholder": "E.g. Where do we hold the meeting?",
+    "questionCount": "{count} of 140",
+    "optionsLegend": "Options",
+    "optionsHint": "Between 2 and 6 options, up to 40 characters each.",
+    "optionLabel": "Option {n}",
+    "optionCount": "{count} of 40",
+    "addOption": "Add option",
+    "removeOption": "Remove option {n}",
+    "durationLegend": "How long will it stay open?",
+    "duration": {
+      "h1": "1 hour",
+      "h24": "1 day",
+      "d3": "3 days",
+      "d7": "7 days"
+    },
+    "submit": "Publish vote",
+    "creating": "Confirm with your fingerprint…",
+    "mustJoin": "To create a vote you first need to be part of the group.",
+    "goToGroup": "Go to the group",
+    "duplicate": "Options can't repeat."
+  },
+  "Me": {
+    "metaTitle": "Me",
+    "title": "Your passkey",
+    "haveKey": "This device has your passkey.",
+    "explain": "With it you get a different credential in every group. No one can link one to another.",
+    "groupsTitle": "Your credentials",
+    "noGroups": "When you join a group, you'll see your credential in it here.",
+    "openStanding": "See my history",
+    "learn": "How your identity works",
+    "credentialIn": "Credential in {group}"
+  },
+  "Standing": {
+    "metaTitle": "My credential",
+    "title": "Your credential in {group}",
+    "lead": "It's the identity your fingerprint creates only in this group.",
+    "votesCast": "Votes cast",
+    "proposalsCreated": "Votes created",
+    "joined": "Joined",
+    "historyVotes": "Your votes",
+    "historyCreated": "Votes you created",
+    "noVotes": "You haven't voted in this group yet.",
+    "noCreated": "You haven't created any votes here yet.",
+    "voted": "You voted: {option}",
+    "notMember": "You're not part of this group yet.",
+    "verify": "Anyone can check this history, but it only appears under this credential.",
+    "toGroup": "Go to the group"
+  },
+  "Stats": {
+    "metaTitle": "Numbers",
+    "title": "Votalo in numbers",
+    "lead": "Public, live numbers. If something can't be read, you'll see a dash, never an invented number.",
+    "totalsTitle": "Totals",
+    "source": "Read straight from the contract on Monad, untouched.",
+    "perDayTitle": "Votes per day",
+    "perDayUnavailable": "This chart appears once the data service is connected.",
+    "perDayEmpty": "There are no votes to chart yet.",
+    "perDayError": "We couldn't read the votes per day right now.",
+    "utcNote": "Days are counted in UTC time.",
+    "chartLabel": "Bar chart: votes per day",
+    "viewTable": "View as a table",
+    "day": "Day",
+    "votes": "Votes"
+  },
+  "About": {
+    "metaTitle": "About",
+    "title": "About Votalo",
+    "lead": "Votalo lets any group decide together from a link, with each person's fingerprint.",
+    "what": {
+      "title": "What it does",
+      "body": "Someone creates a group and a vote and shares the link on WhatsApp or Telegram. Each person votes from their phone with Face ID, their fingerprint or their PIN. No accounts, no passwords, nothing to install."
+    },
+    "identity": {
+      "title": "A different identity in every group",
+      "body": "From your passkey, which lives on your phone or in your password manager, come different credentials for every group. Inside a group your credential is stable and verifiable: one person, one vote per vote. Between groups there's no way to link them."
+    },
+    "monad": {
+      "title": "Votes live on Monad",
+      "body": "Every action is recorded on Monad, a public network. That's why results are live and no one can erase or change them. Today Votalo runs on the Monad test network: this is a test version.",
+      "link": "View the contract on MonadVision"
+    },
+    "limits": {
+      "title": "What you should know",
+      "items": {
+        "secret": "It's not a secret ballot: each vote is visible inside the group under the credential of whoever cast it.",
+        "passkeys": "In open groups, a determined person could create several passkeys and get in more than once.",
+        "invite": "An invite works for whoever uses it first. It isn't tied to a specific person.",
+        "late": "In open groups, someone who joins later can still vote on votes that were already open.",
+        "ip": "The service that saves your vote can see your connection's IP address, like any website."
+      }
+    },
+    "open": {
+      "title": "Open source",
+      "body": "All the code is public under the MIT license.",
+      "link": "View on GitHub"
+    },
+    "cta": "Create a group"
+  },
+  "NotFound": {
+    "title": "We couldn't find this page",
+    "body": "The link may be incomplete, or the page may no longer exist.",
+    "home": "Go home"
   }
 }

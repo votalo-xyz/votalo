@@ -1,22 +1,24 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import type { Hex } from "viem";
+import { castVote, recordVote } from "@/data/actions";
+import { useMemberAddress, useNowSeconds, useProposalView } from "@/data/hooks";
+import { Link } from "@/i18n/navigation";
 import { CredentialBadge } from "../brand/credential-badge";
-import { classifyError, type ErrorKey } from "../errors";
+import { shortAddress } from "../format";
+import { JoinCard, parseInvite } from "../group/join-card";
 import { PasskeySetup } from "../passkey/passkey-setup";
 import { PrfUnavailable } from "../passkey/prf-unavailable";
 import { ShareButton, ShareSheet } from "../share/share-sheet";
 import { ShellTitle } from "../shell/shell-title";
-import { shortAddress } from "../format";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import { cn } from "../ui/cn";
+import { LoadError } from "../ui/load-error";
 import { Skeleton } from "../ui/skeleton";
 import { useCredential } from "../use-credential";
-import { castVote, joinGroup, recordVote } from "@/data/actions";
-import { useCatalog, useNowSeconds } from "@/data/hooks";
-import { Link } from "@/i18n/navigation";
 import { TimeLeft } from "./time-left";
 import { VotePanel } from "./vote-panel";
 
@@ -37,58 +39,26 @@ function ScreenSkeleton() {
   );
 }
 
-function JoinCard({ groupName, groupId }: { groupName: string; groupId: Hex }) {
-  const t = useTranslations("Proposal");
-  const e = useTranslations("Errors");
-  const credential = useCredential();
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<ErrorKey | null>(null);
-
-  async function join() {
-    if (!credential) return;
-    setBusy(true);
-    setError(null);
-    try {
-      await joinGroup({ credential, groupId });
-    } catch (err) {
-      setError(classifyError(err));
-      setBusy(false);
-    }
-  }
-
-  if (error === "PRF_UNAVAILABLE") return <PrfUnavailable onRetry={() => setError(null)} />;
-
-  return (
-    <section className="surface-card rounded-3xl p-5 sm:p-6">
-      <h2 className="text-h3">{t("joinTitle", { group: groupName })}</h2>
-      <p className="mt-2 text-muted">{t("joinBody")}</p>
-      <Button onClick={join} disabled={busy} className="mt-5 w-full sm:w-auto">
-        {busy ? t("joining") : t("joinButton")}
-      </Button>
-      {error && (
-        <p role="alert" className="mt-3 text-sm font-medium text-danger">
-          {e(error)}
-        </p>
-      )}
-    </section>
-  );
-}
-
 /** One proposal: title, time left, live ring and results, hold to vote, share. */
 export function ProposalScreen({ groupId, proposalId }: { groupId: Hex; proposalId: Hex }) {
   const t = useTranslations("Proposal");
   const share = useTranslations("Share");
   const credential = useCredential();
-  const catalog = useCatalog();
+  const view = useProposalView(groupId, proposalId);
+  const member = useMemberAddress(groupId);
   const now = useNowSeconds();
+  const params = useSearchParams();
+  const invite = parseInvite(params);
   const [unsupported, setUnsupported] = useState(false);
+  // Coming straight from creating this vote: offer to share it right away.
+  const [shareOpen, setShareOpen] = useState(() => params.get("new") === "1");
 
-  if (!catalog || credential === undefined) return <ScreenSkeleton />;
+  if (view.status === "error") return <LoadError onRetry={view.retry} />;
+  if (view.status !== "ready" || credential === undefined || member === undefined || now === 0) {
+    return <ScreenSkeleton />;
+  }
 
-  const proposal = catalog.proposals.find((p) => p.id === proposalId && p.groupId === groupId);
-  const group = catalog.groups.find((g) => g.id === groupId);
-
-  if (!proposal || !group) {
+  if (!view.data) {
     return (
       <div className="mx-auto flex max-w-md flex-col items-start gap-4 pt-8">
         <h1 className="text-h2">{t("notFoundTitle")}</h1>
@@ -100,10 +70,10 @@ export function ProposalScreen({ groupId, proposalId }: { groupId: Hex; proposal
     );
   }
 
-  const member = catalog.memberOf(groupId);
+  const { group, proposal, myChoice } = view.data;
   const closed = now >= proposal.deadline;
-  const mine = catalog.myChoice(proposalId);
   const status = closed ? "closed" : !credential ? "needsPasskey" : !member ? "notMember" : "open";
+  const shownTotal = proposal.counts.reduce((a, b) => a + b, 0);
 
   return (
     <div className="flex flex-col gap-8">
@@ -132,6 +102,8 @@ export function ProposalScreen({ groupId, proposalId }: { groupId: Hex; proposal
           <ShareSheet
             path={`/g/${groupId}/p/${proposalId}`}
             text={share("proposalText", { title: proposal.title })}
+            open={shareOpen}
+            onOpenChange={setShareOpen}
             trigger={<ShareButton />}
           />
         </div>
@@ -146,19 +118,21 @@ export function ProposalScreen({ groupId, proposalId }: { groupId: Hex; proposal
               <PasskeySetup inline onDone={() => {}} />
             </section>
           )}
-          {status === "notMember" && <JoinCard groupName={group.name} groupId={groupId} />}
+          {status === "notMember" && (
+            <JoinCard groupId={groupId} groupName={group.name} mode={group.mode} invite={invite} />
+          )}
 
           <section className="surface-card rounded-4xl p-5 sm:p-8">
             <VotePanel
               options={proposal.options}
               counts={proposal.counts}
-              myChoice={mine}
+              myChoice={myChoice}
               status={status}
               onCast={async (choice) => {
                 if (!credential) return;
                 await castVote({ credential, groupId, proposalId, choice, deadline: proposal.deadline });
               }}
-              onConfirmed={(choice) => recordVote(proposalId, choice)}
+              onConfirmed={(choice) => recordVote(proposalId, choice, shownTotal)}
               onError={(key) => key === "PRF_UNAVAILABLE" && setUnsupported(true)}
             />
           </section>
@@ -168,10 +142,16 @@ export function ProposalScreen({ groupId, proposalId }: { groupId: Hex; proposal
       {member && (
         <footer className="flex items-center gap-4 rounded-3xl border border-line bg-surface p-4">
           <CredentialBadge address={member} size={56} />
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-sm text-muted">{t("yourCredential")}</p>
             <p className="mt-0.5 font-mono text-sm">{shortAddress(member, 8, 6)}</p>
           </div>
+          <Link
+            href={`/g/${groupId}/me`}
+            className="shrink-0 text-sm font-semibold text-accent-text underline-offset-4 hover:underline"
+          >
+            {t("seeStanding")}
+          </Link>
         </footer>
       )}
     </div>

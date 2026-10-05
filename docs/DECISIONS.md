@@ -161,3 +161,35 @@ Running log of architecture decisions, deferred scope, and environment surprises
 - **Testing passkeys without a phone.** Headless Chrome with a CDP virtual authenticator (`hasPrf: true`)
   drives the real create, join and vote flow. With `hasPrf: false` it triggers the PRF-unavailable screen.
   A real phone check is still required before delivery.
+
+## App screens and live data (2026-10-05)
+
+- **One switch for real data.** `NEXT_PUBLIC_ENVIO_GRAPHQL_URL` (see `src/data/config.ts`). When set, every
+  read goes to the indexer with the queries in docs/FRONTEND.md, and every action runs the real flow in
+  `@/lib/flows/votalo` (passkey prompt, signed request, relay). When empty, the screens run on local
+  example data and the actions run the real passkey prompt but only record the result in this browser.
+  The example group is hidden when the endpoint is set.
+- **Extra GraphQL fields.** Beyond the documented queries, the screens select `id`, `options`, `createdAt`,
+  and the group's `mode`, `admin` and `memberCount` on the proposal query, `options` on `votesCast.proposal`,
+  and use `Group(where: { id: { _in: $ids } })` for the groups list. All exist in `indexer/schema.graphql`.
+  If the hosted endpoint rejects any of them, the fix is one query string in `src/data/graphql.ts`.
+- **Which groups are "mine".** The member address per group comes from a passkey prompt, so it is cached in
+  this browser (`votalo.ui.v2`) when a member creates or joins a group. A new device with the same synced
+  passkey sees no groups until the member opens a group link and acts in it. Showing them without a prompt
+  would need a way to list groups by passkey, which the per-group design rules out on purpose.
+- **Indexer lag.** After an action, the screens reload at once and again after 2.5 s and 6 s, and poll
+  every 4 to 6 s while visible. Things created here and not yet indexed (groups, votes created) are shown
+  from the local cache and merged by id. A vote counts on top of the shown total until the total passes
+  the total at the moment of the vote (`baseline`), so it is never counted twice.
+- **Invite links.** `/g/<groupId>?i=<inviteId>&s=<signature>`. An invite-only group made by this member
+  creates a fresh single-use invite each time they tap "Invite people" (one passkey prompt). Without an
+  invite in the link, a non-member of an invite-only group is told how to get one instead of seeing a join
+  button that cannot work. The language switch keeps the query string.
+- **Text limits are in bytes.** The contract limits names, titles and options by bytes, so the forms count
+  bytes (an "n with tilde" or an emoji is more than one).
+- **New vote durations** are presets (1 hour, 1 day, 3 days, 7 days), well inside the contract's 30 day cap.
+- **Stats chart.** One series, so no legend. Days without votes are filled with zeros (the indexer only
+  stores days that had a vote) and the range ends today in UTC and covers at least 14 days. A table view and
+  keyboard-focusable bars carry the same numbers. Without an endpoint the chart is replaced by a note, not
+  by made-up data. The four totals come from `getTotals()` through `/api/stats`.
+- **404.** A catch-all route sends unknown URLs to a styled not-found page inside the layout.

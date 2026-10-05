@@ -1,0 +1,21 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
+import type { Hex } from "viem";
+import { isHex32 } from "@/components/ids";
+import { NewProposalScreen } from "@/components/group/new-proposal-screen";
+import { resolveLocale } from "@/i18n/locale";
+
+type Params = Promise<{ locale: string; groupId: string }>;
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const locale = await resolveLocale(params);
+  return { title: (await getTranslations({ locale, namespace: "NewProposal" }))("metaTitle") };
+}
+
+export default async function NewProposalPage({ params }: { params: Params }) {
+  await resolveLocale(params);
+  const { groupId } = await params;
+  if (!isHex32(groupId)) notFound();
+  return <NewProposalScreen groupId={groupId as Hex} />;
+}
