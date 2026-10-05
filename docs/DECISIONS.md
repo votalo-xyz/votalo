@@ -127,3 +127,29 @@ Running log of architecture decisions, deferred scope, and environment surprises
 - **Deploy mistake caught before shipping further:** a first production deploy attempt used a stale
   local clone that had not pulled the latest commit, and would have shipped without the relay code.
   Caught by checking `git log` before trusting the deploy, pulled, and redeployed.
+
+## Phase 3 end-to-end gate met (2026-10-05)
+
+Ran create group → join (x2) → create proposal → vote (x2) against the production relay
+(`https://votalo-six.vercel.app`) on Monad testnet. All six transactions confirmed successful,
+verified independently with `cast receipt` (not just the test's own assertions):
+
+| Step | Tx hash | Block | Gas used |
+|---|---|---|---|
+| createGroup | `0x8f2d82c18437e94ec1a1e8364d995d90c18e5c4a6ab3c0cbf7e6f1ac5dc49ab0` | 68476478 | 300,000 |
+| join (alice) | `0x918f029f17dacb603f741b9f5c4bbd1b01307ad6e3bf6c470d3556e2d22af088` | 68476480 | 250,000 |
+| join (bob) | `0xdbfba99531362ee129af177d571ded7a94b5aae2acf2dbd2c96b2d9934dfedde` | 68476482 | 250,000 |
+| createProposal | `0xa03999190eeaca4af23dbd1f189caecc17ba9135692618835b677d6bbeb3a66b` | 68476485 | 350,000 |
+| vote (alice) | `0xb73570ce288efcfbb924b7a3502479b788c5b05592deea069b30379991aa0444` | 68476487 | 250,000 |
+| vote (bob) | `0x43a7693a1fd2cb03022ae395dfde77c1591bb0ba86b00808b8dcb0f72e897adf` | 68476489 | 250,000 |
+
+`gasUsed` equals each configured limit in every case, consistent with Monad charging the limit. A
+second vote by alice was refused by the relay's simulation step with `AlreadyVoted`, before any
+transaction was sent (confirmed in the test; no tx hash for it, no gas spent). The group's member
+count and the proposal's per-option counts were read back from the contract and matched expectations
+(3 members; counts [1, 1]).
+
+Relayer balance after this run: 1.5206 MON (started at 2 MON; the refused duplicate vote cost
+nothing, since the relay simulates before sending).
+
+This closes the Phase 3 "end to end on testnet with real tx hashes" gate.
