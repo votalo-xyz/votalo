@@ -3,7 +3,7 @@
 import { Check } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import type { Hex } from "viem";
-import { useGroupPage, useStanding } from "@/data/hooks";
+import { useGroupPage, useProposalOptions, useStanding } from "@/data/hooks";
 import { Link } from "@/i18n/navigation";
 import { CredentialBadge } from "../brand/credential-badge";
 import { OptionChip } from "../brand/results-list";
@@ -15,6 +15,13 @@ import { cn } from "../ui/cn";
 import { LoadError } from "../ui/load-error";
 import { Skeleton } from "../ui/skeleton";
 import { useCredential } from "../use-credential";
+
+/** "You voted: Pizza". The option text comes with the vote, or is looked up when only the title is known. */
+function VotedOption({ proposalId, options, choice }: { proposalId: Hex; options: string[] | null; choice: number }) {
+  const t = useTranslations("Standing");
+  const known = useProposalOptions(proposalId, options);
+  return <>{t("voted", { option: known?.[choice] ?? "—" })}</>;
+}
 
 function Tile({ label, value }: { label: string; value: string | number }) {
   return (
@@ -106,7 +113,7 @@ export function StandingScreen({ groupId }: { groupId: Hex }) {
                   <span className="flex items-center gap-2.5 text-sm text-muted">
                     <Check aria-hidden="true" className="size-4 text-success-text" strokeWidth={3} />
                     <OptionChip index={v.choice} className="size-6 text-xs" />
-                    {t("voted", { option: v.options[v.choice] ?? "—" })}
+                    <VotedOption proposalId={v.proposalId} options={v.options} choice={v.choice} />
                     {v.votedAt ? <span className="ml-auto shrink-0">{date(v.votedAt)}</span> : null}
                   </span>
                 </Link>

@@ -40,7 +40,8 @@ export type GroupView = { group: Group; proposals: ProposalSummary[] };
 export type Standing = {
   address: Address;
   joinedAt: number | null;
-  votesCast: { proposalId: Hex; title: string; options: string[]; choice: number; votedAt: number | null }[];
+  /** `options` is null when only the title is known; the screen then looks the options up. */
+  votesCast: { proposalId: Hex; title: string; options: string[] | null; choice: number; votedAt: number | null }[];
   proposalsCreated: { id: Hex; title: string; createdAt: number }[];
 };
 

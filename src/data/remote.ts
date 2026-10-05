@@ -11,28 +11,37 @@ export type Remote<T> =
 
 const refetchers = new Set<() => void>();
 
+/** The data proxy caches for 5 to 10 seconds, so asking more often than this only repeats an old answer. */
+export const MIN_POLL_MS = 5000;
+
+const visible = () => document.visibilityState === "visible";
+
 /**
- * Asks every mounted query to reload now and again shortly after. Call it after an action that changes
- * on-chain data: the indexer needs a few seconds to catch up.
+ * Asks every mounted query to reload now and twice more after the proxy's cache window. Call it after an
+ * action that changes on-chain data: the indexer needs a few seconds to catch up. Hidden tabs skip it.
  */
 export function invalidateRemote() {
-  const run = () => refetchers.forEach((r) => r());
+  const run = () => {
+    if (visible()) refetchers.forEach((r) => r());
+  };
   run();
-  window.setTimeout(run, 2500);
-  window.setTimeout(run, 6000);
+  window.setTimeout(run, MIN_POLL_MS + 500);
+  window.setTimeout(run, 2 * MIN_POLL_MS + 1000);
 }
 
 type Slot<T> = { key: string; data?: T; failed?: boolean };
 
 /**
  * Small fetch-and-poll hook. `key === null` means nothing to fetch (status `unavailable`). Data for an
- * old key is never shown under a new one. Polling pauses while the tab is hidden.
+ * old key is never shown under a new one. Polling pauses while the tab is hidden and never runs faster
+ * than `MIN_POLL_MS`.
  */
 export function useRemote<T>(
   key: string | null,
   fetcher: (signal: AbortSignal) => Promise<T>,
   refreshMs = 0,
 ): Remote<T> {
+  const interval = refreshMs > 0 ? Math.max(refreshMs, MIN_POLL_MS) : 0;
   const [slot, setSlot] = useState<Slot<T>>({ key: "" });
   const [attempt, setAttempt] = useState(0);
   const latest = useRef(fetcher);
@@ -65,17 +74,17 @@ export function useRemote<T>(
     };
     reload();
     refetchers.add(reload);
-    const timer = refreshMs
+    const timer = interval
       ? window.setInterval(() => {
-          if (document.visibilityState === "visible") reload();
-        }, refreshMs)
+          if (visible()) reload();
+        }, interval)
       : undefined;
     return () => {
       controller.abort();
       refetchers.delete(reload);
       if (timer !== undefined) window.clearInterval(timer);
     };
-  }, [key, load, refreshMs, attempt]);
+  }, [key, load, interval, attempt]);
 
   if (key === null) return { status: "unavailable" };
   if (slot.key !== key) return { status: "loading" };

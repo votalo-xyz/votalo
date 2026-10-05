@@ -345,23 +345,32 @@ here, not just the last successful run.
 
 ## App screens and live data (2026-10-05)
 
-- **One switch for real data.** `NEXT_PUBLIC_ENVIO_GRAPHQL_URL` (see `src/data/config.ts`). When set, every
-  read goes to the indexer with the queries in docs/FRONTEND.md, and every action runs the real flow in
-  `@/lib/flows/votalo` (passkey prompt, signed request, relay). When empty, the screens run on local
-  example data and the actions run the real passkey prompt but only record the result in this browser.
-  The example group is hidden when the endpoint is set.
-- **Extra GraphQL fields.** Beyond the documented queries, the screens select `id`, `options`, `createdAt`,
-  and the group's `mode`, `admin` and `memberCount` on the proposal query, `options` on `votesCast.proposal`,
-  and use `Group(where: { id: { _in: $ids } })` for the groups list. All exist in `indexer/schema.graphql`.
-  If the hosted endpoint rejects any of them, the fix is one query string in `src/data/graphql.ts`.
+- **The browser never calls the indexer.** Every read goes to the server-side proxy on main
+  (`/api/data/group|proposal|member/:id` and `/api/data/votes-per-day`, see docs/FRONTEND.md), which holds
+  `ENVIO_GRAPHQL_URL` (server-only) and caches for 5 to 10 s. The client code in `src/data/api.ts` has no
+  indexer address and no GraphQL, and there is no `NEXT_PUBLIC_` variable for it. Polling
+  (`src/data/remote.ts`) runs only while the tab is visible and never faster than every 5 s, including the
+  reloads after an action (now, then after about 5.5 s and 11 s). Intervals per screen: proposal 6 s, group
+  10 s, member 12 s, groups list 15 s, votes per day 30 s.
+- **One switch for real data, decided by the server.** `GET /api/data-mode` (added here, a few lines)
+  answers `{ live: Boolean(process.env.ENVIO_GRAPHQL_URL) }` and never calls the indexer, so it costs
+  nothing against the indexer's quota. `live`: screens read the proxy and actions are the real flows in
+  `@/lib/flows/votalo`. Otherwise (the proxy answers 503 `ENVIO_NOT_CONFIGURED`) the screens run on local
+  example data, and the actions run the real passkey prompt but only record the result in this browser. If
+  the mode check itself fails, screens show a retry and actions fail with a network error. They never assume
+  `local`, because that would record a vote in this browser that never reaches the group.
+- **The proxy selects fewer fields than I first queried**, so: the group's mode and admin come from the
+  group route (the proposal page fetches both routes); the member route returns titles only, so the standing
+  page looks up each vote's option text through the proposal route; a proposal's `createdAt` is not
+  available and not used. The groups list makes one proxied request per group, since there is no
+  list-by-ids route.
 - **Which groups are "mine".** The member address per group comes from a passkey prompt, so it is cached in
   this browser (`votalo.ui.v2`) when a member creates or joins a group. A new device with the same synced
   passkey sees no groups until the member opens a group link and acts in it. Showing them without a prompt
   would need a way to list groups by passkey, which the per-group design rules out on purpose.
-- **Indexer lag.** After an action, the screens reload at once and again after 2.5 s and 6 s, and poll
-  every 4 to 6 s while visible. Things created here and not yet indexed (groups, votes created) are shown
-  from the local cache and merged by id. A vote counts on top of the shown total until the total passes
-  the total at the moment of the vote (`baseline`), so it is never counted twice.
+- **Indexer lag.** Things created here and not yet indexed (groups, votes created) are shown from the local
+  cache and merged by id. A vote counts on top of the shown total until the total passes the total at the
+  moment of the vote (`baseline`), so it is never counted twice.
 - **Invite links.** `/g/<groupId>?i=<inviteId>&s=<signature>`. An invite-only group made by this member
   creates a fresh single-use invite each time they tap "Invite people" (one passkey prompt). Without an
   invite in the link, a non-member of an invite-only group is told how to get one instead of seeing a join
@@ -370,7 +379,7 @@ here, not just the last successful run.
   bytes (an "n with tilde" or an emoji is more than one).
 - **New vote durations** are presets (1 hour, 1 day, 3 days, 7 days), well inside the contract's 30 day cap.
 - **Stats chart.** One series, so no legend. Days without votes are filled with zeros (the indexer only
-  stores days that had a vote) and the range ends today in UTC and covers at least 14 days. A table view and
-  keyboard-focusable bars carry the same numbers. Without an endpoint the chart is replaced by a note, not
-  by made-up data. The four totals come from `getTotals()` through `/api/stats`.
+  stores days that had a vote), and the range ends today in UTC and covers at least 14 days. A table view and
+  keyboard-focusable bars carry the same numbers. Without an indexer the chart is replaced by a note, not by
+  made-up data. The four totals come from `getTotals()` through `/api/stats`.
 - **404.** A catch-all route sends unknown URLs to a styled not-found page inside the layout.

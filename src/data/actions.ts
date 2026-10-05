@@ -6,15 +6,15 @@ import { RelayClientError } from "@/lib/flows/relayClient";
 import { memberAddressFromPrf } from "@/lib/identity/memberKey";
 import { getGroupPrfOutput, type PasskeyCredential } from "@/lib/identity/passkey";
 import { currentRpId } from "@/lib/identity/rpId";
-import { isLive } from "./config";
+import { resolveDataMode } from "./mode";
 import { invalidateRemote } from "./remote";
 import { getStoreSnapshot, updateStore } from "./store";
 import type { GroupMode } from "./types";
 
 /**
- * Everything the screens do to data. With the indexer endpoint set (`isLive`) each action is the real
- * sign-and-relay flow; without it, the action still runs the real passkey prompt (so the member's
- * per-group address is genuine) and records the outcome in this browser. Both paths throw
+ * Everything the screens do to data. When the server has an indexer configured (`live`, see ./mode) each
+ * action is the real sign-and-relay flow; otherwise the action still runs the real passkey prompt (so the
+ * member's per-group address is genuine) and records the outcome in this browser. Both paths throw
  * `RelayClientError` with the codes the relay uses, so error handling is the same.
  */
 
@@ -24,6 +24,18 @@ export type Invite = { inviteId: Hex; adminInviteSig: Hex };
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const nowSeconds = () => Math.floor(Date.now() / 1000);
 const rp = () => currentRpId();
+
+/**
+ * Whether this action should really be sent. If the server cannot be asked, the action fails instead of
+ * guessing: guessing "local" would record a vote in this browser that never reaches the group.
+ */
+async function isLive(): Promise<boolean> {
+  try {
+    return (await resolveDataMode()) === "live";
+  } catch {
+    throw new RelayClientError("NETWORK", 0);
+  }
+}
 
 function randomHex(bytes: number): Hex {
   const buffer = new Uint8Array(bytes);
@@ -46,9 +58,10 @@ function rememberMember(groupId: Hex, address: Address) {
 }
 
 export async function createGroup(args: Common & { name: string; mode: GroupMode }) {
+  const live = await isLive();
   let groupId: Hex;
   let admin: Address;
-  if (isLive) {
+  if (live) {
     ({ groupId, admin } = await flows.createGroup({
       rpId: rp(),
       credential: args.credential,
@@ -71,7 +84,7 @@ export async function createGroup(args: Common & { name: string; mode: GroupMode
 
 /** The group admin signs a single-use invite. Put both values in the link. */
 export async function createInvite(args: Common & { groupId: Hex }): Promise<Invite> {
-  if (isLive) return flows.createInvite({ rpId: rp(), credential: args.credential, groupId: args.groupId });
+  if (await isLive()) return flows.createInvite({ rpId: rp(), credential: args.credential, groupId: args.groupId });
   await promptMemberAddress(args, args.groupId);
   await pause(400);
   return { inviteId: randomHex(32), adminInviteSig: randomHex(65) };
@@ -79,8 +92,9 @@ export async function createInvite(args: Common & { groupId: Hex }): Promise<Inv
 
 export async function joinGroup(args: Common & { groupId: Hex; mode: GroupMode; invite?: Invite }) {
   if (getStoreSnapshot().members[args.groupId]) throw new RelayClientError("AlreadyMember", 409);
+  const live = await isLive();
   let member: Address;
-  if (isLive) {
+  if (live) {
     ({ member } = await flows.joinGroup({
       rpId: rp(),
       credential: args.credential,
@@ -103,7 +117,7 @@ export async function castVote(args: Common & { groupId: Hex; proposalId: Hex; c
   if (!store.members[args.groupId]) throw new RelayClientError("NotMember", 403);
   if (store.votes[args.proposalId] !== undefined) throw new RelayClientError("AlreadyVoted", 409);
   if (nowSeconds() >= args.deadline) throw new RelayClientError("VotingClosed", 409);
-  if (isLive) {
+  if (await isLive()) {
     await flows.castVote({
       rpId: rp(),
       credential: args.credential,
@@ -130,8 +144,9 @@ export async function createProposal(
   args: Common & { groupId: Hex; title: string; options: string[]; deadlineSeconds: number },
 ) {
   if (!getStoreSnapshot().members[args.groupId]) throw new RelayClientError("NotMember", 403);
+  const live = await isLive();
   let proposalId: Hex;
-  if (isLive) {
+  if (live) {
     ({ proposalId } = await flows.createProposal({
       rpId: rp(),
       credential: args.credential,
