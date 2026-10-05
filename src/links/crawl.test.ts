@@ -2,6 +2,9 @@
  * Crawls a running server and fails on any internal link that does not return 200, in Spanish and
  * English. Runs only when CRAWL_BASE_URL is set; `npm run test:links` builds nothing: it starts the
  * production build (`npm run build` first) on a free port and points this test at it.
+ *
+ * Against a server that has a real indexer, the example ids below do not exist, so the widget would
+ * (correctly) answer 404 for them. Set CRAWL_EMBED_ID to a real proposal id in that case.
  */
 import { describe, expect, it } from "vitest";
 import { crawl } from "./crawler";
@@ -13,6 +16,7 @@ const d = BASE ? describe : describe.skip;
 // found in the server HTML; these seeds make sure the pages themselves are still reachable.
 const GROUP = "0x" + "d1".repeat(32);
 const PROPOSAL = "0x" + "a1".repeat(32);
+const EMBED_ID = process.env.CRAWL_EMBED_ID ?? PROPOSAL;
 const APP_ROUTES = [
   "/start",
   "/groups",
@@ -26,8 +30,14 @@ const APP_ROUTES = [
   `/g/${GROUP}/new`,
   `/g/${GROUP}/me`,
   `/g/${GROUP}/p/${PROPOSAL}`,
+  `/embed/p/${EMBED_ID}`,
 ];
 const seeds = ["/", "/en", ...APP_ROUTES, ...APP_ROUTES.map((r) => `/en${r}`)];
+
+const csp = async (path: string) => {
+  const res = await fetch(BASE! + path, { redirect: "manual" });
+  return { status: res.status, csp: res.headers.get("content-security-policy") ?? "", xfo: res.headers.get("x-frame-options") };
+};
 
 d("link crawl", () => {
   it("follows every internal link and none of them is broken", { timeout: 180_000 }, async () => {
@@ -42,6 +52,12 @@ d("link crawl", () => {
       expect(pages.get(route), `ES ${route}`).toBe(200);
       expect(pages.get(`/en${route}`), `EN ${route}`).toBe(200);
     }
+  });
+
+  it("serves the widget in both languages", async () => {
+    const { pages } = await crawl(BASE!, [`/embed/p/${EMBED_ID}`, `/en/embed/p/${EMBED_ID}`]);
+    expect(pages.get(`/embed/p/${EMBED_ID}`), "ES widget").toBe(200);
+    expect(pages.get(`/en/embed/p/${EMBED_ID}`), "EN widget").toBe(200);
   });
 
   it("keeps each language on its own pages", async () => {
@@ -69,6 +85,43 @@ d("link crawl", () => {
     for (const path of ["/g/not-an-id", "/en/g/not-an-id", "/legal/not-a-document", `/g/${GROUP}/p/not-an-id`]) {
       const res = await fetch(BASE! + path, { redirect: "manual" });
       expect(res.status, path).toBe(404);
+    }
+  });
+});
+
+d("embeddable widget", () => {
+  it("can be framed by any site, and nothing else can", async () => {
+    // The widget, including its own 404 (so a bad id still shows its message inside the frame).
+    for (const path of [`/embed/p/${EMBED_ID}`, `/en/embed/p/${EMBED_ID}`, `/embed/p/${EMBED_ID}?theme=light`, "/embed/p/not-an-id", "/en/embed/p/not-an-id"]) {
+      const r = await csp(path);
+      expect(r.csp, `${path} should allow framing`).toContain("frame-ancestors *");
+      expect(r.xfo, `${path} must not send X-Frame-Options`).toBeNull();
+    }
+    // Everything else: pages, the app, API routes and even a 404 stay frameable only by Votalo itself.
+    for (const path of ["/", "/en", "/groups", "/create", "/about", "/how-it-works", "/legal/terms", `/g/${GROUP}`, `/g/${GROUP}/p/${PROPOSAL}`, "/no-such-page", "/api/stats", "/api/data-mode"]) {
+      const r = await csp(path);
+      expect(r.csp, `${path} should not be frameable by other sites`).toContain("frame-ancestors 'self'");
+      expect(r.csp, path).not.toContain("frame-ancestors *");
+    }
+  });
+
+  it("is a bare widget: no navbar or footer, and the theme follows ?theme=", async () => {
+    const page = async (path: string) => (await (await fetch(BASE! + path)).text());
+    const dark = await page(`/embed/p/${EMBED_ID}`);
+    const light = await page(`/embed/p/${EMBED_ID}?theme=light`);
+    for (const html of [dark, light]) {
+      const body = html.slice(html.indexOf("<body"));
+      expect(body, "no navbar").not.toContain("<header");
+      expect(body, "no footer").not.toContain("<footer");
+      expect(html).toContain("noindex");
+    }
+    expect(light, "light theme scopes the light tokens").toContain("force-light");
+    expect(dark, "default is dark").not.toContain("force-light");
+  });
+
+  it("answers a malformed id with a 404", async () => {
+    for (const path of ["/embed/p/not-an-id", "/en/embed/p/not-an-id", "/embed/p/0x1234"]) {
+      expect((await fetch(BASE! + path, { redirect: "manual" })).status, path).toBe(404);
     }
   });
 });

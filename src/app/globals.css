@@ -9,7 +9,9 @@
  *   text on bg 17.3 / 16.7, muted on surface 7.6 / 7.3, accent-text on surface 10.4 / 6.0,
  *   identity on surface 6.6 / 6.1, success-text on surface 10.2 / 6.5, accent-fg on accent 9.0.
  */
-:root {
+/* .force-light lets the embeddable widget show the light theme inside a page that is otherwise dark. */
+:root,
+.force-light {
   --bg: #f7f4ee;
   --surface: #ffffff;
   --surface-2: #efe9df;

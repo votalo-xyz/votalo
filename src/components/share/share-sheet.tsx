@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, MessageCircle, Send, Share2, X } from "lucide-react";
+import { Check, Code, Copy, MessageCircle, Send, Share2, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
@@ -23,15 +23,18 @@ type Props = {
   onOpenChange?: (open: boolean) => void;
   /** Trigger button. Omit when the sheet is controlled from outside. */
   trigger?: ReactNode;
+  /** Path of an embeddable widget for this item, e.g. "/embed/p/0x…". Adds an "Embed" option that copies an iframe. */
+  embedPath?: string;
 };
 
 /** Share sheet: WhatsApp with prefilled text, Telegram, copy link, QR, and the system share sheet when there is one. */
-export function ShareSheet({ path, text, heading, open, onOpenChange, trigger }: Props) {
+export function ShareSheet({ path, text, heading, open, onOpenChange, trigger, embedPath }: Props) {
   const t = useTranslations("Share");
   const c = useTranslations("Common");
   const locale = useLocale() as Locale;
   const base = useSyncExternalStore(noopSubscribe, origin, () => "");
   const [copied, setCopied] = useState(false);
+  const [embedCopied, setEmbedCopied] = useState(false);
 
   const [pathname, query = ""] = path.split("?");
   const url = base ? `${base}${getPathname({ href: pathname, locale })}${query ? `?${query}` : ""}` : "";
@@ -40,6 +43,20 @@ export function ShareSheet({ path, text, heading, open, onOpenChange, trigger }:
     () => typeof navigator.share === "function",
     () => false,
   );
+
+  // The snippet others paste into their pages. The title is for screen readers; frames need one.
+  const embedUrl = embedPath && base ? `${base}${getPathname({ href: embedPath, locale })}` : "";
+  const embedCode = `<iframe src="${embedUrl}" title="Votalo" width="100%" height="420" style="border:0;border-radius:16px" loading="lazy"></iframe>`;
+
+  async function copyEmbed() {
+    try {
+      await navigator.clipboard.writeText(embedCode);
+      setEmbedCopied(true);
+      window.setTimeout(() => setEmbedCopied(false), 2200);
+    } catch {
+      // Clipboard blocked: nothing else to do here.
+    }
+  }
 
   async function copy() {
     try {
@@ -85,6 +102,18 @@ export function ShareSheet({ path, text, heading, open, onOpenChange, trigger }:
           <span role="status" className="sr-only">
             {copied ? c("copied") : ""}
           </span>
+          {embedPath && (
+            <div>
+              <Button variant="secondary" onClick={copyEmbed} disabled={!embedUrl} className="w-full justify-start">
+                {embedCopied ? <Check aria-hidden="true" className="size-5 text-success-text" /> : <Code aria-hidden="true" className="size-5" />}
+                {embedCopied ? t("embedCopied") : t("embed")}
+              </Button>
+              <p className="mt-1.5 px-1 text-xs text-muted">{t("embedHint")}</p>
+              <span role="status" className="sr-only">
+                {embedCopied ? t("embedCopied") : ""}
+              </span>
+            </div>
+          )}
           {canNativeShare && (
             <Button
               variant="secondary"

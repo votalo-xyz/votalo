@@ -101,6 +101,7 @@ export function ProposalScreen({ groupId, proposalId }: { groupId: Hex; proposal
         <div>
           <ShareSheet
             path={`/g/${groupId}/p/${proposalId}`}
+            embedPath={`/embed/p/${proposalId}`}
             text={share("proposalText", { title: proposal.title })}
             open={shareOpen}
             onOpenChange={setShareOpen}

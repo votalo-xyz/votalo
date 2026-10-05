@@ -439,7 +439,10 @@
     "link": "Link",
     "proposalText": "Vote on “{title}” on Votalo:",
     "groupText": "Join “{name}” on Votalo:",
-    "button": "Share"
+    "button": "Share",
+    "embed": "Embed on your site",
+    "embedCopied": "Code copied",
+    "embedHint": "Copy the code to paste into your page. It only shows the results: voting opens Votalo."
   },
   "Proposal": {
     "metaTitle": "Vote",
@@ -766,5 +769,18 @@
     "body": "We had a problem showing this page. You can try again.",
     "retry": "Try again",
     "home": "Go home"
+  },
+  "Embed": {
+    "title": "Votalo vote",
+    "vote": "Vote in Votalo",
+    "voteHint": "Opens in a new tab",
+    "poweredBy": "Powered by Votalo · Monad",
+    "notFoundTitle": "We couldn't find this vote",
+    "notFoundBody": "Check the link, or open it directly in Votalo.",
+    "notFoundLink": "Go to Votalo",
+    "unavailableTitle": "We couldn't load the results",
+    "unavailableBody": "Try again in a moment.",
+    "open": "Open",
+    "closed": "Closed"
   }
 }

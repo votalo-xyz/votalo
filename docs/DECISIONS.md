@@ -489,3 +489,49 @@ here, not just the last successful run.
   `E2E_BASE_URL` and `ENVIO_GRAPHQL_URL`, creates one testnet group per run).
 - **How to read the bytes correctly**: use `curl -s ... | jq` in a UTF-8 terminal, or inspect the hex. The
   Windows PowerShell default (cp1252) displays UTF-8 bytes as Latin-1, which is what produced "VÃ³talo".
+
+## Embeddable widget and framing policy (2026-10-05)
+
+- **What it is.** `/embed/p/<proposalId>` (Spanish at the root, English at `/en/embed/p/<id>`) is a read-only
+  view of one proposal meant for an `<iframe>` on any website: title, options, live results in the living
+  ring, time left, one "Votar en Votalo" button that opens the full proposal page in a **new tab**, and a small
+  "Impulsado por Votalo · Monad" line that links to the site. No navbar or footer. `?theme=dark|light`
+  (default dark) scopes the colour tokens to the widget (`.force-light` or `.dark` on its wrapper), so it looks
+  right whatever theme the visitor saved for Votalo itself. It is `noindex`.
+- **No voting inside the frame.** Passkeys (WebAuthn) do not work reliably inside third-party iframes: browsers
+  require extra permissions and policies for it and several block it. So voting always happens on votalo, in a
+  top-level tab, where it is known to work. The widget has no vote controls at all.
+- **Framing policy.** Only `/embed/*` may be framed by other sites (`Content-Security-Policy: frame-ancestors *`).
+  Every other response, including pages, the app, API routes and 404s, sends `frame-ancestors 'self'`. The rules
+  live in `src/security/frame-headers.ts` and are applied from `next.config.ts` `headers()`; the embed rules come
+  last because Next keeps the last matching rule for a header. The reason for the split: framing the app that
+  handles passkeys and votes would open it to clickjacking (a transparent frame over a hostile page tricking a
+  member into holding the vote button). The widget has nothing to click except a link out, so there is nothing
+  to hijack there. **`X-Frame-Options` is deliberately not set anywhere**: it cannot say "any site", and where
+  both headers are present some browsers apply it too, which would block the widget. CSP `frame-ancestors` is
+  supported by every current browser. The 404 of a bad widget id is also frameable, so the message shows inside
+  the frame.
+- **Data.** Only `/api/data/proposal/:id`, never the indexer. The page reads it on the server by calling that
+  route's own handler (same cache and limits, no network hop, no indexer address in this code) so results appear
+  on first paint; the browser then polls the same route every 6 s while the tab is visible (the shared
+  `useRemote` rule: never faster than 5 s, nothing while hidden). If the data service is not configured or cannot
+  answer, the page still renders and the browser shows a retry state instead of a wrong number.
+- **404.** A malformed id, or an id the data route says does not exist, answers with status 404 and the widget's
+  own small not-found state. As with the app's other 404s, Next draws that state in the browser (the root layout
+  sits under `[locale]`), which is fine inside an iframe. When the data service cannot answer, the status stays
+  200 and the browser shows the retry state, because "cannot tell" is not "does not exist".
+- **Language.** The proxy skips browser-language detection for `/embed`, so the language is whatever the URL
+  says (the site that embeds it chose it). Without that, a visitor's browser would redirect an embedded Spanish
+  widget to the English one.
+- **Share sheet.** Proposal pages have an "Insertar en tu sitio" / "Embed on your site" option that copies the
+  snippet: `<iframe src="<site>/embed/p/<id>" title="Votalo" width="100%" height="420"
+  style="border:0;border-radius:16px" loading="lazy"></iframe>`. The `title` attribute is the one addition to the
+  requested snippet: frames without a title fail basic accessibility checks. The `src` uses the current site's
+  address and language (Spanish at the root, `/en/...` in English).
+- **Tests.** `src/security/frame-headers.test.ts` checks the rules and their order. The crawler (`npm run
+  test:links`, also in CI) checks live responses: `/embed/*` (both languages, theme, and its 404) allows
+  framing and sends no `X-Frame-Options`; pages, app routes, API routes and a 404 do not allow it; the widget has
+  no navbar or footer and honours `?theme=light`; both languages are reachable; a malformed id is a 404. Against
+  a server with a real indexer the example id does not exist, so set `CRAWL_EMBED_ID` to a real proposal id.
+  Also checked by hand in a real browser from another origin: the widget loaded in an iframe, and the browser
+  itself refused to frame `/groups` and `/`.

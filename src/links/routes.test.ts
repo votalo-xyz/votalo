@@ -35,8 +35,8 @@ function pagePatterns(): { route: string; pattern: RegExp }[] {
 const SCAN_SKIP = [path.join(SRC, "lib"), path.join(SRC, "app", "api"), path.join(SRC, "messages"), path.join(SRC, "links")];
 
 const LITERALS = [
-  // href="/x", href={"/x"}, href: "/x", path={`/x/${id}`}
-  /(?:href|path)\s*[=:]\s*\{?\s*(["'`])(\/[^"'`]*)\1/g,
+  // href="/x", href={"/x"}, href: "/x", path={`/x/${id}`}, embedPath={`/embed/p/${id}`}
+  /(?:href|[pP]ath)\s*[=:]\s*\{?\s*(["'`])(\/[^"'`]*)\1/g,
   // router.push("/x"), redirect(`/x`)
   /(?:push|replace|redirect)\(\s*(["'`])(\/[^"'`]*)\1/g,
 ];
@@ -87,6 +87,7 @@ describe("internal links", () => {
       "/g/[groupId]/new",
       "/g/[groupId]/me",
       "/g/[groupId]/p/[proposalId]",
+      "/embed/p/[proposalId]",
     ]) {
       expect(routes, `missing page ${route}`).toContain(route);
     }
