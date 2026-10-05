@@ -1,0 +1,276 @@
+{
+  "Meta": {
+    "title": "Votalo: decide together, no cheating",
+    "description": "Start a vote, share it with your group, and everyone votes with their fingerprint. One person, one vote — live results no one can erase.",
+    "template": "%s · Votalo"
+  },
+  "Common": {
+    "skipToContent": "Skip to content",
+    "createGroup": "Create a group",
+    "seeHow": "See how it works",
+    "close": "Close",
+    "toggleTheme": "Switch between light and dark theme",
+    "language": "Language",
+    "languageName": {
+      "es": "Español",
+      "en": "English"
+    },
+    "loading": "Loading…",
+    "back": "Back",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "share": "Share",
+    "tryAgain": "Try again",
+    "dash": "—",
+    "votes": "{count, plural, one {# vote} other {# votes}}"
+  },
+  "Nav": {
+    "home": "Votalo, go to home",
+    "menu": "Main menu",
+    "menuDescription": "Page sections, language and theme.",
+    "openMenu": "Open menu",
+    "how": "How it works",
+    "privacy": "Privacy",
+    "proof": "Proof",
+    "faq": "FAQ"
+  },
+  "Footer": {
+    "tagline": "Group decisions with your fingerprint, in plain sight.",
+    "product": "Product",
+    "resources": "Resources",
+    "legal": "Legal",
+    "stats": "Live numbers",
+    "about": "About Votalo",
+    "contract": "Contract on MonadVision",
+    "docs": "Documentation",
+    "newTab": "opens in a new tab",
+    "privacyNotice": "Privacy notice",
+    "terms": "Terms of use",
+    "builtOn": "Built on",
+    "openSource": "Open source (MIT)",
+    "copyright": "© 2026 Votalo contributors"
+  },
+  "Legal": {
+    "privacy": {
+      "title": "Privacy notice",
+      "body": "This document isn't written yet. Meanwhile, the privacy section on the home page explains plainly what is visible and what isn't."
+    },
+    "terms": {
+      "title": "Terms of use",
+      "body": "This document isn't written yet. Votalo is a test version and shouldn't be used for decisions that need legal guarantees."
+    },
+    "home": "Back to home"
+  },
+  "Hero": {
+    "eyebrow": "Group votes, no accounts or passwords",
+    "title": "Decide together. No one gets to cheat.",
+    "subtitle": "Start a vote, share it with your group, and everyone votes with their fingerprint. One person, one vote — live results no one can erase.",
+    "assurances": {
+      "noAccounts": "No accounts or passwords",
+      "onePerson": "One person, one vote",
+      "noErase": "Results no one can erase"
+    }
+  },
+  "Demo": {
+    "badge": "Live example",
+    "question": "Where do we eat on Friday?",
+    "options": {
+      "a": "Tacos al pastor",
+      "b": "Pizza",
+      "c": "Sushi"
+    },
+    "hint": "Press and hold an option to vote.",
+    "hintKeyboard": "With a keyboard, activate an option to vote.",
+    "voted": "You voted for {option}.",
+    "note": "This is only an example: no vote is saved here.",
+    "total": "{count, plural, one {# vote} other {# votes}}",
+    "ringLabel": "Results of the example vote"
+  },
+  "Steps": {
+    "eyebrow": "How it works",
+    "title": "Three steps and you've decided",
+    "items": {
+      "create": {
+        "title": "Create and share",
+        "body": "Name your group, write the question and send the link on WhatsApp or Telegram."
+      },
+      "vote": {
+        "title": "Everyone votes with their fingerprint",
+        "body": "When they open the link, each person confirms with Face ID, a fingerprint or their phone's PIN. Nothing to install."
+      },
+      "results": {
+        "title": "Live results",
+        "body": "Every vote counts once and stays in plain sight. No one can erase or change it."
+      }
+    }
+  },
+  "Credentials": {
+    "eyebrow": "Your group credential",
+    "title": "One fingerprint, many identities",
+    "body": "Your fingerprint creates a different credential in every group. Inside a group it's always you, so you count one vote. Between groups, no one can tell you're the same person.",
+    "fingerprint": "Your fingerprint",
+    "stays": "Stays on your phone",
+    "hint": "Tap a group to see its credential.",
+    "unlinked": "No link between them",
+    "groups": {
+      "family": "Family",
+      "team": "Football team",
+      "collective": "Neighborhood collective"
+    },
+    "badgeLabel": "Credential in {group}",
+    "inGroup": "In {group} you are",
+    "points": {
+      "stable": {
+        "title": "Stable inside the group",
+        "body": "Same fingerprint, same group: always the same credential. That's how one person gets one vote."
+      },
+      "different": {
+        "title": "Different in every group",
+        "body": "The credential in one group looks nothing like the one in another."
+      },
+      "unlinkable": {
+        "title": "Impossible to link",
+        "body": "No one can prove two credentials come from the same fingerprint."
+      }
+    }
+  },
+  "Privacy": {
+    "eyebrow": "Privacy",
+    "title": "Privacy, no fine print",
+    "lead": "Votalo isn't a secret ballot box. It's a vote in plain sight of the group, with identities that don't reveal who you are outside it.",
+    "items": {
+      "visible": {
+        "title": "Votes are visible inside the group",
+        "body": "Each vote appears under that person's credential in that group. It is not a secret ballot: that's how anyone can check the count is clean."
+      },
+      "noPersonal": {
+        "title": "We don't ask for your details",
+        "body": "No name, email or phone number. Your fingerprint stays on your device and never reaches us."
+      },
+      "unlinked": {
+        "title": "Your groups can't be linked",
+        "body": "Someone who sees your credential in one group can't tell which other groups you're in."
+      },
+      "ip": {
+        "title": "What the service does see",
+        "body": "The service that saves your vote can see your connection's IP address, like any website. It never sees your fingerprint or your keys."
+      }
+    }
+  },
+  "Proof": {
+    "eyebrow": "Proof",
+    "title": "Check it yourself",
+    "lead": "You don't have to take our word for it. Everything can be checked.",
+    "contract": {
+      "title": "Verified contract",
+      "body": "The code that counts the votes is published and verified on Monad. You can read exactly what runs.",
+      "link": "View on MonadVision"
+    },
+    "code": {
+      "title": "Open source",
+      "body": "The whole app is public under the MIT license. Anyone can review, copy or improve it.",
+      "link": "View on GitHub"
+    },
+    "stats": {
+      "title": "Live numbers",
+      "body": "Read straight from public records, untouched. Until there is data you'll see a dash.",
+      "link": "See all numbers",
+      "groups": "Groups",
+      "members": "People",
+      "proposals": "Votes held",
+      "votes": "Votes cast"
+    },
+    "testnet": "Today Votalo runs on the Monad test network. This is a test version."
+  },
+  "Faq": {
+    "eyebrow": "FAQ",
+    "title": "Frequently asked questions",
+    "items": {
+      "secret": {
+        "q": "Is it a secret ballot?",
+        "a": "No. Each vote is visible inside the group under the credential of whoever cast it. No one sees your name, but the other people in the group can see which credential voted what. If you need a secret ballot, Votalo isn't the right tool."
+      },
+      "devices": {
+        "q": "Does it work on my phone?",
+        "a": "It depends. It works on iPhone with iOS 18 or newer (Safari or Chrome), on Android with Chrome, and on desktop Chrome if you save the passkey in the Google Password Manager or 1Password. Also on Windows 11 25H2 or newer. It doesn't work with the desktop Chrome local profile, Bitwarden or Dashlane."
+      },
+      "unsupported": {
+        "q": "What if my browser doesn't allow it?",
+        "a": "Open the same link on a supported phone. When something doesn't work we show you a QR code so you can do it in a moment."
+      },
+      "twice": {
+        "q": "Can someone vote twice?",
+        "a": "Not with the same passkey: each credential votes once per vote. But in open groups, a determined person could create several passkeys and join more than once. In invite-only groups each invite is used once, which limits it to one entry per invite."
+      },
+      "invite": {
+        "q": "Who can use an invite link?",
+        "a": "Whoever uses it first. An invite isn't tied to a specific person, so if the link reaches someone else, they can get in before your friend does. Share it only with the person you want to let in."
+      },
+      "where": {
+        "q": "Where are votes stored?",
+        "a": "On Monad, a public network. That's why no one, not even us, can erase or change a result."
+      },
+      "cost": {
+        "q": "Does it cost anything? Is this the final version?",
+        "a": "Voting costs you nothing: Votalo covers the technical cost. But today this is a test version, running on the Monad test network. Don't use it for decisions that need legal guarantees."
+      },
+      "lost": {
+        "q": "What if I lose my phone?",
+        "a": "Your passkey lives in your password manager (iCloud, Google, 1Password). If you recover your account there, you recover your credential in every group. If it wasn't synced, there's no way to get it back."
+      }
+    }
+  },
+  "Errors": {
+    "GroupExists": "That group already exists. Try again.",
+    "GroupNotFound": "We couldn't find this group. Check that the link is complete.",
+    "InvalidMode": "Choose whether the group is open or invite-only.",
+    "InvalidAdmin": "We couldn't set up your credential. Please try again.",
+    "InvalidMember": "We couldn't set up your credential. Please try again.",
+    "InvalidNameLength": "The name must be between 1 and 80 characters.",
+    "NotMember": "You're not part of this group yet. Join first.",
+    "AlreadyMember": "You're already part of this group.",
+    "InvalidSignature": "We couldn't confirm your fingerprint. Please try again.",
+    "InviteRequired": "This group is invite-only. Ask whoever created it for an invite link.",
+    "InviteNotAllowed": "This invite link isn't valid for this group.",
+    "InviteAlreadyUsed": "Someone else already used this invite. Ask for a new one.",
+    "ProposalExists": "That vote already exists. Try again.",
+    "ProposalNotFound": "We couldn't find this vote. Check that the link is complete.",
+    "InvalidTitleLength": "The question must be between 1 and 140 characters.",
+    "InvalidOptionCount": "Add between 2 and 6 options.",
+    "InvalidOptionLength": "Each option must be between 1 and 40 characters.",
+    "InvalidDeadline": "A vote can last from a few minutes up to 30 days.",
+    "VotingClosed": "This vote has closed.",
+    "AlreadyVoted": "You already voted here. Your vote counts once.",
+    "InvalidChoice": "That option doesn't exist. Pick another.",
+    "NETWORK": "It looks like you're offline. Check your connection and try again.",
+    "INTERNAL": "Something went wrong on our side. Please try again in a moment.",
+    "RATE_LIMITED": "Too many attempts in a row. Wait a moment and try again.",
+    "DAILY_CAP_REACHED": "Today's limit has been reached. Please come back tomorrow.",
+    "RELAYER_NOT_CONFIGURED": "The service isn't available right now. Please try again later.",
+    "INVALID_INPUT": "Check what you typed and try again.",
+    "PASSKEY_FAILED": "We couldn't confirm with your fingerprint. If you cancelled, you can try again.",
+    "PRF_UNAVAILABLE": "This browser can't create the kind of passkey Votalo needs.",
+    "UNKNOWN": "Something didn't go as expected. Please try again."
+  },
+  "Vote": {
+    "optionsLegend": "Choose your option",
+    "pickOne": "Choose an option to be able to vote.",
+    "holdHint": "Press and hold the circle to vote for {option}.",
+    "holdLabel": "Press and hold to vote for {option}",
+    "keepHolding": "Keep pressing until the circle closes.",
+    "working": "Confirm with your fingerprint…",
+    "done": "Done. Your vote for {option} is recorded.",
+    "alreadyVoted": "You already voted for {option}. Your vote counts once.",
+    "alreadyVotedGeneric": "You already voted. Your vote counts once.",
+    "closed": "This vote has closed.",
+    "notMember": "Join the group to be able to vote.",
+    "yourVote": "Your vote",
+    "noVotes": "No votes yet.",
+    "leading": "{option} is ahead with {percent}%.",
+    "tie": "It's a tie.",
+    "summary": "{total, plural, one {# vote} other {# votes}} in total. {lead}",
+    "ringLabel": "Live results. {summary}",
+    "optionResult": "{votes}, {percent}%",
+    "votesWord": "{count, plural, one {vote} other {votes}}"
+  }
+}

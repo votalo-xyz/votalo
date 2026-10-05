@@ -106,3 +106,33 @@ Running log of architecture decisions, deferred scope, and environment surprises
 - **E2E test** (`src/lib/relay/e2e.testnet.test.ts`) runs only when `E2E_BASE_URL` is set. It spends
   relayer gas on testnet, so it runs only after the relayer is funded and approved.
 - **Test route.** `src/app/test-passkey` is a temporary page for the phone test. Remove before delivery.
+
+## Frontend foundation (2026-10-05)
+
+- **Stack.** Tailwind CSS v4 (tokens as CSS variables in `src/app/globals.css`), Radix primitives for the
+  sheet, accordion and (later) dropdown, written as small shadcn-style components in
+  `src/components/ui` (no shadcn CLI, so no `components.json`). Motion for animation, next-intl,
+  next-themes, lucide-react, qrcode.react.
+- **Node 22.** The local machine runs Node 22.23; the brief asks for 24 LTS. Lint, tsc, tests and the build
+  pass on 22.
+- **i18n routing.** next-intl with `localePrefix: "as-needed"`: Spanish at `/`, English at `/en/...`. Pages
+  stay statically prerendered (`generateStaticParams` + `setRequestLocale`). A browser that asks for English
+  is sent to `/en` by Accept-Language detection; everyone else gets Spanish. `src/proxy.ts` is the Next 16
+  name for middleware. `src/app/[locale]/test-passkey` moved under the locale folder (a root layout needs
+  every route inside it); it is still marked for removal.
+- **Contrast.** Checked with a WCAG script. Everything in the brief's palette passes AA for text except
+  two cases, handled with extra tokens: light-theme success green `#0E8F66` is only 3.4–4.1:1 on light
+  surfaces, so text uses `--success-text` `#09684A` (5.4–6.5:1) and the brighter green stays for icons and
+  fills; light accent orange `#FF9F1C` is 1.9:1 on the light background, so it is only used as a button fill
+  (button text is `#1A1206`, 9.0:1) and never as a thin line or text.
+- **Option colours.** Six ring colours (`--seg-1..6`) alternate light and dark steps (light theme L\* 15–61,
+  dark theme L\* 53–92) and every option also carries a letter chip (A to F) and its count and percent as
+  text, so colour is never the only cue. Light-theme segments are at least 3:1 on white.
+- **Hold to vote.** About 0.9 s with a pointer. Keyboard and screen-reader activation (a click with
+  `detail === 0`) votes immediately, because holding a key is not reliable for everyone. This is an
+  assumption; revisit if the spec wants a hold on every input.
+- **Mock data.** Chain reads and live stats are real (`/api/stats` wraps `getTotals()` with a 30 s cache and
+  returns 503 on failure, which the UI shows as a dash). The landing demo is clearly labelled as an example
+  and saves nothing. Per-group data (group, proposals, members) stays mock until Phase 4 GraphQL lands.
+- **Proposal URL.** `/g/<groupId>/p/<proposalId>`: the vote flow needs both ids, and proposal titles are not
+  stored on chain (only hashes), so they come from the indexer later.
