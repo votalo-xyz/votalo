@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Foundry project and its vendored libraries
+    "contracts/**",
+    "vitest.config.ts",
   ]),
 ]);
 
