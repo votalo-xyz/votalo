@@ -122,8 +122,7 @@ are per server instance and best-effort.
 Server env: `RELAYER_PRIVATE_KEY` (server only, never `NEXT_PUBLIC_`). Without it, relay routes return
 `RELAYER_NOT_CONFIGURED` (503).
 
-Test-only route: `/test-passkey` (passkey creation and member-address check). It is marked for
-removal before delivery.
+The temporary `/test-passkey` page was removed; the real passkey flow now runs inside `/create`.
 
 ## Chain reads (`src/lib/chain/read.ts`) — ready
 

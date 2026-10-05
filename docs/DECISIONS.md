@@ -438,3 +438,22 @@ here, not just the last successful run.
   every internal `<a>` from the home pages and the app routes in both languages, and fails on anything that is not
   200, on a link that switches language, and on an unknown address that is not a branded 404. CI runs it after the
   build. Both were checked to fail on a deliberately broken link.
+
+## Removed the temporary /test-passkey page (2026-10-05)
+
+- **Why.** It was a bare test page for the phone passkey check. The real passkey flow is now
+  inside the product at `/create`, which is better evidence than a standalone test page.
+- **What was removed.** `src/app/[locale]/test-passkey/page.tsx`. Nothing else referenced it (a
+  grep across `src/` found only the file itself).
+- **Link test threshold.** `src/links/routes.test.ts` asserted at least 17 pages, which counted the
+  test page. It is now at least 16, with a comment pointing here. The required-pages list in the same
+  test is unchanged and still passes.
+- **Checks run from WSL (Linux, Node 24).** `npm run build`, `npm run test:links` (5 of 5 pass, every
+  internal link resolves), `tsc --noEmit`, lint, and the unit tests (27 pass, 6 skipped as expected:
+  the testnet-only checks, which need `E2E_BASE_URL`).
+- **Why WSL.** On this Windows machine, `@swc/core`'s native loader refuses to load a binary from
+  any user-writable directory (a DACL check on the cache root), so `next.config.ts` cannot load and
+  the build and link crawler cannot run natively. The same code builds and passes under Linux, which
+  is what GitHub Actions and Vercel use.
+- **Production.** Redeployed from the clean clone so `votalo-six.vercel.app` stops serving the page;
+  see the check recorded below.

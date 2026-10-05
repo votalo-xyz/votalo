@@ -63,7 +63,8 @@ describe("internal links", () => {
   const links = internalLinks();
 
   it("finds the pages and links it is supposed to check", () => {
-    expect(pages.length).toBeGreaterThanOrEqual(17);
+    // 16 real pages. The temporary /test-passkey page was removed (see docs/DECISIONS.md).
+    expect(pages.length).toBeGreaterThanOrEqual(16);
     expect(links.length).toBeGreaterThanOrEqual(40);
   });
 
