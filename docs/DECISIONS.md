@@ -64,3 +64,19 @@ Running log of architecture decisions, deferred scope, and environment surprises
   files.
 - **Metadata** still said "Create Next App" from the scaffold. Changed the title to "Votalo" and the
   description to the one-line product summary, because it is public-facing.
+
+## Phase 2 deploy (2026-10-05)
+
+- **Deployed to Monad testnet (10143)** at `0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072`. Tx
+  `0xfef9cf83f188d13b8718644e7b9046dab11dd1a2790d2b4c45e057a0f76f55e0`, block 68466493, status
+  success. The user ran the deploy in their own terminal with the keystore `votalo-deployer`. The
+  deployer is `0xeaA969E64e29fd379981Bfe2e7128a23eDcA87A0`.
+- **Gas.** `gasUsed` = 3,000,000, the full limit charged, as Monad does. Simulation estimated
+  2,555,436. The deploy cost about 0.309 MON.
+- **Checks.** `eip712Domain()` returns name "Votalo", version "1", chainId 10143 and the contract
+  address. The on-chain runtime bytecode matches the local build except in the immutable slots (the
+  EIP-712 domain cache), which differ by design.
+- **Verified on Sourcify** (job `93fff108-0669-4329-847f-891dad89bdf5`): runtime match. Explorer
+  link is in the README.
+- **Keystore deploys need the user's terminal.** The keystore password cannot be passed through
+  Claude Code. The relayer key will come from a server env var, which does not have this limit.

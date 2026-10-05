@@ -15,6 +15,17 @@ npm install
 npm run dev
 ```
 
+## Deployment
+
+Votalo contract on Monad testnet (chain ID 10143):
+
+- Address: `0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072`
+- Deploy transaction: `0xfef9cf83f188d13b8718644e7b9046dab11dd1a2790d2b4c45e057a0f76f55e0` (block 68466493, success)
+- Explorer: [testnet.monadvision.com/address/0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072](https://testnet.monadvision.com/address/0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072)
+- Source verified on Sourcify (runtime match).
+
+Run the contract tests with `cd contracts && forge test --network monad` (Foundry v1.8 or later).
+
 ## Known limits
 
 - **A person can hold more than one passkey.** INVITE mode limits this to one member per invite.
