@@ -55,3 +55,12 @@ Running log of architecture decisions, deferred scope, and environment surprises
 - **Deploy not yet done.** Needs a funded testnet deployer, chosen by the user. Explorer verification
   uses Sourcify (`--verifier sourcify --verifier-url https://sourcify-api-monad.blockvision.org/`).
   That publishes the source, so it is a separate step the user approves.
+
+## CI fixes (2026-10-05)
+
+- **`tsc` failed in CI** on `LayoutProps`, a global type that Next.js generates into `.next/types`
+  during `next build`. CI runs `tsc` on a clean checkout, before any build. Fixed by typing the root
+  layout props explicitly (`{ children: ReactNode }`), so the type check does not depend on generated
+  files.
+- **Metadata** still said "Create Next App" from the scaffold. Changed the title to "Votalo" and the
+  description to the one-line product summary, because it is public-facing.
