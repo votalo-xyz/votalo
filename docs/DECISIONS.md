@@ -383,3 +383,20 @@ here, not just the last successful run.
   keyboard-focusable bars carry the same numbers. Without an indexer the chart is replaced by a note, not by
   made-up data. The four totals come from `getTotals()` through `/api/stats`.
 - **404.** A catch-all route sends unknown URLs to a styled not-found page inside the layout.
+
+## CI fix for runner starvation (2026-10-05)
+
+- **Cause confirmed before fixing**: `gh run view` on main run `37366097175` showed `contracts`
+  completed success (got a runner) while `app` was cancelled with `runner: null`. Both `push` and
+  `pull_request` fired for the same branch push, doubling the queued jobs.
+- **Fix** (`.github/workflows/ci.yml`, commit `b1ca37b`): scope `push` to `branches: [main]` (PRs are
+  already covered by `pull_request`); add `concurrency: { group: ci-${{ github.ref }},
+  cancel-in-progress: true }` so a newer push cancels a stale run instead of queuing alongside it;
+  add `timeout-minutes: 15` to both jobs so a genuinely hung job fails clearly.
+- **Verified the fix works**: in run `37370100140` (after the fix), the `app` job got a runner and
+  passed. Previously it never did.
+- **Separate, unrelated problem found while verifying**: a GitHub-wide Actions incident started
+  2026-10-05 19:11 UTC ("delays in assigning GitHub-hosted runners to Actions jobs" — confirmed on
+  githubstatus.com), which is why later runs still queued for minutes with `runner: null` after the
+  fix was in place. Not caused by this repo's workflow or by the push volume from merging PR #1; it
+  should clear once GitHub resolves the incident, with no action needed here.
