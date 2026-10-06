@@ -1,32 +1,99 @@
 # Votalo
 
-Votalo ("vote on it") lets any group make decisions together from a shared link.
-Members vote with a passkey (Face ID, fingerprint, or device PIN). Each vote is
-recorded on Monad testnet.
+Votalo ("vote on it") lets any group make decisions together from a shared link. Members vote with a
+passkey (Face ID, fingerprint, or device PIN), with no wallet, seed phrase or app to install.
+
+- **Try it:** https://www.votalo.xyz
+- **Pitch:** https://www.votalo.xyz/pitch
+
+Each vote is an EIP-712 signature from a per-group key derived from the member's passkey, recorded on
+Monad testnet. Results update live from an indexer.
 
 Votalo is the decision layer community-governed products need: a game voting on its rules, a community choosing its feed's ranking, a collective deciding on its fund — one person, one vote, results no one can rig.
 
-Status: early build. See [docs/SPEC.md](docs/SPEC.md) for the build specification
-and [docs/DECISIONS.md](docs/DECISIONS.md) for architecture decisions.
+## How it works
+
+1. **Passkey.** The member's passkey is created or used with WebAuthn PRF through
+   [Mera](https://mera.category.xyz). A per-group salt gives each member a separate signing key for each
+   group. Two members of different groups cannot be linked on-chain.
+2. **Signature.** The app builds the EIP-712 digest for the action (create group, join, propose, vote) and the
+   group key signs it in the browser. The key is derived, used and zeroed; it is never stored.
+3. **Relayer.** A server route checks the signature, simulates the call, then sends the transaction with an
+   explicit gas limit. The relayer pays gas only; it never holds user keys or funds.
+4. **Contract.** `Votalo.sol` on Monad testnet verifies every signature and enforces the rules: one vote per member,
+   single-use invites, deadlines, and length bounds.
+5. **Indexer.** An [Envio HyperIndex](https://envio.dev) indexer (HyperSync) reads the four events and serves them
+   over GraphQL. The app reads through its own server routes, which cache results to stay within the hosted
+   plan's rate limit.
+6. **Encrypted group vault.** The list of groups is encrypted in the browser with a key from the passkey, and the
+   server stores only the ciphertext. A new device restores the list with the same passkey.
+
+## Contract
+
+`Votalo` on Monad testnet (chain ID 10143):
+
+- Address: `0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072`
+- Explorer: [testnet.monadvision.com/address/0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072](https://testnet.monadvision.com/address/0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072)
+- Deploy transaction: `0xfef9cf83f188d13b8718644e7b9046dab11dd1a2790d2b4c45e057a0f76f55e0` (block 68466493)
+- Source verified on Sourcify (runtime match).
 
 ## Local setup
 
+Requirements: Node 24, npm. Foundry 1.8 or later for the contracts (Monad execution requires it). Docker,
+for the indexer only; on Windows run the indexer from WSL, since Envio's CLI has no native Windows build.
+
 ```bash
-cp .env.example .env   # fill in values; .env is git-ignored
+cp .env.example .env   # optional for local use; .env is git-ignored
 npm install
-npm run dev
+npm run dev            # http://localhost:3000
 ```
+
+The app runs without any environment variables. Without them, data screens show local example data and group
+actions are recorded in the browser only, not on-chain. The relay, data and vault routes need the variables in
+`.env.example` to work for real.
+
+## Tests and checks
+
+```bash
+npm run lint           # ESLint
+npx tsc --noEmit       # type check
+npm test               # unit tests (vitest); live testnet tests skip unless E2E_BASE_URL is set
+npm run build && npm run test:links   # production build, then the link crawler
+cd contracts && forge test --network monad   # Foundry 1.8 or later
+```
+
+## Indexer
+
+```bash
+cd indexer
+npm install
+npm run codegen -- --config config.local.yaml
+npm run dev -- --config config.local.yaml   # local Postgres, Hasura and indexer, RPC only, no token needed
+```
+
+`config.yaml` is the hosted configuration (HyperSync as the source). `config.local.yaml` is the same chain and
+contract using RPC only, which works without an Envio API token. See [indexer/README.md](indexer/README.md).
 
 ## Deployment
 
-Votalo contract on Monad testnet (chain ID 10143):
+The app is deployed on Vercel. Set these in the project's environment:
 
-- Address: `0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072`
-- Deploy transaction: `0xfef9cf83f188d13b8718644e7b9046dab11dd1a2790d2b4c45e057a0f76f55e0` (block 68466493, success)
-- Explorer: [testnet.monadvision.com/address/0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072](https://testnet.monadvision.com/address/0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072)
-- Source verified on Sourcify (runtime match).
+| Variable | Scope | Purpose |
+|---|---|---|
+| `NEXT_PUBLIC_RP_ID` | Production | Passkey relying party (`votalo.xyz`) |
+| `NEXT_PUBLIC_SITE_URL` | Production | Canonical site URL for metadata and share links |
+| `RELAYER_PRIVATE_KEY` | Production | Relayer key (testnet MON only); server-only, never logged |
+| `ENVIO_GRAPHQL_URL` | Production | Hosted indexer endpoint; server-only |
+| `BLOB_READ_WRITE_TOKEN` | Production, Preview | Vercel Blob store for the encrypted vault; set by linking the store |
 
-Run the contract tests with `cd contracts && forge test --network monad` (Foundry v1.8 or later).
+The hosted indexer's endpoint changes on each redeploy on the free plan, so `ENVIO_GRAPHQL_URL` must be updated to
+match. See [docs/DECISIONS.md](docs/DECISIONS.md).
+
+## Docs
+
+- [docs/SPEC.md](docs/SPEC.md): the build specification.
+- [docs/FRONTEND.md](docs/FRONTEND.md): the interface contract (routes, data, vault, relay).
+- [docs/DECISIONS.md](docs/DECISIONS.md): architecture decisions and the log of what was verified and when.
 
 ## Known limits
 
