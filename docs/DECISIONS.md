@@ -750,3 +750,23 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
 - **Not yet done**: a real passkey, on a real device, through the actual UI. That needs `saveVault` and
   `restoreVault` wired into the create/join flows and a restore button, which is Monse's side per
   `docs/FRONTEND.md`.
+
+## Envio: try HyperSync on the hosted deployment, no token (2026-10-06)
+
+- **Reason.** The Envio free plan does not allow custom environment variables, so `ENVIO_API_TOKEN`
+  cannot be set for the hosted deployment. Trying HyperSync without a token, relying on whatever
+  built-in access the hosted service itself has.
+- **`indexer/config.yaml`**: removed `rpc.for: sync`. With no `for:` set, the schema's own default
+  applies: `fallback` when HyperSync is available for the chain, so this becomes HyperSync as the
+  primary source with RPC as a fallback (kept, with the same 100-block interval cap, in case the
+  fallback is ever used).
+- **`indexer/config.local.yaml`** (new): the previous RPC-only config, kept so local dev still works
+  without a token. Run with `npm run dev -- --config config.local.yaml` (documented in
+  `indexer/README.md`). Verified: a fresh local sync with this file reached "The indexer is ready" and
+  returned the correct totals (8 groups, 17 members, 4 proposals, 7 votes — matching the contract).
+- **Pushed only this change to the `envio` branch** (cherry-picked, not merged, so the branch stays
+  focused on the indexer and does not pull in the rest of `main`'s history). `main` keeps the full
+  commit as usual.
+- **Outcome: pending.** Waiting for the user to check the Envio dashboard for "Source: HyperSync" at
+  100%. If it works: switch `ENVIO_GRAPHQL_URL` in Vercel, confirm totals match the contract, verify
+  `/api/data/*`. If it fails or still shows RPC: revert `envio` to `8b84b2b`.

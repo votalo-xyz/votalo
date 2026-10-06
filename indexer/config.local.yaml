@@ -1,22 +1,20 @@
 name: votalo-indexer
-description: Indexes Votalo groups, members, proposals, and votes on Monad testnet.
+description: >-
+  Local-dev variant of config.yaml. RPC-only, so `envio dev` works without an ENVIO_API_TOKEN.
+  The hosted deployment uses config.yaml (HyperSync as the primary source) instead; see
+  docs/DECISIONS.md. Run with "npm run dev -- --config config.local.yaml".
 field_selection:
   transaction_fields:
     - hash
 chains:
   - id: 10143
     start_block: 68466493 # Votalo deploy block (see docs/DECISIONS.md)
-    # No `for:` set, so this RPC defaults to "fallback" (HyperSync is the primary source; see
-    # https://docs.envio.dev — Rpc.for). The Envio free plan has no custom env vars, so
-    # ENVIO_API_TOKEN cannot be set for the hosted deployment; this relies on the hosted service's
-    # own built-in HyperSync access, with RPC only as a fallback if that stalls.
-    # For local dev without a token, use config.local.yaml instead (RPC-only; see indexer/README.md).
     rpc:
       url: https://testnet-rpc.monad.xyz
+      for: sync # RPC for both historical sync and real-time; local dev has no HyperSync token.
       # Monad testnet RPC caps eth_getLogs at a 100-block range (confirmed by the 413 error it
       # returns above that). Without this, Envio guesses a larger range, fails, and backs off for
       # every new chunk, which is slow. Capping both bounds to 100 skips the guess-and-fail cycle.
-      # Only matters when this fallback is actually used.
       initial_block_interval: 100
       interval_ceiling: 100
     contracts:
