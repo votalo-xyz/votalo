@@ -734,3 +734,19 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
   that risk belongs to her, not to me. She resolved it herself (a separate `ui/pitch` branch, not yet
   merged to `main`), and nothing of hers was touched or lost. Every commit in this entry was staged by
   explicit file path, never `git add -A`, to keep the two sessions' work from mixing.
+
+## Vault verified live in production (2026-10-06)
+
+- **Vercel Blob store connected** via the dashboard (CLI/API had no non-interactive path to link an
+  existing store to a project — confirmed by reading the CLI's own `--help` output and the public REST
+  API reference, which only lists get/create/delete for stores, no connect endpoint). `BLOB_READ_WRITE_TOKEN`
+  is now set for Production and Preview.
+- **Verified end to end against `https://www.votalo.xyz/api/vault/:vaultId`**, not a local or mocked
+  server: `PUT` with a real AES-GCM-encrypted payload → `200 {"ok":true}`; `GET` of the same id → `200`,
+  body is exactly `{ iv, ciphertext }`; decrypting the returned value with the matching key reproduces
+  the original content exactly; `GET` of a vault id that was never written → `404`. The script used the
+  same HKDF info strings as `src/lib/vault/crypto.ts`, with a locally generated key/id standing in for a
+  real PRF output (no real passkey was used for this check).
+- **Not yet done**: a real passkey, on a real device, through the actual UI. That needs `saveVault` and
+  `restoreVault` wired into the create/join flows and a restore button, which is Monse's side per
+  `docs/FRONTEND.md`.
