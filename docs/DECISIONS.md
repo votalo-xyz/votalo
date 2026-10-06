@@ -554,3 +554,13 @@ here, not just the last successful run.
   that host, so preview deployments are unaffected.
 - **No hardcoded `vercel.app` or `votalo.xyz` host remains in `src/`, the README, or the frontend doc.**
   `docs/SPEC.md` keeps the domain as a spec fact, and that file is not app output.
+
+- **Verified after the final deploy** (commit `c679d57`, production on `www.votalo.xyz`):
+  - Passkey: a virtual authenticator with PRF enabled, driven through headless Chrome over CDP, created a
+    passkey on `https://www.votalo.xyz/en/start`. The credential is bound to RP id `votalo.xyz`, and onboarding
+    completed on `/en/groups`. This is a virtual authenticator, not a real phone, so a phone check is still
+    needed before delivery.
+  - Metadata: `https://www.votalo.xyz/en` has `og:url` = `https://www.votalo.xyz/en`. A proposal page has `og:url`
+    pointing at its own URL and an `og:image` under `https://www.votalo.xyz/`.
+  - Redirect: `https://votalo-six.vercel.app/en/stats?x=1` → `308` to `https://www.votalo.xyz/en/stats?x=1`.
+    Path and query are kept.
