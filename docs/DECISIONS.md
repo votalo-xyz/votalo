@@ -646,3 +646,26 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
   (not measured). It touches every animated component close to the freeze, for a modest gain on a
   page that already meets the target, so it is left out.
 - **Re-check after any change** with 5 runs and compare medians, never single runs.
+
+## Final QA pass (2026-10-05)
+
+- **What was run.** A phone-sized browser (390x844, touch, 2x, a virtual passkey with PRF) against a production
+  build in local mode, in Spanish and English, dark and light (4 runs of each script): create a group
+  (invite-only), open the share sheet (WhatsApp link prefilled, invite link with signature, QR), group page, new
+  vote (duplicate options blocked), hold to vote, the ring and bars update, "my standing", Me, Groups, Stats,
+  About and the branded 404; and, on the example group, create passkey, join, hold to vote, result, reload keeps
+  the vote locked. The unsupported-browser screen (QR, supported and unsupported lists) was checked with a
+  passkey that has no PRF. No script failed, no page threw an error and no page scrolled sideways.
+- **What was not done, and why.** No physical phone was used in this pass, and a second device joining a group
+  was not exercised: in local mode a group exists only in the browser that made it, and doing it live would
+  write new records to the real contract. The real-phone check (create on a phone, a second person joins, both
+  vote) is the one recorded as passed above.
+- **Honesty rules checked in the text.** Votes are described as visible under the voter's credential and the
+  record as public (privacy summary, privacy page, FAQ, About, legal). The device list names iPhone with iOS 18+
+  (Safari or Chrome), Android with Chrome, desktop Chrome with Google Password Manager or 1Password, and Windows
+  11 25H2+, and says the desktop Chrome local profile, Bitwarden and Dashlane do not work. The hero demo is
+  labelled as an interactive example. Stats show numbers read from the contract, and a message instead of a
+  chart when the data service is not connected.
+- **Known wording choice.** The copy uses "fingerprint" for the passkey as a metaphor and says in the same
+  places that Face ID or the phone's PIN work too; the confirm prompts say "your fingerprint" even when the
+  person uses Face ID or a PIN.
