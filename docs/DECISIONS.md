@@ -1668,3 +1668,22 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
   own round-trip checks. The CLI needs the store token to delete them, and getting the token means writing it to a
   file, which is not done. They can be removed from the Vercel dashboard (Storage, votalo-vault, Blobs).
 - **No tag.** The tag `v1.0.0` waits for the freeze (2026-10-11 evening, Mexico City).
+
+## Language switch: the locale cookie (2026-10-06)
+
+- **Symptom.** In production, clicking EN while on a Spanish page went back to `/es`.
+- **Cause.** Since English became the default, a URL without a prefix (`/`, `/create`) is resolved by the
+  middleware from the `NEXT_LOCALE` cookie first, then from the browser's `Accept-Language`. The switch renders
+  `next/link` (to avoid next-intl's double prefix on dynamic segments), so it never updated that cookie. A Spanish
+  browser was therefore always sent back to `/es`.
+- **Fix.** `src/components/layout/language-switch.tsx` writes `NEXT_LOCALE` on click and turns prefetch off, as
+  next-intl's own locale-changing `Link` does.
+- **Environment surprise.** `defineRouting` returns the config as written; next-intl applies its defaults only
+  inside the middleware and navigation helpers. `routing.localeCookie` is `undefined` at runtime even though the
+  cookie is on. The first version of the fix read it as "off" and wrote nothing. An unset value must be read as
+  "on" (`routing.localeCookie ?? true`).
+- **Then: no browser-language redirect (same day, at the user's request).** English must be what every visitor
+  gets first. `routing.ts` now sets `localeDetection: false`: the URL alone decides the language, so a browser set
+  to Spanish lands on English at `/`, and the middleware no longer reads `NEXT_LOCALE`. The cookie write and
+  `prefetch={false}` above were removed from the switch, since nothing depends on them now. `src/proxy.ts` no
+  longer needs a separate middleware for `/embed` (it existed only to turn detection off there).

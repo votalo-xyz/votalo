@@ -1,17 +1,9 @@
 import createMiddleware from "next-intl/middleware";
-import type { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
 
-const app = createMiddleware(routing);
-
-// The widget's language is whatever its URL says: the site that embeds it chose it. Without this, a visitor's
-// browser language would redirect an embedded Spanish widget to the English one.
-const embed = createMiddleware({ ...routing, localeDetection: false });
-
-export default function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  return /^\/(en\/)?embed(\/|$)/.test(pathname) ? embed(request) : app(request);
-}
+// The URL alone decides the language (`localeDetection: false` in routing.ts), so an embedded widget keeps the
+// language the embedding site chose, and a browser set to Spanish still lands on English at "/".
+export default createMiddleware(routing);
 
 export const config = {
   // Everything except API routes, Next internals, the brand pack page (a static folder with no language) and
