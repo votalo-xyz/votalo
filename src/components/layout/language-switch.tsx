@@ -20,6 +20,16 @@ function switchHref(pathname: string, query: string, locale: string): string {
   return query ? `${base}?${query}` : base;
 }
 
+/** The middleware reads the NEXT_LOCALE cookie for a URL without a prefix, so a visitor who chose Spanish
+ * would be sent back to /es from "/" unless the cookie changes too. next-intl's own locale-changing Link
+ * does this; next/link does not, so the cookie is written here before the navigation. */
+function syncLocaleCookie(locale: string) {
+  const cookie = routing.localeCookie;
+  if (!cookie) return;
+  const name = cookie === true ? "NEXT_LOCALE" : (cookie.name ?? "NEXT_LOCALE");
+  document.cookie = `${name}=${locale}; path=/; samesite=lax`;
+}
+
 function Switch({ className }: { className?: string }) {
   const t = useTranslations("Common");
   const active = useLocale();
@@ -45,6 +55,7 @@ function Switch({ className }: { className?: string }) {
             lang={locale}
             aria-current={current ? "true" : undefined}
             aria-label={`${locale.toUpperCase()}, ${t(`languageName.${locale}`)}`}
+            onClick={() => syncLocaleCookie(locale)}
             className={cn(
               "inline-flex min-h-11 min-w-12 items-center justify-center rounded-full px-3 text-sm font-semibold uppercase tracking-wide transition-colors duration-200",
               current ? "bg-fg text-bg" : "text-muted hover:text-fg",
