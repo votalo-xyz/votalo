@@ -78,6 +78,7 @@ describe("internal links", () => {
       "/faq",
       "/about",
       "/stats",
+      "/pitch",
       "/legal/[doc]",
       "/start",
       "/groups",

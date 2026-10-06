@@ -24,6 +24,7 @@ const APP_ROUTES = [
   "/me",
   "/stats",
   "/about",
+  "/pitch",
   "/legal/privacy",
   "/legal/terms",
   `/g/${GROUP}`,
@@ -49,7 +50,7 @@ d("link crawl", { timeout: 180_000 }, () => {
 
   it("reaches the four marketing pages and the legal pages in both languages", async () => {
     const { pages } = await crawl(BASE!, ["/", "/en"]);
-    for (const route of ["/how-it-works", "/privacy", "/proof", "/faq", "/about", "/stats", "/legal/privacy", "/legal/terms", "/create", "/groups", "/me"]) {
+    for (const route of ["/how-it-works", "/privacy", "/proof", "/faq", "/about", "/stats", "/pitch", "/legal/privacy", "/legal/terms", "/create", "/groups", "/me"]) {
       expect(pages.get(route), `ES ${route}`).toBe(200);
       expect(pages.get(`/en${route}`), `EN ${route}`).toBe(200);
     }

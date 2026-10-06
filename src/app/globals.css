@@ -358,3 +358,59 @@
     height: 0;
   }
 }
+
+/* Pitch deck (/pitch). Full-screen slides on desktop, plain stacked sections on phones, one 16:9 page per slide in print. */
+.deck-slide {
+  scroll-margin-top: 0;
+  scroll-snap-align: start;
+}
+@media (min-width: 1024px) {
+  html:has(.deck) {
+    scroll-snap-type: y proximity;
+  }
+  .deck-slide {
+    min-height: 100svh;
+  }
+}
+@page {
+  size: 13.333in 7.5in;
+  margin: 0;
+}
+@media print {
+  html:has(.deck) {
+    scroll-snap-type: none;
+  }
+  html,
+  body {
+    background: var(--bg);
+  }
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  body::after,
+  .deck-chrome {
+    display: none !important;
+  }
+  /* Scroll-in animations may not have played for slides never scrolled to. */
+  .deck [style*="opacity"],
+  .deck [style*="transform"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .deck-slide {
+    width: 13.333in;
+    height: 7.5in;
+    min-height: 0;
+    overflow: hidden;
+    break-after: page;
+    break-inside: avoid;
+  }
+  .deck-slide:last-child {
+    break-after: auto;
+  }
+  .deck-slide > div {
+    padding-top: 0.6in;
+    padding-bottom: 0.6in;
+  }
+}
