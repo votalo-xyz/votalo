@@ -64,6 +64,47 @@ The member's address for this group. Stable per passkey and group. Use it to sho
 Signs a 32-byte EIP-712 digest. `signature` is `{ compact: Uint8Array(64), recovery: 0 | 1 }`. Used by the
 sign-and-relay flow below. The key is derived, used, and zeroed inside the call.
 
+## Encrypted group vault (`src/lib/vault`) — ready
+
+Solves the new-device problem: "your groups" otherwise lives only in one browser's `localStorage`, so on a
+new device the passkey syncs but the group ids are unreachable. The vault stores an encrypted list of
+`{ groupId, name, joinedAt, credentialId }`, keyed by an id derived from the same passkey. The server only
+ever sees `{ iv, ciphertext }` — never plaintext, a PRF output, or a key. Uses two PRF salts separate from
+the per-group signing salt, so neither the vault key nor the vault id can be derived from a member key, or
+from each other.
+
+### `saveVault({ rpId, credential, groups }): Promise<void>` (`client.ts`)
+Call after every create or join, with the full current group list for this passkey (not just the one that
+changed — each save replaces the stored vault). One passkey prompt on a device that has saved before; two
+the very first time on a device (the vault id has to be derived once, then it is cached in `localStorage`,
+which is safe: the id is an opaque lookup name, not a secret).
+
+```ts
+await saveVault({ rpId: currentRpId(), credential, groups: [...myGroups, newGroup] });
+```
+
+### `restoreVault({ rpId, credential }): Promise<VaultGroupEntry[] | null>` (`client.ts`)
+Call after passkey sign-in on a device that has no local group list (a new device, or cleared storage).
+Two passkey prompts (vault id, then vault key). Returns `null` when this passkey has never saved a vault —
+show that as "no groups found," not an error. This is what a "Recuperar mis grupos" / "Restore my groups"
+button should call.
+
+```ts
+const groups = await restoreVault({ rpId: currentRpId(), credential });
+if (groups === null) showNoVaultFound();
+else showGroups(groups);
+```
+
+### `VaultClientError` (`client.ts`)
+Thrown by both functions. `code`: `NETWORK`, `INVALID_INPUT:<field>`, `RATE_LIMITED`,
+`VAULT_STORAGE_NOT_CONFIGURED` (503, the Blob store has no token set), `NOT_FOUND` (only reachable
+internally — `restoreVault` turns a missing vault into `null`, not an error), `INTERNAL`.
+
+### `VaultGroupEntry` / `VaultContent` (`types.ts`)
+```ts
+type VaultGroupEntry = { groupId: Hex; name: string; joinedAt: number; credentialId: string };
+```
+
 ## Contract actions (`contracts/src/Votalo.sol`) — ready
 
 Each action needs an EIP-712 signature from the acting member. The relayer submits it and pays gas.

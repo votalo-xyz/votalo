@@ -40,6 +40,10 @@ Run the contract tests with `cd contracts && forge test --network monad` (Foundr
   relayer is a trusted party for availability and rate limiting. It never holds user keys or funds.
 - **Votes are pseudonymous, not secret.** Each vote is public per member address inside its group.
 - **The relayer's gas key is set only for the Production environment** on Vercel, not Preview. Preview deploys cannot relay transactions until that is set separately.
+- **The vault server learns only that some passkey stored about N bytes, and when.** It stores
+  `{ iv, ciphertext }` under an opaque id and nothing else: no plaintext, no PRF output, no key, no
+  group names or ids. It cannot tell which passkey owns a vault, or link two vaults to the same
+  person, beyond what request timing and size alone reveal.
 
 ## Brand
 

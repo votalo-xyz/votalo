@@ -690,3 +690,47 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
   the first would leave the arcs 1.6 closer than the pack's. The files in `public/brand/` were replaced by
   the pack's (mark and lockup SVGs, mark PNGs at 512 and 1024, light and dark), keeping their names so the README
   table and any links keep working. The PNG corners have alpha 0 (checked).
+
+## Encrypted group vault (2026-10-05)
+
+- **Problem solved**: "your groups" lived only in one browser's `localStorage`. On a new device the
+  passkey syncs, but the group ids were unreachable, so per-group identities were orphaned.
+- **Two new PRF salts**, separate from `groupPrfSalt` (`identity/groupSalt.ts`):
+  `keccak256("votalo/vault/v1")` for the AES key, `keccak256("votalo/vault-id/v1")` for the lookup id.
+  Mera's PRF API takes one salt per ceremony (checked its types directly: no multi-salt option), so the
+  two values need two separate assertions, not one.
+- **Prompt count, by design**: the vault id is cached in `localStorage` after the first time it is
+  derived (safe: it is an opaque lookup name, not a secret — it reveals nothing without the vault key,
+  which is never cached). So `saveVault` needs one prompt on a device that has saved before, and two the
+  very first time. `restoreVault` (a new device, nothing cached) always needs two. Documented in
+  `docs/FRONTEND.md` so the "Restore my groups" button Monse builds can set expectations correctly.
+- **Vault key**: HKDF-SHA256(PRF output, info `votalo-vault-aes-v1`) → **non-extractable** AES-256-GCM
+  `CryptoKey` (WebCrypto `deriveKey`, not `deriveBits`), so the raw key bytes never exist in JS memory.
+- **Vault id**: HKDF-SHA256(PRF output, info `votalo-vault-id-v1`) → 64-char hex string.
+- **Encryption**: fresh random 12-byte IV per write (`crypto.getRandomValues`), AES-GCM, stored as
+  `{ iv, ciphertext }` (base64). The server never sees plaintext, the PRF output, or any key — confirmed
+  by a test that the PUT handler stores exactly those two JSON keys.
+- **Storage: Vercel Blob**, private access (not public — reads need the server's token, not just a
+  guessable URL; double protection on top of AES-GCM). Store `votalo-vault` created via
+  `vercel blob create-store votalo-vault --access private`; `BLOB_READ_WRITE_TOKEN` is a server-only env
+  var, auto-injected once linked to the project. Pathname `vault/<vaultId>.json`, `addRandomSuffix:
+  false` (the vault id is already a 256-bit opaque value, so no extra randomness is needed) and
+  `allowOverwrite: true` (a PUT replaces the previous save).
+- **Route** `PUT`/`GET /api/vault/:vaultId`: 16 KB body cap, per-IP and per-vault-id rate limits
+  (`vault/limits.ts`, same per-instance tradeoff as the relay's). The handler logic (`vault/handler.ts`)
+  takes its storage as a parameter, so it is unit-tested against an in-memory fake, not real Blob calls.
+- **Tests** (`vault/crypto.test.ts`, `vault/handler.test.ts`): round trip; decrypting with the wrong key
+  throws (AES-GCM authentication failure); two encryptions of the same content produce different IVs and
+  ciphertexts, both still decrypting correctly; the vault id, the vault-key PRF output, and a group's PRF
+  output are pairwise unrelated for the same passkey (tested with the same fake-authenticator convention
+  as `identity.test.ts`); the server-side handler stores only `{ iv, ciphertext }`; oversized and
+  malformed bodies are rejected; the per-vault-id rate limit kicks in.
+- **Not yet done**: wiring `saveVault` into the actual create/join flows and a restore button is
+  explicitly Monse's work per the frontend contract (`docs/FRONTEND.md`); the library side is complete,
+  tested, and documented for her to call.
+- **Working-directory note**: this session shares the Votalo checkout with at least one other live
+  session (Monse's), which was mid-way through an uncommitted `/pitch` deck page when this work started.
+  The sandbox correctly blocked an attempt to `git stash` her uncommitted work, which was the right call —
+  that risk belongs to her, not to me. She resolved it herself (a separate `ui/pitch` branch, not yet
+  merged to `main`), and nothing of hers was touched or lost. Every commit in this entry was staged by
+  explicit file path, never `git add -A`, to keep the two sessions' work from mixing.
