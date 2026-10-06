@@ -988,6 +988,7 @@
     "saving": "Saving your list of groups, encrypted…",
     "saved": "Group list saved, encrypted.",
     "failed": "We couldn't save the list of your groups to restore on another device. What you just did went through.",
-    "retry": "Save again"
+    "retry": "Save again",
+    "restoredTitle": "Your groups are back"
   }
 }

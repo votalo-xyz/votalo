@@ -55,6 +55,8 @@ export function RestoreGroups({
     return <PrfUnavailable onRetry={() => setState({ phase: "idle" })} />;
   }
 
+  // Once groups are back, the question in the heading no longer applies: say what happened instead.
+  const restored = state.phase === "done" && state.added > 0;
   const message =
     state.phase === "working"
       ? state.total === null
@@ -72,7 +74,7 @@ export function RestoreGroups({
 
   const body = (
     <>
-      {title && <h2 className="text-h3">{t(title)}</h2>}
+      {title && <h2 className="text-h3">{t(restored ? "restoredTitle" : title)}</h2>}
       <p className={cn("text-muted", title && "mt-2", compact && "text-sm")}>{t("note")}</p>
       <Button
         variant={compact ? "secondary" : "primary"}

@@ -988,6 +988,7 @@
     "saving": "Guardando tu lista de grupos, cifrada…",
     "saved": "Lista de grupos guardada, cifrada.",
     "failed": "No pudimos guardar la lista de tus grupos para recuperarla en otro dispositivo. Lo que acabas de hacer sí quedó listo.",
-    "retry": "Guardar de nuevo"
+    "retry": "Guardar de nuevo",
+    "restoredTitle": "Tus grupos están de vuelta"
   }
 }
