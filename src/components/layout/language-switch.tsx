@@ -24,8 +24,9 @@ function switchHref(pathname: string, query: string, locale: string): string {
  * would be sent back to /es from "/" unless the cookie changes too. next-intl's own locale-changing Link
  * does this; next/link does not, so the cookie is written here before the navigation. */
 function syncLocaleCookie(locale: string) {
-  const cookie = routing.localeCookie;
-  if (!cookie) return;
+  // defineRouting does not fill in defaults: an unset localeCookie means "on", as next-intl itself reads it.
+  const cookie = routing.localeCookie ?? true;
+  if (cookie === false) return;
   const name = cookie === true ? "NEXT_LOCALE" : (cookie.name ?? "NEXT_LOCALE");
   document.cookie = `${name}=${locale}; path=/; samesite=lax`;
 }
