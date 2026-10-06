@@ -64,46 +64,71 @@ The member's address for this group. Stable per passkey and group. Use it to sho
 Signs a 32-byte EIP-712 digest. `signature` is `{ compact: Uint8Array(64), recovery: 0 | 1 }`. Used by the
 sign-and-relay flow below. The key is derived, used, and zeroed inside the call.
 
-## Encrypted group vault (`src/lib/vault`) — ready
+## Encrypted group vault (`src/lib/vault`) — ready, live in production
 
-Solves the new-device problem: "your groups" otherwise lives only in one browser's `localStorage`, so on a
-new device the passkey syncs but the group ids are unreachable. The vault stores an encrypted list of
-`{ groupId, name, joinedAt, credentialId }`, keyed by an id derived from the same passkey. The server only
-ever sees `{ iv, ciphertext }` — never plaintext, a PRF output, or a key. Uses two PRF salts separate from
-the per-group signing salt, so neither the vault key nor the vault id can be derived from a member key, or
-from each other.
+Solves the new-device problem: "your groups" otherwise lives only in one browser's `localStorage`. The vault
+stores an encrypted list of `{ groupId, name, joinedAt, credentialId, memberAddress }`, keyed by an id derived
+from the same passkey. The server only ever sees `{ iv, ciphertext }`: no plaintext, no PRF output, no key.
 
-### `saveVault({ rpId, credential, groups }): Promise<void>` (`client.ts`)
-Call after every create or join, with the full current group list for this passkey (not just the one that
-changed — each save replaces the stored vault). One passkey prompt on a device that has saved before; two
-the very first time on a device (the vault id has to be derived once, then it is cached in `localStorage`,
-which is safe: the id is an opaque lookup name, not a secret).
+**One PRF evaluation per page session.** A single salt, `keccak256("votalo/vault/v1")`, gives one 32-byte
+output. HKDF turns it into the AES-256-GCM key (info `votalo-vault-aes-v1`, non-extractable) and the lookup id
+(info `votalo-vault-id-v1`). The key lives only in memory for the page session (see `clearVaultSession`).
+
+**Passkey prompts** (counted by the unit tests with a counting authenticator; not yet re-measured in a browser, so please re-measure in the emulated flow):
+
+| Situation | Prompts |
+|---|---|
+| Create a new passkey and its first group | 2 (creation, which also derives the vault key, then the group's own prompt). Authenticators that do not evaluate PRF at creation add one fallback prompt. |
+| Create another group in the same page session | 1 (the group's own prompt; the vault saves with no prompt) |
+| First save on a device that has the passkey but no session | 2 (vault, then group) |
+| Restore on a device with no groups | 1 (vault), plus 0 per group, because each group's member address is in the vault |
+| Restore an entry saved before `memberAddress` existed | 1 per such group (that group's prompt) |
+
+Unit tests: `client.test.ts` (prompt counts, round trip, a different passkey gets `null`, the server stores only
+`{iv, ciphertext}`, a fresh IV per save), `session.test.ts` (idle timeout, sign-out, non-extractable key),
+`crypto.test.ts` (round trip, wrong key fails, fresh IV, key non-extractable, group PRF unrelated to vault PRF).
+
+### `saveVault({ rpId, credential, groups, webAuthnClient? }): Promise<void>`
+Call after every create or join, with the full current group list (each save replaces the stored vault).
 
 ```ts
 await saveVault({ rpId: currentRpId(), credential, groups: [...myGroups, newGroup] });
 ```
 
-### `restoreVault({ rpId, credential }): Promise<VaultGroupEntry[] | null>` (`client.ts`)
-Call after passkey sign-in on a device that has no local group list (a new device, or cleared storage).
-Two passkey prompts (vault id, then vault key). Returns `null` when this passkey has never saved a vault —
-show that as "no groups found," not an error. This is what a "Recuperar mis grupos" / "Restore my groups"
-button should call.
+### `restoreVault({ rpId, credential, webAuthnClient? }): Promise<VaultGroupEntry[] | null>`
+For a passkey already known on this device. Returns `null` when this passkey has never saved a vault; show that
+as "no groups found," not an error.
+
+### `restoreVaultFromPasskey({ rpId, webAuthnClient? }): Promise<{ credential, groups: VaultGroupEntry[] | null }>`
+For a device with no passkey saved yet. The platform picks the passkey (one prompt), which gives the credential
+and the vault key together. Store `credential` (the caller keeps it), then use `groups`. This is the call for a
+"Recuperar mis grupos" / "Restore my groups" button on a device with no groups.
 
 ```ts
-const groups = await restoreVault({ rpId: currentRpId(), credential });
+const { credential, groups } = await restoreVaultFromPasskey({ rpId: currentRpId() });
+saveCredential(credential);
 if (groups === null) showNoVaultFound();
 else showGroups(groups);
 ```
 
-### `VaultClientError` (`client.ts`)
-Thrown by both functions. `code`: `NETWORK`, `INVALID_INPUT:<field>`, `RATE_LIMITED`,
-`VAULT_STORAGE_NOT_CONFIGURED` (503, the Blob store has no token set), `NOT_FOUND` (only reachable
-internally — `restoreVault` turns a missing vault into `null`, not an error), `INTERNAL`.
+### `clearVaultSession(): void`
+Forgets the vault key and id in memory. Call on sign-out. The session also ends after 15 minutes without use and
+when the page is hidden or closed (`pagehide`).
 
 ### `VaultGroupEntry` / `VaultContent` (`types.ts`)
 ```ts
-type VaultGroupEntry = { groupId: Hex; name: string; joinedAt: number; credentialId: string };
+type VaultGroupEntry = { groupId: Hex; name: string; joinedAt: number; credentialId: string; memberAddress?: Hex };
 ```
+`memberAddress` is optional so entries saved before it existed still decode. There are no such entries in
+production: the Blob store held one test blob when this changed.
+
+### Signature changes (for Monse)
+- `saveVault` and `restoreVault`: **unchanged** signatures and return types.
+- **New**: `restoreVaultFromPasskey`, `clearVaultSession`.
+- **Changed**: `VaultGroupEntry` gained the optional `memberAddress`. The vault id is no longer cached in
+  `localStorage` (the old `localCache.ts` and its `getCachedVaultId`/`setCachedVaultId` are removed), and the
+  separate vault-id salt `VAULT_ID_PRF_SALT` is gone. `createVotaloPasskey` keeps its signature and return value;
+  it now also derives the vault key during creation.
 
 ## Contract actions (`contracts/src/Votalo.sol`) — ready
 

@@ -1563,3 +1563,32 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
   not production storage; the production route was verified separately.
 - **Not verified here.** The real-phone gate (create on one device, restore on another with the same synced
   passkey) has not been run by me; it needs a physical phone and is still open.
+
+## Vault UX: one PRF evaluation, in-memory session key, addresses in the vault (2026-10-06)
+
+- **Why.** Monse measured the live flow: first create on a new device 3 prompts, later creates 2, restore on a
+  cleared device 4. Too many for a one-fingerprint product.
+- **One salt.** The vault now uses one PRF salt, `keccak256("votalo/vault/v1")`. HKDF with two info strings gives
+  the AES key (`votalo-vault-aes-v1`, non-extractable) and the lookup id (`votalo-vault-id-v1`). The separate
+  vault-id salt is removed. Mera's API takes one `prfSalt` per ceremony (checked its types), so the group key and
+  the vault output cannot share one assertion. That is not worked around: the vault costs one ceremony of its own,
+  and passkey creation is used as the first one (the creation ceremony takes `prfSalt`, a documented option).
+- **Old vault ids.** Checked the Blob store before switching: it held one blob, 285 bytes, written by my own
+  round-trip test. No user vaults existed, so no fallback to the old id was needed. That test blob is still there,
+  under an id nothing will ever derive again; it holds nothing a user could read.
+- **Session key in memory only.** `vault/session.ts` keeps the key and id in a module variable, never in storage.
+  It ends after 15 minutes without use, on `clearVaultSession()` (sign-out), and on `pagehide`. A reload clears it.
+  The vault id is no longer cached in `localStorage`; `localCache.ts` is removed.
+- **Restore target.** The member address for each group is now stored inside the encrypted vault, so restore no
+  longer asks once per group. The address is authenticated by the same AES-GCM key as the group ids, so only the
+  passkey holder can write it. Entries without it (none exist) fall back to the per-group prompt.
+- **Prompt counts** (unit tests with a counting authenticator; a browser re-measure is still needed): new passkey
+  and first group 2 (plus one if the authenticator skips PRF at creation); later creates 1; first save on a device
+  with a passkey but no session 2; restore on a cleared device 1.
+- **Signatures.** `saveVault`, `restoreVault` and `createVotaloPasskey` keep their signatures. New:
+  `restoreVaultFromPasskey`, `clearVaultSession`. `VaultGroupEntry` gained an optional `memberAddress`. Documented in
+  `docs/FRONTEND.md`.
+- **Edit to Monse's file.** `src/data/vault.ts` (her restore flow) had its own first prompt to look up the vault id,
+  which the new design removes, and it imported the deleted modules. I changed only `restoreMyGroups` (use
+  `restoreVaultFromPasskey` when no passkey is saved, use the stored member address) and `currentEntries` (write the
+  address). Without this, `main` would not compile. She should review that diff.

@@ -1,17 +1,18 @@
 /**
- * Browser-side vault flows: saveVault and restoreVault. Each PRF output is derived into a key or id
- * and zeroed immediately after use; it is never stored, logged, or sent anywhere.
+ * Browser-side vault flows: saveVault, restoreVault and restoreVaultFromPasskey.
  *
- * Prompts: the vault id is cached locally after the first time it is derived (localCache.ts), so a
- * save on a device that has saved before needs one passkey prompt (the vault key). The very first
- * save on a device, and a restore on a device that has never saved (a new device), need two: one for
- * the vault id, one for the vault key.
+ * All of them use one PRF evaluation (VAULT_PRF_SALT) for the vault key and the vault id, and keep the
+ * result in memory for the page session (session.ts). Passkey prompts:
+ *   - saveVault: 1 on the first save of a page session, 0 after that.
+ *   - restoreVault: 1 on the first use of a page session, 0 after that.
+ *   - restoreVaultFromPasskey (a device with no passkey saved): 1, and it also returns the credential.
+ * The PRF output is zeroed right after deriving the key and id; it is never stored or sent anywhere.
  */
 import { getPasskeyPrfOutput, type WebAuthnClient } from "@category-labs/mera";
 import type { PasskeyCredential } from "../identity/passkey";
-import { VAULT_ID_PRF_SALT, VAULT_KEY_PRF_SALT } from "./salts";
-import { decryptVault, deriveVaultId, deriveVaultKey, encryptVault, type EncryptedVault } from "./crypto";
-import { getCachedVaultId, setCachedVaultId } from "./localCache";
+import { decryptVault, encryptVault, type EncryptedVault } from "./crypto";
+import { getVaultSession, primeVaultSession, type VaultSession } from "./session";
+import { VAULT_PRF_SALT } from "./salts";
 import type { VaultContent, VaultGroupEntry } from "./types";
 
 export class VaultClientError extends Error {
@@ -25,33 +26,18 @@ export class VaultClientError extends Error {
 
 type Common = { rpId: string; credential: PasskeyCredential; webAuthnClient?: WebAuthnClient };
 
-async function getOrDeriveVaultId(c: Common): Promise<string> {
-  const cached = getCachedVaultId();
-  if (cached) return cached;
+/** Returns the page session, asking the passkey once if there is none yet. */
+async function ensureSession(c: Common): Promise<VaultSession> {
+  const live = getVaultSession();
+  if (live) return live;
   const { prfOutput } = await getPasskeyPrfOutput({
     rpId: c.rpId,
     credential: c.credential,
-    prfSalt: VAULT_ID_PRF_SALT,
+    prfSalt: VAULT_PRF_SALT,
     webAuthnClient: c.webAuthnClient,
   });
   try {
-    const vaultId = await deriveVaultId(prfOutput);
-    setCachedVaultId(vaultId);
-    return vaultId;
-  } finally {
-    prfOutput.fill(0);
-  }
-}
-
-async function getVaultKey(c: Common): Promise<CryptoKey> {
-  const { prfOutput } = await getPasskeyPrfOutput({
-    rpId: c.rpId,
-    credential: c.credential,
-    prfSalt: VAULT_KEY_PRF_SALT,
-    webAuthnClient: c.webAuthnClient,
-  });
-  try {
-    return await deriveVaultKey(prfOutput);
+    return await primeVaultSession(prfOutput);
   } finally {
     prfOutput.fill(0);
   }
@@ -91,20 +77,45 @@ async function getVault(vaultId: string): Promise<EncryptedVault | null> {
 
 /** Saves the full group list for this passkey. Call after every create or join. */
 export async function saveVault(c: Common & { groups: VaultGroupEntry[] }): Promise<void> {
-  const vaultId = await getOrDeriveVaultId(c);
-  const key = await getVaultKey(c);
+  const session = await ensureSession(c);
   const content: VaultContent = { v: 1, groups: c.groups };
-  const encrypted = await encryptVault(key, content);
-  await putVault(vaultId, encrypted);
+  const encrypted = await encryptVault(session.vaultKey, content);
+  await putVault(session.vaultId, encrypted);
 }
 
-/** Restores the group list after passkey sign-in on a new device. Returns `null` when this passkey
- * has never saved a vault. */
+/** Restores the group list for a passkey that is already known on this device. Returns `null` when that
+ * passkey has never saved a vault. */
 export async function restoreVault(c: Common): Promise<VaultGroupEntry[] | null> {
-  const vaultId = await getOrDeriveVaultId(c);
-  const encrypted = await getVault(vaultId);
+  const session = await ensureSession(c);
+  const encrypted = await getVault(session.vaultId);
   if (!encrypted) return null;
-  const key = await getVaultKey(c);
-  const content = await decryptVault<VaultContent>(key, encrypted);
+  const content = await decryptVault<VaultContent>(session.vaultKey, encrypted);
   return content.groups;
+}
+
+/**
+ * For a device with no passkey saved yet: the platform picks the passkey (one prompt), which gives the
+ * credential and the vault key in the same step. Returns the credential so the caller can keep it, and the
+ * group list, or `null` when this passkey has never saved a vault.
+ */
+export async function restoreVaultFromPasskey(args: {
+  rpId: string;
+  webAuthnClient?: WebAuthnClient;
+}): Promise<{ credential: PasskeyCredential; groups: VaultGroupEntry[] | null }> {
+  const { credentialId, prfOutput } = await getPasskeyPrfOutput({
+    rpId: args.rpId,
+    prfSalt: VAULT_PRF_SALT,
+    webAuthnClient: args.webAuthnClient,
+  });
+  const credential: PasskeyCredential = { credentialId };
+  let session: VaultSession;
+  try {
+    session = await primeVaultSession(prfOutput);
+  } finally {
+    prfOutput.fill(0);
+  }
+  const encrypted = await getVault(session.vaultId);
+  if (!encrypted) return { credential, groups: null };
+  const content = await decryptVault<VaultContent>(session.vaultKey, encrypted);
+  return { credential, groups: content.groups };
 }

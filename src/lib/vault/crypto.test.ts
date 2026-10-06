@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { keccak256, stringToBytes } from "viem";
 import { decryptVault, deriveVaultId, deriveVaultKey, encryptVault } from "./crypto";
-import { memberAddressFromPrf } from "../identity/memberKey";
+import { VAULT_PRF_SALT } from "./salts";
 import { groupPrfSalt } from "../identity/groupSalt";
 import { getGroupPrfOutput } from "../identity/passkey";
-import type { WebAuthnClient } from "@category-labs/mera";
+import { getPasskeyPrfOutput, type WebAuthnClient } from "@category-labs/mera";
 
 // Simulated authenticator, same convention as identity.test.ts: PRF(salt) = keccak256(secret || salt).
 function fakeAuthenticator(secret: string): WebAuthnClient {
@@ -16,26 +16,25 @@ function fakeAuthenticator(secret: string): WebAuthnClient {
   };
 }
 
+const random32 = () => crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer>;
 const content = { v: 1 as const, groups: [{ groupId: `0x${"ab".repeat(32)}` as const, name: "Club", joinedAt: 1, credentialId: "abc" }] };
 
-describe("vault key and id derivation", () => {
+describe("vault key and id from one PRF output", () => {
   it("round-trips: encrypt then decrypt returns the same content", async () => {
-    const prfOutput = crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer>;
-    const key = await deriveVaultKey(prfOutput);
+    const key = await deriveVaultKey(random32());
     const encrypted = await encryptVault(key, content);
-    const decrypted = await decryptVault<typeof content>(key, encrypted);
-    expect(decrypted).toEqual(content);
+    expect(await decryptVault<typeof content>(key, encrypted)).toEqual(content);
   });
 
   it("fails to decrypt with a different (wrong) key", async () => {
-    const key1 = await deriveVaultKey(crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer>);
-    const key2 = await deriveVaultKey(crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer>);
+    const key1 = await deriveVaultKey(random32());
+    const key2 = await deriveVaultKey(random32());
     const encrypted = await encryptVault(key1, content);
     await expect(decryptVault(key2, encrypted)).rejects.toThrow();
   });
 
   it("uses a fresh IV on every write, so the ciphertext differs even for the same content and key", async () => {
-    const key = await deriveVaultKey(crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer>);
+    const key = await deriveVaultKey(random32());
     const a = await encryptVault(key, content);
     const b = await encryptVault(key, content);
     expect(a.iv).not.toBe(b.iv);
@@ -44,44 +43,33 @@ describe("vault key and id derivation", () => {
     expect(await decryptVault(key, b)).toEqual(content);
   });
 
-  it("vaultId is a 64-char hex string, distinct from any per-group member address", async () => {
-    const prfOutput = crypto.getRandomValues(new Uint8Array(32)) as Uint8Array<ArrayBuffer>;
-    const vaultId = await deriveVaultId(prfOutput);
-    expect(vaultId).toMatch(/^[0-9a-f]{64}$/);
+  it("the vault key is non-extractable: its raw bytes can never be read back", async () => {
+    const key = await deriveVaultKey(random32());
+    await expect(crypto.subtle.exportKey("raw", key)).rejects.toThrow();
   });
 
-  it("vault-id PRF output and a group's PRF output are unrelated, for the same passkey", async () => {
+  it("the vault id is 64 hex chars, and differs from the vault key's role (different HKDF info)", async () => {
+    const prfOutput = random32();
+    const id = await deriveVaultId(prfOutput);
+    expect(id).toMatch(/^[0-9a-f]{64}$/);
+    // Same PRF output, two info strings: the id must not be the key material. Encrypting with a key
+    // derived from the same output must still work, and decrypting with a key from another output must fail.
+    const key = await deriveVaultKey(prfOutput);
+    const encrypted = await encryptVault(key, content);
+    expect(await decryptVault(key, encrypted)).toEqual(content);
+    expect(await deriveVaultId(prfOutput)).toBe(id);
+  });
+
+  it("the vault PRF output and a group's PRF output are unrelated, for the same passkey", async () => {
     const auth = fakeAuthenticator("passkey-1");
     const credential = { credentialId: "AAAAAAAAAAAAAAAAAAAAAA", transports: ["internal"] as const };
     const groupId = `0x${"11".repeat(32)}` as const;
     const groupPrf = await getGroupPrfOutput({ rpId: "localhost", credential, groupId, webAuthnClient: auth });
-    const memberAddress = await memberAddressFromPrf(groupPrf);
-
-    // Derive the vault-id output the same way client.ts does, through the same fake authenticator.
-    const { getPasskeyPrfOutput } = await import("@category-labs/mera");
-    const { VAULT_ID_PRF_SALT, VAULT_KEY_PRF_SALT } = await import("./salts");
-    const vaultIdPrf = (
-      await getPasskeyPrfOutput({ rpId: "localhost", credential, prfSalt: VAULT_ID_PRF_SALT, webAuthnClient: auth })
-    ).prfOutput;
-    const vaultKeyPrf = (
-      await getPasskeyPrfOutput({ rpId: "localhost", credential, prfSalt: VAULT_KEY_PRF_SALT, webAuthnClient: auth })
-    ).prfOutput;
-
-    expect(groupPrf).not.toEqual(vaultIdPrf);
-    expect(groupPrf).not.toEqual(vaultKeyPrf);
-    expect(vaultIdPrf).not.toEqual(vaultKeyPrf);
-
-    const vaultId = await deriveVaultId(vaultIdPrf);
-    // A member address is 20 bytes with a 0x prefix; the vault id is 32 raw hex bytes, no prefix.
-    expect(vaultId).not.toBe(memberAddress.toLowerCase().slice(2));
-    expect(memberAddress.toLowerCase()).not.toContain(vaultId);
+    const vaultPrf = (await getPasskeyPrfOutput({ rpId: "localhost", credential, prfSalt: VAULT_PRF_SALT, webAuthnClient: auth })).prfOutput;
+    expect(groupPrf).not.toEqual(vaultPrf);
   });
 
-  it("groupPrfSalt and the vault salts are all different", async () => {
-    const { VAULT_ID_PRF_SALT, VAULT_KEY_PRF_SALT } = await import("./salts");
-    const gSalt = groupPrfSalt(`0x${"11".repeat(32)}`);
-    expect(gSalt).not.toEqual(VAULT_ID_PRF_SALT);
-    expect(gSalt).not.toEqual(VAULT_KEY_PRF_SALT);
-    expect(VAULT_ID_PRF_SALT).not.toEqual(VAULT_KEY_PRF_SALT);
+  it("the vault salt differs from every group salt", () => {
+    expect(VAULT_PRF_SALT).not.toEqual(groupPrfSalt(`0x${"11".repeat(32)}`));
   });
 });

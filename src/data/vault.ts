@@ -1,6 +1,5 @@
 "use client";
 
-import { getPasskeyPrfOutput } from "@category-labs/mera";
 import { useSyncExternalStore } from "react";
 import type { Hex } from "viem";
 import { storeCredential } from "@/components/use-credential";
@@ -8,10 +7,7 @@ import { loadCredential } from "@/lib/identity/credentialStore";
 import { memberAddressFromPrf } from "@/lib/identity/memberKey";
 import { getGroupPrfOutput, type PasskeyCredential } from "@/lib/identity/passkey";
 import { currentRpId } from "@/lib/identity/rpId";
-import { restoreVault, saveVault } from "@/lib/vault/client";
-import { deriveVaultId } from "@/lib/vault/crypto";
-import { setCachedVaultId } from "@/lib/vault/localCache";
-import { VAULT_ID_PRF_SALT } from "@/lib/vault/salts";
+import { restoreVault, restoreVaultFromPasskey, saveVault } from "@/lib/vault/client";
 import type { VaultGroupEntry } from "@/lib/vault/types";
 import { resolveDataMode } from "./mode";
 import { invalidateRemote } from "./remote";
@@ -63,6 +59,7 @@ function currentEntries(credential: PasskeyCredential): VaultGroupEntry[] {
     name: member.name ?? names.get(id.toLowerCase()) ?? shortId(id),
     joinedAt: member.joinedAt,
     credentialId: credential.credentialId,
+    memberAddress: member.address,
   }));
 }
 
@@ -102,7 +99,8 @@ export type RestoreResult =
   | { status: "none" }
   | { status: "done"; added: number; total: number; partial: boolean };
 
-/** One passkey prompt per group: the member address for a group comes from that group's own key. */
+/** One passkey prompt per group: the member address for a group comes from that group's own key. Only
+ * used for entries saved before addresses were stored in the vault. */
 async function memberAddress(credential: PasskeyCredential, groupId: Hex) {
   const prf = await getGroupPrfOutput({ rpId: currentRpId(), credential, groupId });
   try {
@@ -113,27 +111,25 @@ async function memberAddress(credential: PasskeyCredential, groupId: Hex) {
 }
 
 /**
- * Signs in with the passkey and brings back the groups saved for it. On a device that has no passkey
- * saved yet, the platform picks one (this is the "sign in" step) and the same prompt gives the vault id,
- * so a new device needs two prompts for the list, then one per group for that group's member address.
- * Returns `{ status: "none" }` when this passkey has never saved a list. Throws what the passkey and the
- * vault throw (`classifyError` turns it into a message).
+ * Signs in with the passkey and brings back the groups saved for it. On a device that has no passkey saved
+ * yet, the platform picks one (the "sign in" step) and the same prompt gives the vault key, so a new device
+ * needs one prompt for the list. Each group's member address is read from the vault, so there is no
+ * per-group prompt, except for groups saved before addresses were stored. Returns `{ status: "none" }` when
+ * this passkey has never saved a list. Throws what the passkey and the vault throw (`classifyError` turns
+ * it into a message).
  */
 export async function restoreMyGroups(onProgress?: (done: number, total: number) => void): Promise<RestoreResult> {
   const rpId = currentRpId();
   let credential = loadCredential();
-  if (!credential) {
-    const found = await getPasskeyPrfOutput({ rpId, prfSalt: VAULT_ID_PRF_SALT });
-    try {
-      setCachedVaultId(await deriveVaultId(found.prfOutput));
-    } finally {
-      found.prfOutput.fill(0);
-    }
-    credential = { credentialId: found.credentialId };
+  let saved: VaultGroupEntry[] | null;
+  if (credential) {
+    saved = await restoreVault({ rpId, credential });
+  } else {
+    const found = await restoreVaultFromPasskey({ rpId });
+    credential = found.credential;
     storeCredential(credential);
+    saved = found.groups;
   }
-
-  const saved = await restoreVault({ rpId, credential });
   if (saved === null) return { status: "none" };
 
   const known = new Set(Object.keys(getStoreSnapshot().members).map((id) => id.toLowerCase()));
@@ -145,7 +141,7 @@ export async function restoreMyGroups(onProgress?: (done: number, total: number)
   for (const entry of missing) {
     onProgress?.(added, missing.length);
     try {
-      const address = await memberAddress(credential, entry.groupId);
+      const address = entry.memberAddress ?? (await memberAddress(credential, entry.groupId));
       const id = entry.groupId.toLowerCase() as Hex;
       updateStore((s) => ({
         ...s,
