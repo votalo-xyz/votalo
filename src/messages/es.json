@@ -314,7 +314,7 @@
     "InvalidNameLength": "El nombre debe tener entre 1 y 80 caracteres.",
     "NotMember": "Todavía no eres parte de este grupo. Únete primero.",
     "AlreadyMember": "Ya eres parte de este grupo.",
-    "InvalidSignature": "No pudimos confirmar tu huella. Inténtalo otra vez.",
+    "InvalidSignature": "No pudimos confirmar tu identidad. Inténtalo otra vez.",
     "InviteRequired": "Este grupo es por invitación. Pide un enlace de invitación a quien lo creó.",
     "InviteNotAllowed": "Este enlace de invitación no es válido para este grupo.",
     "InviteAlreadyUsed": "Esta invitación ya la usó alguien más. Pide una nueva.",
@@ -333,7 +333,7 @@
     "DAILY_CAP_REACHED": "Hoy ya se alcanzó el límite de acciones. Vuelve mañana, por favor.",
     "RELAYER_NOT_CONFIGURED": "El servicio no está disponible en este momento. Inténtalo más tarde.",
     "INVALID_INPUT": "Revisa lo que escribiste e inténtalo otra vez.",
-    "PASSKEY_FAILED": "No pudimos confirmar con tu huella. Si lo cancelaste, puedes intentarlo otra vez.",
+    "PASSKEY_FAILED": "No pudimos confirmar con tu huella, Face ID o PIN. Si lo cancelaste, puedes intentarlo otra vez.",
     "PRF_UNAVAILABLE": "Este navegador no puede crear la llave de acceso que necesita Votalo.",
     "UNKNOWN": "Algo no salió como esperábamos. Inténtalo otra vez."
   },
@@ -343,7 +343,7 @@
     "holdHint": "Mantén presionado el círculo para votar por {option}.",
     "holdLabel": "Mantén presionado para votar por {option}",
     "keepHolding": "Sigue presionando hasta que el círculo se cierre.",
-    "working": "Confirma con tu huella…",
+    "working": "Confirma con tu huella, Face ID o PIN…",
     "done": "Listo. Tu voto por {option} quedó registrado.",
     "alreadyVoted": "Ya votaste por {option}. Tu voto cuenta una sola vez.",
     "alreadyVotedGeneric": "Ya votaste. Tu voto cuenta una sola vez.",
@@ -464,7 +464,7 @@
     "title": "Únete a {group} para votar",
     "body": "Tu huella crea tu credencial en este grupo. Solo sirve aquí y nadie puede enlazarla con tus otros grupos.",
     "button": "Unirme al grupo",
-    "joining": "Confirma con tu huella…",
+    "joining": "Confirma con tu huella, Face ID o PIN…",
     "inviteOnlyTitle": "Este grupo es por invitación",
     "inviteOnlyBody": "Para entrar necesitas un enlace de invitación de quien creó el grupo. Pídele uno y ábrelo en este teléfono."
   },
@@ -498,14 +498,14 @@
     "modeInviteBody": "Entran solo con una invitación que tú generas. Cada invitación se usa una sola vez.",
     "modeInviteNote": "Ojo: la invitación sirve para quien la use primero, así que compártela solo con quien quieres que entre.",
     "submit": "Crear grupo",
-    "creating": "Confirma con tu huella…",
+    "creating": "Confirma con tu huella, Face ID o PIN…",
     "doneTitle": "Tu grupo está listo",
     "doneBody": "Compártelo para que la gente entre y vote.",
     "goToGroup": "Ir al grupo"
   },
   "Invite": {
     "button": "Invitar personas",
-    "creating": "Confirma con tu huella…",
+    "creating": "Confirma con tu huella, Face ID o PIN…",
     "sheetTitle": "Invitar a {name}"
   },
   "GroupPage": {
@@ -545,7 +545,7 @@
       "d7": "7 días"
     },
     "submit": "Publicar votación",
-    "creating": "Confirma con tu huella…",
+    "creating": "Confirma con tu huella, Face ID o PIN…",
     "mustJoin": "Para crear una votación primero tienes que ser parte del grupo.",
     "goToGroup": "Ir al grupo",
     "duplicate": "Las opciones no pueden repetirse."

@@ -314,7 +314,7 @@
     "InvalidNameLength": "The name must be between 1 and 80 characters.",
     "NotMember": "You're not part of this group yet. Join first.",
     "AlreadyMember": "You're already part of this group.",
-    "InvalidSignature": "We couldn't confirm your fingerprint. Please try again.",
+    "InvalidSignature": "We couldn't confirm it's you. Please try again.",
     "InviteRequired": "This group is invite-only. Ask whoever created it for an invite link.",
     "InviteNotAllowed": "This invite link isn't valid for this group.",
     "InviteAlreadyUsed": "Someone else already used this invite. Ask for a new one.",
@@ -333,7 +333,7 @@
     "DAILY_CAP_REACHED": "Today's limit has been reached. Please come back tomorrow.",
     "RELAYER_NOT_CONFIGURED": "The service isn't available right now. Please try again later.",
     "INVALID_INPUT": "Check what you typed and try again.",
-    "PASSKEY_FAILED": "We couldn't confirm with your fingerprint. If you cancelled, you can try again.",
+    "PASSKEY_FAILED": "We couldn't confirm with your fingerprint, Face ID or PIN. If you cancelled, you can try again.",
     "PRF_UNAVAILABLE": "This browser can't create the kind of passkey Votalo needs.",
     "UNKNOWN": "Something didn't go as expected. Please try again."
   },
@@ -343,7 +343,7 @@
     "holdHint": "Press and hold the circle to vote for {option}.",
     "holdLabel": "Press and hold to vote for {option}",
     "keepHolding": "Keep pressing until the circle closes.",
-    "working": "Confirm with your fingerprint…",
+    "working": "Confirm with your fingerprint, Face ID or PIN…",
     "done": "Done. Your vote for {option} is recorded.",
     "alreadyVoted": "You already voted for {option}. Your vote counts once.",
     "alreadyVotedGeneric": "You already voted. Your vote counts once.",
@@ -464,7 +464,7 @@
     "title": "Join {group} to vote",
     "body": "Your fingerprint creates your credential in this group. It only works here and no one can link it to your other groups.",
     "button": "Join the group",
-    "joining": "Confirm with your fingerprint…",
+    "joining": "Confirm with your fingerprint, Face ID or PIN…",
     "inviteOnlyTitle": "This group is invite-only",
     "inviteOnlyBody": "To get in you need an invite link from whoever created the group. Ask them for one and open it on this phone."
   },
@@ -498,14 +498,14 @@
     "modeInviteBody": "People get in only with an invite you generate. Each invite is used once.",
     "modeInviteNote": "Heads up: an invite works for whoever uses it first, so share it only with the person you want to let in.",
     "submit": "Create group",
-    "creating": "Confirm with your fingerprint…",
+    "creating": "Confirm with your fingerprint, Face ID or PIN…",
     "doneTitle": "Your group is ready",
     "doneBody": "Share it so people can get in and vote.",
     "goToGroup": "Go to the group"
   },
   "Invite": {
     "button": "Invite people",
-    "creating": "Confirm with your fingerprint…",
+    "creating": "Confirm with your fingerprint, Face ID or PIN…",
     "sheetTitle": "Invite to {name}"
   },
   "GroupPage": {
@@ -545,7 +545,7 @@
       "d7": "7 days"
     },
     "submit": "Publish vote",
-    "creating": "Confirm with your fingerprint…",
+    "creating": "Confirm with your fingerprint, Face ID or PIN…",
     "mustJoin": "To create a vote you first need to be part of the group.",
     "goToGroup": "Go to the group",
     "duplicate": "Options can't repeat."
