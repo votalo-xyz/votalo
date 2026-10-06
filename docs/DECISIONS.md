@@ -770,3 +770,20 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
 - **Outcome: pending.** Waiting for the user to check the Envio dashboard for "Source: HyperSync" at
   100%. If it works: switch `ENVIO_GRAPHQL_URL` in Vercel, confirm totals match the contract, verify
   `/api/data/*`. If it fails or still shows RPC: revert `envio` to `8b84b2b`.
+
+## Hosted indexer on HyperSync: production switched (2026-10-06)
+
+- **The hosted service syncs with HyperSync without a token.** Deployment `28e237d` (branch `envio`)
+  reached 100% with "Source: HyperSync". No `ENVIO_API_TOKEN` is needed on the hosted service. The
+  free plan does not allow custom environment variables, so none could be set anyway.
+- **The endpoint URL changes on every indexer redeploy on the free plan.** Each deploy gets a new
+  deployment id in the URL. Whenever the indexer redeploys, `ENVIO_GRAPHQL_URL` in Vercel must be
+  updated to match, and the production app redeployed.
+- **Current endpoint**: `https://indexer.dev.hyperindex.xyz/9e5a8ae/v1/graphql`. Verified directly
+  against the contract: 8 groups, 17 members, 4 proposals, 7 votes. `DailyVoteCount`:
+  `2026-10-05: 5`, `2026-10-06: 2`.
+- **Production switched and verified**: `ENVIO_GRAPHQL_URL` set for Vercel Production, redeployed,
+  `/api/data/votes-per-day`, `/api/data/group/:id` and `/api/data/proposal/:id` return the same data
+  as the RPC-synced deployment did.
+- **Previous deployment `8b84b2b` (RPC-synced, `4c1d9a7`)** can now be deleted. Production no longer
+  reads from it.
