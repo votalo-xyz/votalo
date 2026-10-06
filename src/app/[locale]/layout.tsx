@@ -27,6 +27,9 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+  // Only addresses and short ids use it, all below the fold. Not preloading it keeps its download from
+  // competing with the fonts and scripts the first screen needs.
+  preload: false,
 });
 
 export function generateStaticParams() {

@@ -74,7 +74,7 @@
         },
         {
           "title": "What is public and permanent",
-          "body": "What is recorded on Monad is public and can't be erased or changed, not even at the request of whoever wrote it. Think before writing personal details in a group name, a question or an option. Your votes are visible inside their group under your credential in that group: it is not a secret ballot."
+          "body": "What is recorded on Monad is public and can't be erased or changed, not even at the request of whoever wrote it. Think before writing personal details in a group name, a question or an option. Your votes appear under your credential in that group and the record is public: it is not a secret ballot."
         },
         {
           "title": "Who it is shared with",
@@ -141,7 +141,7 @@
     }
   },
   "Demo": {
-    "badge": "Live example",
+    "badge": "Interactive example",
     "question": "Where do we eat on Friday?",
     "options": {
       "a": "Tacos al pastor",
@@ -210,7 +210,7 @@
     "items": {
       "visible": {
         "title": "Votes are visible inside the group",
-        "body": "Each vote appears under that person's credential in that group. It is not a secret ballot: that's how anyone can check the count is clean."
+        "body": "Each vote appears under that person's credential in that group, and the record is public. It is not a secret ballot: that's how anyone can check the count is clean."
       },
       "noPersonal": {
         "title": "We don't ask for your details",
@@ -257,7 +257,7 @@
     "items": {
       "secret": {
         "q": "Is it a secret ballot?",
-        "a": "No. Each vote is visible inside the group under the credential of whoever cast it. No one sees your name, but the other people in the group can see which credential voted what. If you need a secret ballot, Votalo isn't the right tool."
+        "a": "No. Each vote is visible inside the group under the credential of whoever cast it, and the record is public, so anyone who looks can see it too. Your name doesn't appear, but anyone who knows which credential is yours knows how you voted. If you need a secret ballot, Votalo isn't the right tool."
       },
       "devices": {
         "q": "Does it work on my phone?",
@@ -273,7 +273,7 @@
       },
       "invite": {
         "q": "Who can use an invite link?",
-        "a": "Whoever uses it first. An invite isn't tied to a specific person, so if the link reaches someone else, they can get in before your friend does. Share it only with the person you want to let in."
+        "a": "Whoever uses it first. An invite isn't tied to a specific person, so if the link reaches someone else, they can get in before the person you meant to invite. Share it only with the person you want to let in."
       },
       "where": {
         "q": "Where are votes stored?",
@@ -339,7 +339,7 @@
   },
   "Vote": {
     "optionsLegend": "Choose your option",
-    "pickOne": "Choose an option to be able to vote.",
+    "pickOne": "Choose an option to vote.",
     "holdHint": "Press and hold the circle to vote for {option}.",
     "holdLabel": "Press and hold to vote for {option}",
     "keepHolding": "Keep pressing until the circle closes.",
@@ -357,7 +357,7 @@
     "ringLabel": "Live results. {summary}",
     "optionResult": "{votes}, {percent}%",
     "votesWord": "{count, plural, one {vote} other {votes}}",
-    "needsPasskey": "Create your passkey to be able to vote."
+    "needsPasskey": "Create your passkey to vote."
   },
   "Shell": {
     "tabs": "App navigation",
@@ -382,7 +382,7 @@
     "hint": "We'll ask for Face ID, your fingerprint or your phone's PIN.",
     "privacy": "We don't ask for a name, email or phone number.",
     "haveTitle": "You already have your passkey",
-    "haveBody": "This browser already has your passkey. You can carry on.",
+    "haveBody": "This browser already has your passkey. You're good to go.",
     "continue": "Continue"
   },
   "Prf": {
@@ -437,7 +437,7 @@
     "more": "More options",
     "qr": "QR code for the link",
     "link": "Link",
-    "proposalText": "Vote on “{title}” on Votalo:",
+    "proposalText": "Let's vote: “{title}” on Votalo:",
     "groupText": "Join “{name}” on Votalo:",
     "button": "Share",
     "embed": "Embed on your site",
@@ -603,7 +603,7 @@
     },
     "identity": {
       "title": "A different identity in every group",
-      "body": "From your passkey, which lives on your phone or in your password manager, come different credentials for every group. Inside a group your credential is stable and verifiable: one person, one vote per vote. Between groups there's no way to link them."
+      "body": "Your passkey, which lives on your phone or in your password manager, produces a different credential for every group. Inside a group your credential is stable and verifiable: one person, one vote per vote. Between groups there's no way to link them."
     },
     "monad": {
       "title": "Votes live on Monad",
@@ -613,7 +613,7 @@
     "limits": {
       "title": "What you should know",
       "items": {
-        "secret": "It's not a secret ballot: each vote is visible inside the group under the credential of whoever cast it.",
+        "secret": "It's not a secret ballot: each vote appears under the credential of whoever cast it, and the record is public.",
         "passkeys": "In open groups, a determined person could create several passkeys and get in more than once.",
         "invite": "An invite works for whoever uses it first. It isn't tied to a specific person.",
         "late": "In open groups, someone who joins later can still vote on votes that were already open.",
@@ -690,7 +690,7 @@
     "sees": {
       "title": "What is visible",
       "items": {
-        "votes": "Each vote is visible inside the group, under the credential of whoever cast it.",
+        "votes": "Each vote is visible under the credential of whoever cast it: inside the group and, because the record is public, to anyone who looks.",
         "counts": "The count for each option is public and updates live.",
         "public": "That a credential exists, and which group it belongs to, is recorded on Monad, a public network."
       }
@@ -713,7 +713,7 @@
     "limits": {
       "title": "What we can't guarantee",
       "items": {
-        "secret": "It's not a secret ballot: anyone in the group can see which credential voted what.",
+        "secret": "It's not a secret ballot: anyone who checks the record can see which credential voted what, and anyone who knows which one is yours knows how you voted.",
         "forever": "What is recorded on Monad can't be erased or changed, not even at your request. Don't write personal details in a group name, a question or an option.",
         "passkeys": "In open groups, a determined person could get in with several passkeys."
       }

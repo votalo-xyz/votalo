@@ -74,7 +74,7 @@
         },
         {
           "title": "Lo que es público y permanente",
-          "body": "Lo que se registra en Monad es público y no se puede borrar ni modificar, ni siquiera a petición de quien lo escribió. Piensa antes de escribir datos personales en el nombre de un grupo, en una pregunta o en una opción. Tus votos son visibles dentro de su grupo bajo tu credencial en ese grupo: no es un voto secreto."
+          "body": "Lo que se registra en Monad es público y no se puede borrar ni modificar, ni siquiera a petición de quien lo escribió. Piensa antes de escribir datos personales en el nombre de un grupo, en una pregunta o en una opción. Tus votos aparecen bajo tu credencial en ese grupo y el registro es público: no es un voto secreto."
         },
         {
           "title": "Con quién se comparten",
@@ -141,7 +141,7 @@
     }
   },
   "Demo": {
-    "badge": "Ejemplo en vivo",
+    "badge": "Ejemplo interactivo",
     "question": "¿Dónde comemos el viernes?",
     "options": {
       "a": "Tacos al pastor",
@@ -210,7 +210,7 @@
     "items": {
       "visible": {
         "title": "Los votos se ven dentro del grupo",
-        "body": "Cada voto aparece bajo la credencial de esa persona en ese grupo. No es un voto secreto: así cualquiera puede comprobar que el conteo es limpio."
+        "body": "Cada voto aparece bajo la credencial de esa persona en ese grupo, y el registro es público. No es un voto secreto: así cualquiera puede comprobar que el conteo es limpio."
       },
       "noPersonal": {
         "title": "No pedimos tus datos",
@@ -232,7 +232,7 @@
     "lead": "No tienes que creernos. Todo se puede revisar.",
     "contract": {
       "title": "Contrato verificado",
-      "body": "El código que cuenta los votos está publicado y verificado en Monad. Puedes leerlo tal cual funciona.",
+      "body": "El código que cuenta los votos está publicado y verificado en Monad. Puedes leer exactamente lo que se ejecuta.",
       "link": "Ver en MonadVision"
     },
     "code": {
@@ -257,7 +257,7 @@
     "items": {
       "secret": {
         "q": "¿Es un voto secreto?",
-        "a": "No. Cada voto se ve dentro del grupo bajo la credencial de quien lo emitió. Nadie ve tu nombre, pero las demás personas del grupo sí pueden ver qué credencial votó qué. Si necesitas un voto secreto, Votalo no es la herramienta."
+        "a": "No. Cada voto se ve dentro del grupo bajo la credencial de quien lo emitió, y el registro es público, así que cualquiera que lo revise también lo ve. Tu nombre no aparece, pero quien sepa cuál credencial es tuya sabe cómo votaste. Si necesitas un voto secreto, Votalo no es la herramienta."
       },
       "devices": {
         "q": "¿Funciona en mi teléfono?",
@@ -269,11 +269,11 @@
       },
       "twice": {
         "q": "¿Alguien puede votar dos veces?",
-        "a": "Con una misma llave de acceso, no: cada credencial vota una vez por votación. Pero en los grupos abiertos una persona decidida podría crear varias llaves de acceso y entrar más de una vez. En los grupos por invitación cada invitación se usa una sola vez, lo que lo limita a una entrada por invitación."
+        "a": "Con una misma llave de acceso, no: cada credencial vota una vez por votación. Pero en los grupos abiertos una persona decidida podría crear varias llaves de acceso y entrar más de una vez. En los grupos por invitación cada invitación se usa una sola vez, así que entra una sola persona por invitación."
       },
       "invite": {
         "q": "¿Quién puede usar un enlace de invitación?",
-        "a": "Quien lo use primero. La invitación no está atada a una persona en concreto, así que si el enlace llega a alguien más, esa persona puede entrar antes que tu amistad. Compártelo solo con quien quieres que entre."
+        "a": "Quien lo use primero. La invitación no está atada a una persona en concreto, así que si el enlace llega a alguien más, esa persona puede entrar antes que la que querías invitar. Compártelo solo con quien quieres que entre."
       },
       "where": {
         "q": "¿Dónde se guardan los votos?",
@@ -293,7 +293,7 @@
       },
       "final": {
         "q": "¿Puedo cambiar mi voto?",
-        "a": "No. Cada persona vota una vez por votación y el voto es definitivo, para que el resultado se pueda confiar."
+        "a": "No. Cada persona vota una vez por votación y el voto es definitivo, para que puedas confiar en el resultado."
       },
       "create": {
         "q": "¿Quién puede crear votaciones?",
@@ -437,7 +437,7 @@
     "more": "Más opciones",
     "qr": "Código QR del enlace",
     "link": "Enlace",
-    "proposalText": "Vota en “{title}” en Votalo:",
+    "proposalText": "¿Votamos? “{title}”, en Votalo:",
     "groupText": "Únete a “{name}” en Votalo:",
     "button": "Compartir",
     "embed": "Insertar en tu sitio",
@@ -613,7 +613,7 @@
     "limits": {
       "title": "Lo que debes saber",
       "items": {
-        "secret": "No es un voto secreto: cada voto se ve dentro del grupo bajo la credencial de quien lo emitió.",
+        "secret": "No es un voto secreto: cada voto aparece bajo la credencial de quien lo emitió, y el registro es público.",
         "passkeys": "En los grupos abiertos, una persona decidida podría crear varias llaves de acceso y entrar más de una vez.",
         "invite": "Una invitación sirve para quien la use primero. No está atada a una persona en concreto.",
         "late": "En los grupos abiertos, quien entra después todavía puede votar en las votaciones que ya estaban abiertas.",
@@ -690,7 +690,7 @@
     "sees": {
       "title": "Lo que se ve",
       "items": {
-        "votes": "Cada voto se ve dentro del grupo, bajo la credencial de quien lo emitió.",
+        "votes": "Cada voto se ve bajo la credencial de quien lo emitió: dentro del grupo y, como el registro es público, para cualquiera que lo revise.",
         "counts": "El conteo de cada opción es público y se actualiza en vivo.",
         "public": "Que una credencial existe y a qué grupo pertenece queda registrado en Monad, una red pública."
       }
@@ -713,7 +713,7 @@
     "limits": {
       "title": "Lo que no podemos garantizar",
       "items": {
-        "secret": "No es un voto secreto: quien esté en el grupo puede ver qué credencial votó qué.",
+        "secret": "No es un voto secreto: cualquiera que revise el registro puede ver qué credencial votó qué, y quien sepa cuál es la tuya sabe cómo votaste.",
         "forever": "Lo que se registra en Monad no se puede borrar ni cambiar, ni siquiera a petición tuya. No escribas datos personales en el nombre de un grupo, en una pregunta o en una opción.",
         "passkeys": "En los grupos abiertos, una persona decidida podría entrar con varias llaves de acceso."
       }
