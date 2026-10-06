@@ -4,6 +4,8 @@ Votalo ("vote on it") lets any group make decisions together from a shared link.
 Members vote with a passkey (Face ID, fingerprint, or device PIN). Each vote is
 recorded on Monad testnet.
 
+Votalo is the decision layer community-governed products need: a game voting on its rules, a community choosing its feed's ranking, a collective deciding on its fund — one person, one vote, results no one can rig.
+
 Status: early build. See [docs/SPEC.md](docs/SPEC.md) for the build specification
 and [docs/DECISIONS.md](docs/DECISIONS.md) for architecture decisions.
 
