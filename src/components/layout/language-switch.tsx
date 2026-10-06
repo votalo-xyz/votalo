@@ -51,6 +51,9 @@ function Switch({ className }: { className?: string }) {
           <NextLink
             key={locale}
             href={switchHref(pathname, query, locale)}
+            // No prefetch: a "/" prefetched while the cookie still says "es" caches the redirect to /es,
+            // and clicking EN would then reuse that cached page. next-intl turns prefetch off for the same reason.
+            prefetch={false}
             hrefLang={locale}
             lang={locale}
             aria-current={current ? "true" : undefined}
