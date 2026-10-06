@@ -11,7 +11,9 @@ import { cn } from "../ui/cn";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "../ui/sheet";
 
 const noopSubscribe = () => () => {};
-const origin = () => window.location.origin;
+// Links and embeds always use the canonical site, so a shared link never points at a retired host.
+// Falls back to the current origin when NEXT_PUBLIC_SITE_URL is not set (local development).
+const origin = () => (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "");
 
 type Props = {
   /** Path inside the app, without language prefix, e.g. "/g/0x…/p/0x…". Query string allowed. */

@@ -14,6 +14,18 @@ const nextConfig: NextConfig = {
     // Only /embed/* may be framed by other sites; see src/security/frame-headers.ts.
     return frameHeaders();
   },
+  async redirects() {
+    // The old production host keeps working for shared links: permanent (308) redirect to the final
+    // domain, same path and query. Preview deployments use their own host names and are not affected.
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "votalo-six.vercel.app" }],
+        destination: "https://www.votalo.xyz/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

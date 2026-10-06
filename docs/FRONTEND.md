@@ -16,8 +16,12 @@ Status key: **ready** (implemented and tested), **planned** (not built yet; shap
 Import from `@/lib/identity/...`.
 
 ### `currentRpId(): string` (`rpId.ts`)
-Returns `NEXT_PUBLIC_RP_ID` when set, otherwise the current hostname. Passkeys are bound to it, so a
-preview origin and votalo.xyz do not share passkeys.
+Returns `NEXT_PUBLIC_RP_ID` when set, otherwise the current hostname. Production sets it to `votalo.xyz`
+(the registrable domain), so passkeys work on both `votalo.xyz` and `www.votalo.xyz`. Passkeys are bound to
+this id: a `*.vercel.app` origin cannot use `votalo.xyz`, so passkeys cannot be created on preview hosts.
+
+Share links and embed snippets use `NEXT_PUBLIC_SITE_URL` (production: `https://www.votalo.xyz`), never a
+hardcoded or `*.vercel.app` host. Build any new link or embed code from that value.
 
 ### `createVotaloPasskey({ rpId, displayName, webAuthnClient? }): Promise<PasskeyCredential>` (`passkey.ts`)
 Creates the user's passkey (one biometric or device-PIN prompt). Returns `{ credentialId, transports? }`.

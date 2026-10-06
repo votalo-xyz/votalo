@@ -535,3 +535,22 @@ here, not just the last successful run.
   a server with a real indexer the example id does not exist, so set `CRAWL_EMBED_ID` to a real proposal id.
   Also checked by hand in a real browser from another origin: the widget loaded in an iframe, and the browser
   itself refused to frame `/groups` and `/`.
+
+## Final domain: passkey RP id, site URL, old-host redirect (2026-10-05)
+
+- **Passkey RP id** `NEXT_PUBLIC_RP_ID=votalo.xyz` (Vercel Production). It is the registrable domain, so
+  passkeys work on both `votalo.xyz` and `www.votalo.xyz`. Before this, the fallback bound new passkeys to
+  whichever host served the page, so `www.votalo.xyz` would have produced a passkey bound to `www.votalo.xyz`.
+- **Passkeys created on `votalo-six.vercel.app` are bound to that host and will not carry over.** These are
+  test identities only. This is expected. Also, a `*.vercel.app` origin cannot use the `votalo.xyz` RP id, so
+  passkey creation no longer works on preview or old hosts at all. The old host now redirects to the final
+  domain (below), so those test identities are not reachable from anywhere.
+- **Site URL** `NEXT_PUBLIC_SITE_URL=https://www.votalo.xyz` (Vercel Production). It sets `metadataBase`
+  (og:url, og:image) in `src/app/[locale]/layout.tsx`. Share links and embed snippets now use it too
+  (`src/components/share/share-sheet.tsx`), so they never use `window.location.origin`, which would be
+  whatever host the viewer is on.
+- **Old host redirect.** `next.config.ts` `redirects()` sends `votalo-six.vercel.app/<path>` to
+  `https://www.votalo.xyz/<path>` with a permanent (308) status, keeping the path and query. It is scoped to
+  that host, so preview deployments are unaffected.
+- **No hardcoded `vercel.app` or `votalo.xyz` host remains in `src/`, the README, or the frontend doc.**
+  `docs/SPEC.md` keeps the domain as a spec fact, and that file is not app output.
