@@ -1592,3 +1592,47 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
   which the new design removes, and it imported the deleted modules. I changed only `restoreMyGroups` (use
   `restoreVaultFromPasskey` when no passkey is saved, use the stored member address) and `currentEntries` (write the
   address). Without this, `main` would not compile. She should review that diff.
+
+## Installable app (PWA) (2026-10-06)
+
+- **Manifest** (`src/app/manifest.ts`): `start_url` and `scope` are `/`, `display: standalone`, Plaza ink
+  (`#0D0B12`) for background and theme. Icons are in `public/pwa/`: 192 and 512 "any" (the app icon's rounded
+  square), and 192 and 512 "maskable" (full-bleed ink, ring at 80% so it stays inside the safe zone). The pack in
+  `public/branding-votalo` has no 192 px icon, so the PWA icons are new renders of the app icon, not pack files.
+  `apple-touch-icon.png` (180 px, full bleed) is linked from the layout; none existed before.
+- **Worker** (`src/app/sw.ts`, built by `@serwist/turbopack` through `src/app/serwist/[path]/route.ts`, served at
+  `/sw.js` by a rewrite). The worker is built with native esbuild: the WASM build fails on the Windows working
+  directory, and both builds use the same bundler this way.
+  - Precache: app shell (JS, CSS, fonts, icons) and the two offline pages. The brand pack is excluded from the
+    precache (27 files) because it is served from the network anyway.
+  - Never cached: `/api/*` (relay, data, vault, stats), `/embed/*`, `/branding-votalo`. These are network only, so
+    the widget and the brand pack behave as they do without a worker.
+  - Pages: network first (4 s), then the cache, then the locale's offline page (`/offline` or `/en/offline`).
+  - `skipWaiting` and `clientsClaim` are off. A new version waits until the person presses "Actualizar"; the
+    page reloads only after that. Nothing reloads mid-vote.
+  - The worker's revision for the offline pages is the commit SHA on Vercel, so each deploy refreshes them.
+- **Install card** (`src/components/pwa/install-card.tsx`): shown in the app shell only after a first group is
+  created or joined or a vote is cast, never on first load. Chromium uses `beforeinstallprompt` (captured at
+  page load, so an early prompt is not lost). iPhone and iPad Safari get the Share → "Agregar a inicio" steps,
+  since Safari has no prompt. "Ahora no" hides it for 14 days; once installed (`display-mode: standalone`, or
+  the `appinstalled` event, remembered) it never shows again.
+- **Me entry**: "Instalar app" stays on Me until the app is installed. With a browser prompt it has a button; on
+  iPhone it shows the Share steps; elsewhere it says to use the browser's menu.
+- **Updates**: the toast ("Nueva versión de Votalo") appears only when a changed worker is waiting, not on the
+  first install.
+- **No push notifications**, as asked.
+- **Checked in a real browser** (production build, Edge headless, local server): the worker installs and controls
+  the page; the app shell is precached (69 entries); `/api/data-mode` is in no cache; offline Spanish and English
+  pages appear for pages never visited online; the offline embed fails as a network error rather than showing the
+  offline page; the iPhone card and Me entry follow the rules above (no card on first load, "Ahora no" for 14
+  days, nothing after install); desktop without a prompt shows nothing; the update toast appears for a changed
+  worker and the page reloads only after "Actualizar" (done with a persistent profile: version 1 installed, the
+  worker rebuilt, the same profile reloaded).
+- **Not checked here**: Android's install prompt and a real iPhone. Passkeys in standalone mode were not run on a
+  device; the origin and rpId are unchanged, so nothing about the passkey setup should differ, but a real phone
+  must confirm it.
+- **Vault after votalo-66** (commit 74b0dbf): `saveVault` and `restoreVault` kept their signatures, and
+  `restoreMyGroups` already uses `restoreVaultFromPasskey` and each entry's `memberAddress`. Re-measured in the
+  emulated flow (page reloaded before each create, so each create starts with no session key): first create 2
+  prompts, second create 2 prompts (cold session each time), restore on a cleared device 1 prompt. Earlier counts in
+  this log (3, 2, 4) were from before the change.

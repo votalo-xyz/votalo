@@ -17,13 +17,19 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     // Only /embed/* may be framed by other sites; see src/security/frame-headers.ts.
-    return frameHeaders();
+    return [
+      ...frameHeaders(),
+      // The worker file must be revalidated, or a new version is never seen.
+      { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache" }] },
+    ];
   },
   async rewrites() {
     // The brand pack is a static folder in public/; Next does not serve a folder's index.html by itself.
     return [
       { source: "/branding-votalo", destination: "/branding-votalo/index.html" },
       { source: "/branding-votalo/", destination: "/branding-votalo/index.html" },
+      // The service worker is generated under /serwist; at /sw.js its scope is the whole site.
+      { source: "/sw.js", destination: "/serwist/sw.js" },
     ];
   },
   async redirects() {

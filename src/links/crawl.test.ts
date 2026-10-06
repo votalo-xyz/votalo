@@ -62,6 +62,34 @@ d("link crawl", { timeout: 180_000 }, () => {
     expect(pages.get(`/en/embed/p/${EMBED_ID}`), "EN widget").toBe(200);
   });
 
+  it("serves the app install files: manifest, icons, worker and offline pages in both languages", async () => {
+    const manifest = await fetch(BASE! + "/manifest.webmanifest", { redirect: "manual" });
+    expect(manifest.status, "manifest").toBe(200);
+    const json = (await manifest.json()) as { start_url: string; scope: string; display: string; icons: { src: string; purpose: string }[] };
+    expect(json.start_url).toBe("/");
+    expect(json.scope).toBe("/");
+    expect(json.display).toBe("standalone");
+    expect(json.icons.some((i) => i.purpose === "maskable"), "maskable icon").toBe(true);
+    for (const icon of json.icons) {
+      const res = await fetch(BASE! + icon.src, { redirect: "manual" });
+      expect(res.status, icon.src).toBe(200);
+      expect(res.headers.get("content-type"), icon.src).toBe("image/png");
+    }
+    const worker = await fetch(BASE! + "/sw.js", { redirect: "manual" });
+    expect(worker.status, "/sw.js").toBe(200);
+    expect(worker.headers.get("cache-control")).toBe("no-cache");
+    const source = await worker.text();
+    // The worker must never precache or serve the API, the widget or the brand pack.
+    const precached = [...source.matchAll(/url:"([^"]+)"/g)].map((m) => m[1]);
+    expect(precached.filter((u) => u.startsWith("/api/")), "api in precache").toEqual([]);
+    expect(precached.filter((u) => /embed|branding-votalo/.test(u)), "widget or brand pack in precache").toEqual([]);
+    expect(precached, "offline pages precached").toEqual(expect.arrayContaining(["/offline", "/en/offline"]));
+    for (const path of ["/offline", "/en/offline"]) {
+      const res = await fetch(BASE! + path, { redirect: "manual" });
+      expect(res.status, path).toBe(200);
+    }
+  });
+
   it("serves the brand pack page with its files, linked from both footers, without a language redirect", async () => {
     const { pages, broken } = await crawl(BASE!, ["/", "/en"]);
     expect(pages.get("/branding-votalo"), "brand page").toBe(200);

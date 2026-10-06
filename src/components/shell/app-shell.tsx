@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ViewTransition, type ReactNode } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Logo, LogoMark } from "../brand/logo";
+import { InstallCard } from "../pwa/install-card";
 import { cn } from "../ui/cn";
 import { SettingsSheet } from "./settings-sheet";
 import { ShellHeaderProvider, useShellHeader } from "./shell-title";
@@ -117,6 +118,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       <TopBar />
       <ViewTransition default="none" enter="page-swap" exit="page-swap">
         <main id="main" className="mx-auto w-full max-w-3xl px-4 pb-32 pt-6 sm:pt-10 md:pb-16">
+          <div className="mb-8 empty:hidden">
+            <InstallCard />
+          </div>
           {children}
         </main>
       </ViewTransition>

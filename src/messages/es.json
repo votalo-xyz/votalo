@@ -990,5 +990,27 @@
     "failed": "No pudimos guardar la lista de tus grupos para recuperarla en otro dispositivo. Lo que acabas de hacer sí quedó listo.",
     "retry": "Guardar de nuevo",
     "restoredTitle": "Tus grupos están de vuelta"
+  },
+  "Offline": {
+    "title": "Sin conexión por ahora",
+    "body": "Votalo necesita internet para registrar votos y mostrar resultados. Tus grupos siguen en este teléfono; vuelve a intentarlo cuando tengas señal.",
+    "retry": "Intentar de nuevo"
+  },
+  "Pwa": {
+    "updateTitle": "Nueva versión de Votalo",
+    "updateBody": "Actualiza cuando te convenga. No se cerrará nada mientras votas.",
+    "updateButton": "Actualizar",
+    "updateLater": "Después",
+    "installTitle": "Instala Votalo en tu teléfono",
+    "installBody": "Se abre como una app, sin barra del navegador. Tus llaves siguen en tu teléfono.",
+    "installButton": "Instalar",
+    "installLater": "Ahora no",
+    "iosTitle": "Instálalo en tu iPhone",
+    "iosStep1": "Toca el botón Compartir de Safari.",
+    "iosStep2": "Elige Agregar a inicio.",
+    "entry": "Instalar app",
+    "entryBody": "Ábrela desde tu pantalla de inicio, sin barra del navegador.",
+    "entryFallback": "Usa el menú de tu navegador y elige Instalar o Agregar a la pantalla de inicio.",
+    "installed": "Ya tienes la app instalada."
   }
 }

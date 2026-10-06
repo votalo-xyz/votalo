@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Providers } from "@/components/providers";
 import { routing } from "@/i18n/routing";
+import { PwaRoot } from "@/components/pwa/pwa-root";
 import { siteImageUrl } from "@/seo/metadata";
 import { SITE_URL } from "@/seo/site";
 import "../globals.css";
@@ -52,6 +53,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale: locale === "en" ? "en_US" : "es_MX",
       images: [{ url: siteImageUrl(locale === "en" ? "en" : "es"), width: 1200, height: 630, alt: t("title") }],
     },
+    appleWebApp: { capable: true, title: "Votalo" },
+    icons: { apple: "/pwa/apple-touch-icon.png" },
     twitter: {
       card: "summary_large_image",
       title: t("title"),
@@ -92,6 +95,7 @@ export default async function RootLayout({
       <body>
         <NextIntlClientProvider>
           <Providers>{children}</Providers>
+          <PwaRoot />
         </NextIntlClientProvider>
       </body>
     </html>

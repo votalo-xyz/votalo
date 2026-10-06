@@ -990,5 +990,27 @@
     "failed": "We couldn't save the list of your groups to restore on another device. What you just did went through.",
     "retry": "Save again",
     "restoredTitle": "Your groups are back"
+  },
+  "Offline": {
+    "title": "No connection for now",
+    "body": "Votalo needs internet to record votes and show results. Your groups are still on this phone; try again when you have signal.",
+    "retry": "Try again"
+  },
+  "Pwa": {
+    "updateTitle": "New version of Votalo",
+    "updateBody": "Update when it suits you. Nothing closes while you vote.",
+    "updateButton": "Update",
+    "updateLater": "Later",
+    "installTitle": "Install Votalo on your phone",
+    "installBody": "It opens like an app, without the browser bar. Your keys stay on your phone.",
+    "installButton": "Install",
+    "installLater": "Not now",
+    "iosTitle": "Install it on your iPhone",
+    "iosStep1": "Tap the Share button in Safari.",
+    "iosStep2": "Choose Add to Home Screen.",
+    "entry": "Install app",
+    "entryBody": "Open it from your home screen, without the browser bar.",
+    "entryFallback": "Use your browser's menu and choose Install or Add to Home Screen.",
+    "installed": "You already have the app installed."
   }
 }

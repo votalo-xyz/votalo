@@ -7,6 +7,7 @@ import { useMyGroups } from "@/data/hooks";
 import { useStore } from "@/data/store";
 import { Link } from "@/i18n/navigation";
 import { CredentialBadge } from "../brand/credential-badge";
+import { InstallEntry } from "../pwa/install-entry";
 import { shortAddress } from "../format";
 import { PasskeySetup } from "../passkey/passkey-setup";
 import { Skeleton } from "../ui/skeleton";
@@ -98,6 +99,8 @@ export function MeScreen() {
       </section>
 
       <RestoreGroups title="restoreMeTitle" />
+
+      <InstallEntry />
     </div>
   );
 }
