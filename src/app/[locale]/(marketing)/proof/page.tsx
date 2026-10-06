@@ -7,10 +7,11 @@ import { PageHeader } from "@/components/landing/page-header";
 import { CONTRACT_ADDRESS, CONTRACT_URL, GITHUB_URL } from "@/components/site";
 import { Reveal } from "@/components/ui/reveal";
 import { resolveLocale } from "@/i18n/locale";
+import { pageMetadata } from "@/seo/metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = await resolveLocale(params);
-  return { title: (await getTranslations({ locale, namespace: "ProofPage" }))("metaTitle") };
+  return pageMetadata({ locale, path: "/proof", title: (await getTranslations({ locale, namespace: "ProofPage" }))("metaTitle") });
 }
 
 const STEPS = ["one", "two", "three", "four"] as const;

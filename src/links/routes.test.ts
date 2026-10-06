@@ -101,7 +101,8 @@ describe("internal links", () => {
   });
 
   it("serves only the legal documents that exist", () => {
-    const legal = links.filter(({ link }) => link.startsWith("/legal/")).map(({ link }) => link);
+    // "/legal/x" is a template such as `/legal/${doc}` with its placeholder filled in, not a link to a document.
+    const legal = links.filter(({ link }) => link.startsWith("/legal/") && link !== "/legal/x").map(({ link }) => link);
     for (const link of legal) expect(["/legal/privacy", "/legal/terms"], link).toContain(link);
   });
 });

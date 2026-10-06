@@ -5,10 +5,11 @@ import { PageHeader } from "@/components/landing/page-header";
 import { GITHUB_URL } from "@/components/site";
 import { Reveal } from "@/components/ui/reveal";
 import { resolveLocale } from "@/i18n/locale";
+import { pageMetadata } from "@/seo/metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = await resolveLocale(params);
-  return { title: (await getTranslations({ locale, namespace: "FaqPage" }))("metaTitle") };
+  return pageMetadata({ locale, path: "/faq", title: (await getTranslations({ locale, namespace: "FaqPage" }))("metaTitle") });
 }
 
 export default async function FaqPage({ params }: { params: Promise<{ locale: string }> }) {

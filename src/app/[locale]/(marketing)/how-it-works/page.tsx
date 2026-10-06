@@ -7,11 +7,12 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Reveal } from "@/components/ui/reveal";
 import { resolveLocale } from "@/i18n/locale";
+import { pageMetadata } from "@/seo/metadata";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = await resolveLocale(params);
-  return { title: (await getTranslations({ locale, namespace: "HowPage" }))("metaTitle") };
+  return pageMetadata({ locale, path: "/how-it-works", title: (await getTranslations({ locale, namespace: "HowPage" }))("metaTitle") });
 }
 
 const STEPS = [

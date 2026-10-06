@@ -5,12 +5,14 @@ import type { Hex } from "viem";
 import { isHex32 } from "@/components/ids";
 import { NewProposalScreen } from "@/components/group/new-proposal-screen";
 import { resolveLocale } from "@/i18n/locale";
+import { pageMetadata } from "@/seo/metadata";
 
 type Params = Promise<{ locale: string; groupId: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const locale = await resolveLocale(params);
-  return { title: (await getTranslations({ locale, namespace: "NewProposal" }))("metaTitle") };
+  const { groupId } = await params;
+  return pageMetadata({ locale, path: `/g/${groupId}/new`, title: (await getTranslations({ locale, namespace: "NewProposal" }))("metaTitle") });
 }
 
 export default async function NewProposalPage({ params }: { params: Params }) {

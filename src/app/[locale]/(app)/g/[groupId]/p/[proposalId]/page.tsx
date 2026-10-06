@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { Hex } from "viem";
-import { ProposalScreen } from "@/components/vote/proposal-screen";
-import { buildDemo } from "@/data/demo";
-import { resolveLocale } from "@/i18n/locale";
 import { isHex32 } from "@/components/ids";
+import { ProposalScreen } from "@/components/vote/proposal-screen";
+import { resolveLocale } from "@/i18n/locale";
+import { readProposalTitle } from "@/seo/data";
+import { pageMetadata, proposalImageUrl } from "@/seo/metadata";
 
 type Params = Promise<{ locale: string; groupId: string; proposalId: string }>;
 
@@ -13,23 +14,15 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const locale = await resolveLocale(params);
   const { groupId, proposalId } = await params;
   const t = await getTranslations({ locale, namespace: "Proposal" });
-  const d = await getTranslations({ locale, namespace: "DemoData" });
-  // Titles are not stored on chain, so the server only knows the example proposals. Others get a generic card.
-  const demo = buildDemo(
-    {
-      group: d("group"),
-      open: { title: d("open.title"), options: d.raw("open.options") as string[] },
-      closed: { title: d("closed.title"), options: d.raw("closed.options") as string[] },
-    },
-    Math.floor(Date.now() / 1000),
-  );
-  const title = demo.proposals.find((p) => p.id === proposalId)?.title ?? t("ogTitle");
-  return {
-    title,
+  // The real question when the data service has it (that is what people see in the chat), else a generic title.
+  const title = isHex32(proposalId) ? await readProposalTitle(proposalId) : undefined;
+  return pageMetadata({
+    locale,
+    path: `/g/${groupId}/p/${proposalId}`,
+    title: title ?? t("metaTitle"),
     description: t("ogTagline"),
-    openGraph: { title, description: t("ogTagline"), type: "website", url: `/${locale}/g/${groupId}/p/${proposalId}` },
-    twitter: { card: "summary_large_image", title, description: t("ogTagline") },
-  };
+    image: proposalImageUrl(locale, proposalId.toLowerCase()),
+  });
 }
 
 export default async function ProposalPage({ params }: { params: Params }) {

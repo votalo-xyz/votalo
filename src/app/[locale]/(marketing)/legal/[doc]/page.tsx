@@ -6,6 +6,7 @@ import { GITHUB_URL } from "@/components/site";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { resolveLocale } from "@/i18n/locale";
+import { pageMetadata } from "@/seo/metadata";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { doc } = await params;
   if (!DOCS.includes(doc as Doc)) return {};
   const t = await getTranslations({ locale, namespace: "Legal" });
-  return { title: t(`${doc as Doc}.title`) };
+  return pageMetadata({ locale, path: `/legal/${doc}`, title: t(`${doc as Doc}.title`) });
 }
 
 export default async function LegalPage({ params }: { params: Promise<{ locale: string; doc: string }> }) {

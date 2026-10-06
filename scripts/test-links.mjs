@@ -41,7 +41,7 @@ let code = 1;
 try {
   await ready();
   code = await new Promise((resolve) => {
-    const run = spawn("npx", ["vitest", "run", "src/links/crawl.test.ts"], {
+    const run = spawn("npx", ["vitest", "run", "src/links/crawl.test.ts", "src/links/share-metadata.test.ts"], {
       env: { ...env, CRAWL_BASE_URL: base },
       stdio: "inherit",
       shell: true,

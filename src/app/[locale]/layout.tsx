@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Providers } from "@/components/providers";
 import { routing } from "@/i18n/routing";
+import { siteImageUrl } from "@/seo/metadata";
+import { SITE_URL } from "@/seo/site";
 import "../globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -27,12 +29,6 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
-
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -41,19 +37,24 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations({ locale: hasLocale(routing.locales, locale) ? locale : routing.defaultLocale, namespace: "Meta" });
   return {
-    metadataBase: new URL(siteUrl),
+    metadataBase: new URL(SITE_URL),
     title: { default: t("title"), template: t("template") },
     description: t("description"),
     applicationName: "Votalo",
     openGraph: {
       type: "website",
-      url: `/${locale}`,
       siteName: "Votalo",
       title: t("title"),
       description: t("description"),
       locale: locale === "en" ? "en_US" : "es_MX",
+      images: [{ url: siteImageUrl(locale === "en" ? "en" : "es"), width: 1200, height: 630, alt: t("title") }],
     },
-    twitter: { card: "summary_large_image", title: t("title"), description: t("description") },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("description"),
+      images: [siteImageUrl(locale === "en" ? "en" : "es")],
+    },
   };
 }
 

@@ -41,6 +41,23 @@ Run the contract tests with `cd contracts && forge test --network monad` (Foundr
 - **Votes are pseudonymous, not secret.** Each vote is public per member address inside its group.
 - **The relayer's gas key is set only for the Production environment** on Vercel, not Preview. Preview deploys cannot relay transactions until that is set separately.
 
+## Brand
+
+The Votalo logo, as SVG and as transparent PNGs. The `-on-dark` files use the dark-theme colors and a light
+center dot, for dark backgrounds; the others are for light backgrounds.
+
+| File | Use |
+|---|---|
+| [votalo-logo.svg](public/brand/votalo-logo.svg) | Logo with name (wordmark as outlines, no font needed), light backgrounds |
+| [votalo-logo-on-dark.svg](public/brand/votalo-logo-on-dark.svg) | Logo with name, dark backgrounds |
+| [votalo-mark.svg](public/brand/votalo-mark.svg) | Mark only, light backgrounds |
+| [votalo-mark-on-dark.svg](public/brand/votalo-mark-on-dark.svg) | Mark only, dark backgrounds |
+| [votalo-mark-512.png](public/brand/votalo-mark-512.png), [votalo-mark-1024.png](public/brand/votalo-mark-1024.png) | Mark, 512 and 1024 px square, transparent, light backgrounds |
+| [votalo-mark-on-dark-512.png](public/brand/votalo-mark-on-dark-512.png), [votalo-mark-on-dark-1024.png](public/brand/votalo-mark-on-dark-1024.png) | Mark, 512 and 1024 px square, transparent, dark backgrounds |
+
+The mark is three arcs and a dot: the same shape as the living ring that shows results. The wordmark is
+Bricolage Grotesque ExtraBold, used under the SIL Open Font License (`src/seo/fonts/OFL.txt`).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

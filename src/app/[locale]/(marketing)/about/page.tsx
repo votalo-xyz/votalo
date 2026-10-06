@@ -6,11 +6,12 @@ import { CONTRACT_URL, GITHUB_URL } from "@/components/site";
 import { buttonVariants } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { resolveLocale } from "@/i18n/locale";
+import { pageMetadata } from "@/seo/metadata";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = await resolveLocale(params);
-  return { title: (await getTranslations({ locale, namespace: "About" }))("metaTitle") };
+  return pageMetadata({ locale, path: "/about", title: (await getTranslations({ locale, namespace: "About" }))("metaTitle") });
 }
 
 const LIMITS = ["secret", "passkeys", "invite", "late", "ip"] as const;

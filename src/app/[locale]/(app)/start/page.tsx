@@ -3,11 +3,12 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { StartScreen } from "@/components/passkey/start-screen";
 import { resolveLocale } from "@/i18n/locale";
+import { pageMetadata } from "@/seo/metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = await resolveLocale(params);
   const t = await getTranslations({ locale, namespace: "Onboarding" });
-  return { title: t("metaTitle") };
+  return pageMetadata({ locale, path: "/start", title: t("metaTitle") });
 }
 
 export default async function StartPage({ params }: { params: Promise<{ locale: string }> }) {

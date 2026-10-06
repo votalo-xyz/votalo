@@ -4,11 +4,12 @@ import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/landing/page-header";
 import { Reveal } from "@/components/ui/reveal";
 import { resolveLocale } from "@/i18n/locale";
+import { pageMetadata } from "@/seo/metadata";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = await resolveLocale(params);
-  return { title: (await getTranslations({ locale, namespace: "PrivacyPage" }))("metaTitle") };
+  return pageMetadata({ locale, path: "/privacy", title: (await getTranslations({ locale, namespace: "PrivacyPage" }))("metaTitle") });
 }
 
 const SECTIONS: { key: "sees" | "hidden" | "service" | "limits"; icon: LucideIcon; items: string[]; tone: string }[] = [
