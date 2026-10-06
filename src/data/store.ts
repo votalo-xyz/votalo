@@ -14,8 +14,8 @@ export type StoreState = {
   /** Groups created in this browser. */
   groups: Group[];
   proposals: Proposal[];
-  /** Member address per group joined from this browser. */
-  members: Record<Hex, { address: Address; joinedAt: number }>;
+  /** Member address per group joined from this browser. `name` is kept for the encrypted backup of the group list. */
+  members: Record<Hex, { address: Address; joinedAt: number; name?: string }>;
   /**
    * Votes cast from this browser. `baseline` is the proposal total at that moment: the vote counts on
    * top of the shown total until the total passes it, so a vote is never counted twice.

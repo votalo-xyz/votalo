@@ -6,6 +6,7 @@ import { useState } from "react";
 import { createVotaloPasskey, type PasskeyCredential } from "@/lib/identity/passkey";
 import { currentRpId } from "@/lib/identity/rpId";
 import { classifyError, type ErrorKey } from "../errors";
+import { RestoreGroups } from "../group/restore-groups";
 import { Button } from "../ui/button";
 import { storeCredential } from "../use-credential";
 import { PrfUnavailable } from "./prf-unavailable";
@@ -76,6 +77,8 @@ export function PasskeySetup({
         <ShieldCheck aria-hidden="true" className="size-4 shrink-0 text-success-text" />
         {t("privacy")}
       </p>
+      {/* A synced passkey on a new device: signing in and restoring is the right step, not making a second passkey. */}
+      {!inline && <RestoreGroups compact title="restoreTitle" className="w-full border-t border-line pt-6" />}
     </div>
   );
 }

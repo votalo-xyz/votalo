@@ -27,10 +27,12 @@ type Props = {
   trigger?: ReactNode;
   /** Path of an embeddable widget for this item, e.g. "/embed/p/0x…". Adds an "Embed" option that copies an iframe. */
   embedPath?: string;
+  /** Something to show under the description, such as a status. The sheet covers the page, so it must show it here. */
+  notice?: ReactNode;
 };
 
 /** Share sheet: WhatsApp with prefilled text, Telegram, copy link, QR, and the system share sheet when there is one. */
-export function ShareSheet({ path, text, heading, open, onOpenChange, trigger, embedPath }: Props) {
+export function ShareSheet({ path, text, heading, open, onOpenChange, trigger, embedPath, notice }: Props) {
   const t = useTranslations("Share");
   const c = useTranslations("Common");
   const locale = useLocale() as Locale;
@@ -87,6 +89,7 @@ export function ShareSheet({ path, text, heading, open, onOpenChange, trigger, e
           </SheetClose>
         </div>
         <SheetDescription className="px-5 text-muted">{t("description")}</SheetDescription>
+        {notice && <div className="px-5 pt-4">{notice}</div>}
 
         <div className="flex flex-col gap-3 overflow-y-auto px-5 pb-6 pt-5">
           <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={rowClass}>

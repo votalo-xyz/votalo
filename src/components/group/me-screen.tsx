@@ -10,6 +10,8 @@ import { CredentialBadge } from "../brand/credential-badge";
 import { shortAddress } from "../format";
 import { PasskeySetup } from "../passkey/passkey-setup";
 import { Skeleton } from "../ui/skeleton";
+import { BackupStatus } from "./backup-status";
+import { RestoreGroups } from "./restore-groups";
 import { useCredential } from "../use-credential";
 
 /** Overview: the passkey on this device, and the credential it made in each group. */
@@ -41,6 +43,7 @@ export function MeScreen() {
 
   return (
     <div className="flex flex-col gap-10">
+      <BackupStatus className="-mb-4" />
       <header className="flex items-start gap-5">
         <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-success/15 text-success-text">
           <Fingerprint aria-hidden="true" className="size-7" strokeWidth={1.6} />
@@ -93,6 +96,8 @@ export function MeScreen() {
           </ul>
         )}
       </section>
+
+      <RestoreGroups title="restoreMeTitle" />
     </div>
   );
 }

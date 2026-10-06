@@ -7,6 +7,7 @@ import { memberAddressFromPrf } from "@/lib/identity/memberKey";
 import { getGroupPrfOutput, type PasskeyCredential } from "@/lib/identity/passkey";
 import { currentRpId } from "@/lib/identity/rpId";
 import { resolveDataMode } from "./mode";
+import { backUpGroups } from "./vault";
 import { invalidateRemote } from "./remote";
 import { getStoreSnapshot, updateStore } from "./store";
 import type { GroupMode } from "./types";
@@ -53,8 +54,8 @@ async function promptMemberAddress({ credential }: Common, groupId: Hex): Promis
   }
 }
 
-function rememberMember(groupId: Hex, address: Address) {
-  updateStore((s) => ({ ...s, members: { ...s.members, [groupId]: { address, joinedAt: nowSeconds() } } }));
+function rememberMember(groupId: Hex, address: Address, name?: string) {
+  updateStore((s) => ({ ...s, members: { ...s.members, [groupId]: { address, joinedAt: nowSeconds(), name } } }));
 }
 
 export async function createGroup(args: Common & { name: string; mode: GroupMode }) {
@@ -76,9 +77,11 @@ export async function createGroup(args: Common & { name: string; mode: GroupMode
   updateStore((s) => ({
     ...s,
     groups: [{ id: groupId, name: args.name, mode: args.mode, members: 1, mine: true, demo: false }, ...s.groups],
-    members: { ...s.members, [groupId]: { address: admin, joinedAt: nowSeconds() } },
+    members: { ...s.members, [groupId]: { address: admin, joinedAt: nowSeconds(), name: args.name } },
   }));
   invalidateRemote();
+  // The encrypted copy of the group list is not part of the action: if it fails, the group still exists.
+  backUpGroups(args.credential);
   return { groupId, admin };
 }
 
@@ -90,7 +93,7 @@ export async function createInvite(args: Common & { groupId: Hex }): Promise<Inv
   return { inviteId: randomHex(32), adminInviteSig: randomHex(65) };
 }
 
-export async function joinGroup(args: Common & { groupId: Hex; mode: GroupMode; invite?: Invite }) {
+export async function joinGroup(args: Common & { groupId: Hex; mode: GroupMode; invite?: Invite; name?: string }) {
   if (getStoreSnapshot().members[args.groupId]) throw new RelayClientError("AlreadyMember", 409);
   const live = await isLive();
   let member: Address;
@@ -106,8 +109,9 @@ export async function joinGroup(args: Common & { groupId: Hex; mode: GroupMode; 
     member = await promptMemberAddress(args, args.groupId);
     await pause(600);
   }
-  rememberMember(args.groupId, member);
+  rememberMember(args.groupId, member, args.name);
   invalidateRemote();
+  backUpGroups(args.credential);
   return { member };
 }
 

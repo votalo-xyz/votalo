@@ -16,6 +16,7 @@ import { cn } from "../ui/cn";
 import { Counter, Input } from "../ui/input";
 import { Skeleton } from "../ui/skeleton";
 import { useCredential } from "../use-credential";
+import { BackupStatus } from "./backup-status";
 import { InviteButton } from "./invite-button";
 
 const MAX_NAME = 80;
@@ -63,6 +64,7 @@ export function CreateGroupScreen() {
         <p className="text-lead text-muted">
           <span className="font-semibold text-fg">{created.name}</span>. {t("doneBody")}
         </p>
+        <BackupStatus className="w-full" />
         <div className="flex flex-wrap items-center gap-3">
           <InviteButton groupId={created.id} groupName={created.name} mode={created.mode} variant="primary" autoOpen />
           <Link href={`/g/${created.id}`} className={buttonVariants({ variant: "secondary", size: "sm" })}>

@@ -2,18 +2,26 @@
 
 import { Plus, UsersRound } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { useMyGroups, useNowSeconds } from "@/data/hooks";
+import { useStore } from "@/data/store";
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "../ui/button";
 import { cn } from "../ui/cn";
 import { LoadError } from "../ui/load-error";
 import { Skeleton } from "../ui/skeleton";
 import { GroupCard } from "./parts";
+import { RestoreGroups } from "./restore-groups";
 
 export function GroupsScreen() {
   const t = useTranslations("Groups");
   const groups = useMyGroups();
   const now = useNowSeconds();
+  const store = useStore();
+  // Nothing of mine on this device: a new device, or cleared site data. The list may be saved for my passkey.
+  const nothingHere = !!store && Object.keys(store.members).length === 0 && store.groups.length === 0;
+  // Once a restore has run here, keep its block on screen: its message says what came back.
+  const [restoredHere, setRestoredHere] = useState(false);
 
   return (
     <div className="flex flex-col gap-8">
@@ -55,6 +63,8 @@ export function GroupsScreen() {
           ))}
         </ul>
       )}
+
+      {(nothingHere || restoredHere) && <RestoreGroups title="restoreTitle" onRestored={() => setRestoredHere(true)} />}
     </div>
   );
 }

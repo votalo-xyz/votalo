@@ -52,7 +52,7 @@ export function JoinCard({
     setBusy(true);
     setError(null);
     try {
-      await joinGroup({ credential, groupId, mode, invite: invite ?? undefined });
+      await joinGroup({ credential, groupId, mode, invite: invite ?? undefined, name: groupName });
       onJoined?.();
     } catch (err) {
       setError(classifyError(err));

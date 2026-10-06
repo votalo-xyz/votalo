@@ -64,7 +64,7 @@
         },
         {
           "title": "Qué datos tratamos",
-          "body": "No pedimos nombre, correo, teléfono ni contraseña. Lo que existe es esto. En tu dispositivo: el identificador de tu llave de acceso y datos públicos de tus grupos (identificadores, tu dirección de miembro en cada grupo y tus votos), guardados en el almacenamiento de tu navegador, además de tu idioma y tu tema. Tu huella y tu llave privada nunca salen de tu dispositivo. Al votar o crear algo: tu dirección de miembro en ese grupo, el texto que escribes (nombre del grupo, pregunta y opciones) y tu voto se registran en Monad. Al usar el sitio: como cualquier sitio web, nuestro proveedor de alojamiento y el servicio que envía tu acción a la red pueden ver tu dirección IP y datos técnicos de la conexión."
+          "body": "No pedimos nombre, correo, teléfono ni contraseña. Lo que existe es esto. En tu dispositivo: el identificador de tu llave de acceso y datos públicos de tus grupos (identificadores, tu dirección de miembro en cada grupo y tus votos), guardados en el almacenamiento de tu navegador, además de tu idioma y tu tema. Tu huella y tu llave privada nunca salen de tu dispositivo. Al votar o crear algo: tu dirección de miembro en ese grupo, el texto que escribes (nombre del grupo, pregunta y opciones) y tu voto se registran en Monad. En nuestros servidores: la lista de tus grupos (nombre, identificador y fecha en que entraste), cifrada con una llave que solo tu llave de acceso puede generar; no podemos leerla. Al usar el sitio: como cualquier sitio web, nuestro proveedor de alojamiento y el servicio que envía tu acción a la red pueden ver tu dirección IP y datos técnicos de la conexión."
         },
         {
           "title": "Cookies y seguimiento",
@@ -337,7 +337,8 @@
     "INVALID_INPUT": "Revisa lo que escribiste e inténtalo otra vez.",
     "PASSKEY_FAILED": "No pudimos confirmar con tu huella, Face ID o PIN. Si lo cancelaste, puedes intentarlo otra vez.",
     "PRF_UNAVAILABLE": "Este navegador no puede crear la llave de acceso que necesita Votalo.",
-    "UNKNOWN": "Algo no salió como esperábamos. Inténtalo otra vez."
+    "UNKNOWN": "Algo no salió como esperábamos. Inténtalo otra vez.",
+    "VAULT_TOO_LARGE": "Tu lista de grupos ya no cabe en la copia cifrada."
   },
   "Vote": {
     "optionsLegend": "Elige tu opción",
@@ -702,7 +703,8 @@
       "items": {
         "details": "Tu nombre, correo o teléfono: no los pedimos.",
         "biometrics": "Tu huella o tu Face ID: nunca salen de tu dispositivo.",
-        "groups": "En qué otros grupos participas: las credenciales de grupos distintos no se pueden enlazar."
+        "groups": "En qué otros grupos participas: las credenciales de grupos distintos no se pueden enlazar.",
+        "vault": "La lista de tus grupos se guarda cifrada con una llave que solo tu llave de acceso puede generar; no podemos leerla."
       }
     },
     "service": {
@@ -839,7 +841,8 @@
       "items": {
         "inside": "Dentro de un grupo: un miembro, un voto.",
         "across": "Entre grupos: nadie puede ligar tus identidades.",
-        "stored": "Tus claves por grupo nunca se guardan en nuestros servidores."
+        "stored": "Tus claves por grupo nunca se guardan en nuestros servidores.",
+        "vault": "La lista de tus grupos se guarda cifrada con una llave que solo tu llave de acceso puede generar; no podemos leerla."
       },
       "privacy": "Leer los detalles de privacidad",
       "mera": "Mera en npm",
@@ -970,5 +973,21 @@
         }
       }
     }
+  },
+  "Vault": {
+    "note": "La lista de tus grupos se guarda cifrada con una llave que solo tu llave de acceso puede generar; no podemos leerla.",
+    "restoreTitle": "¿Ya usabas Votalo en otro dispositivo?",
+    "restoreMeTitle": "Tus grupos en otro dispositivo",
+    "restoreButton": "Recuperar mis grupos",
+    "restoring": "Confirma con tu huella, Face ID o PIN…",
+    "progress": "Confirma para abrir el grupo {current} de {total}…",
+    "restored": "Listo. Recuperamos {count, plural, one {# grupo} other {# grupos}}.",
+    "upToDate": "Ya tienes aquí todos los grupos guardados.",
+    "partial": "Recuperamos {done} de {total}. Puedes volver a intentarlo para el resto.",
+    "none": "Todavía no hay grupos guardados para esta llave de acceso. Se guardan cuando creas un grupo o te unes a uno.",
+    "saving": "Guardando tu lista de grupos, cifrada…",
+    "saved": "Lista de grupos guardada, cifrada.",
+    "failed": "No pudimos guardar la lista de tus grupos para recuperarla en otro dispositivo. Lo que acabas de hacer sí quedó listo.",
+    "retry": "Guardar de nuevo"
   }
 }

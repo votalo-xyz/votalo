@@ -8,6 +8,7 @@ import { createInvite } from "@/data/actions";
 import type { GroupMode } from "@/data/types";
 import { classifyError, type ErrorKey } from "../errors";
 import { ShareSheet } from "../share/share-sheet";
+import { BackupStatus } from "./backup-status";
 import { Button } from "../ui/button";
 import { useCredential } from "../use-credential";
 
@@ -74,6 +75,7 @@ export function InviteButton({
           text={share("groupText", { name: groupName })}
           open={open}
           onOpenChange={setOpen}
+          notice={<BackupStatus />}
         />
       )}
     </div>

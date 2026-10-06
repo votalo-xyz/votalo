@@ -33,6 +33,7 @@ export type ErrorKey =
   | "INVALID_INPUT"
   | "PRF_UNAVAILABLE"
   | "PASSKEY_FAILED"
+  | "VAULT_TOO_LARGE"
   | "UNKNOWN";
 
 /**
@@ -53,6 +54,17 @@ export function classifyError(e: unknown): ErrorKey {
   if (e instanceof RelayClientError) {
     if (e.code.startsWith("INVALID_INPUT")) return "INVALID_INPUT";
     const known = [...CONTRACT_ERRORS, ...RELAY_ERRORS].find((code) => code === e.code);
+    if (known) return known;
+  }
+  // The group-list vault throws the same shape ({ code, status }) as the relay client. It is recognised by
+  // shape for the same reason as Mera above: its class lives next to the crypto code.
+  const vaultCode = e instanceof Error && "status" in e ? (e as Error & { code?: unknown }).code : undefined;
+  if (typeof vaultCode === "string") {
+    const code = vaultCode;
+    if (code.startsWith("INVALID_INPUT")) return "INVALID_INPUT";
+    if (code === "VAULT_STORAGE_NOT_CONFIGURED") return "RELAYER_NOT_CONFIGURED";
+    if (code === "TOO_LARGE") return "VAULT_TOO_LARGE";
+    const known = RELAY_ERRORS.find((r) => r === code);
     if (known) return known;
   }
   return "UNKNOWN";

@@ -237,7 +237,7 @@ function Slide4() {
 
 function Slide5() {
   const t = useTranslations("Pitch.s5");
-  const items = ["inside", "across", "stored"] as const;
+  const items = ["inside", "across", "stored", "vault"] as const;
   return (
     <Slide n={5} title={t("title")} lead={t("lead")}>
       <div className="mt-10 grid items-center gap-10 lg:grid-cols-[1.2fr_1fr]">

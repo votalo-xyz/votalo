@@ -64,7 +64,7 @@
         },
         {
           "title": "What data we handle",
-          "body": "We don't ask for a name, email, phone number or password. Here is what exists. On your device: your passkey's identifier and public data about your groups (identifiers, your member address in each group and your votes), kept in your browser's storage, plus your language and theme. Your fingerprint and your private key never leave your device. When you vote or create something: your member address in that group, the text you write (group name, question and options) and your vote are recorded on Monad. When you use the site: like any website, our hosting provider and the service that sends your action to the network can see your IP address and technical details of the connection."
+          "body": "We don't ask for a name, email, phone number or password. Here is what exists. On your device: your passkey's identifier and public data about your groups (identifiers, your member address in each group and your votes), kept in your browser's storage, plus your language and theme. Your fingerprint and your private key never leave your device. When you vote or create something: your member address in that group, the text you write (group name, question and options) and your vote are recorded on Monad. On our servers: the list of your groups (name, identifier and the date you joined), encrypted with a key only your passkey can produce; we can't read it. When you use the site: like any website, our hosting provider and the service that sends your action to the network can see your IP address and technical details of the connection."
         },
         {
           "title": "Cookies and tracking",
@@ -337,7 +337,8 @@
     "INVALID_INPUT": "Check what you typed and try again.",
     "PASSKEY_FAILED": "We couldn't confirm with your fingerprint, Face ID or PIN. If you cancelled, you can try again.",
     "PRF_UNAVAILABLE": "This browser can't create the kind of passkey Votalo needs.",
-    "UNKNOWN": "Something didn't go as expected. Please try again."
+    "UNKNOWN": "Something didn't go as expected. Please try again.",
+    "VAULT_TOO_LARGE": "Your group list no longer fits in the encrypted copy."
   },
   "Vote": {
     "optionsLegend": "Choose your option",
@@ -702,7 +703,8 @@
       "items": {
         "details": "Your name, email or phone number: we don't ask for them.",
         "biometrics": "Your fingerprint or Face ID: they never leave your device.",
-        "groups": "Which other groups you're in: credentials from different groups can't be linked."
+        "groups": "Which other groups you're in: credentials from different groups can't be linked.",
+        "vault": "The list of your groups is stored encrypted with a key only your passkey can produce; we can't read it."
       }
     },
     "service": {
@@ -839,7 +841,8 @@
       "items": {
         "inside": "Inside a group: one member, one vote.",
         "across": "Across groups: no one can link your identities.",
-        "stored": "Your per-group keys are never stored on our servers."
+        "stored": "Your per-group keys are never stored on our servers.",
+        "vault": "The list of your groups is stored encrypted with a key only your passkey can produce; we can't read it."
       },
       "privacy": "Read the privacy details",
       "mera": "Mera on npm",
@@ -970,5 +973,21 @@
         }
       }
     }
+  },
+  "Vault": {
+    "note": "The list of your groups is stored encrypted with a key only your passkey can produce; we can't read it.",
+    "restoreTitle": "Already used Votalo on another device?",
+    "restoreMeTitle": "Your groups on another device",
+    "restoreButton": "Restore my groups",
+    "restoring": "Confirm with your fingerprint, Face ID or PIN…",
+    "progress": "Confirm to open group {current} of {total}…",
+    "restored": "Done. We restored {count, plural, one {# group} other {# groups}}.",
+    "upToDate": "You already have every saved group here.",
+    "partial": "We restored {done} of {total}. You can try again for the rest.",
+    "none": "There are no saved groups for this passkey yet. They're saved when you create or join a group.",
+    "saving": "Saving your list of groups, encrypted…",
+    "saved": "Group list saved, encrypted.",
+    "failed": "We couldn't save the list of your groups to restore on another device. What you just did went through.",
+    "retry": "Save again"
   }
 }

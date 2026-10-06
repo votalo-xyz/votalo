@@ -14,6 +14,7 @@ import { LoadError } from "../ui/load-error";
 import { Skeleton } from "../ui/skeleton";
 import { useCredential } from "../use-credential";
 import { InviteButton } from "./invite-button";
+import { BackupStatus } from "./backup-status";
 import { JoinCard, parseInvite } from "./join-card";
 import { DemoBadge, MemberCount, ModeBadge, ProposalItem } from "./parts";
 
@@ -64,6 +65,7 @@ export function GroupScreen({ groupId }: { groupId: Hex }) {
   return (
     <div className="flex flex-col gap-10">
       <ShellTitle title={group.name} backHref="/groups" />
+      <BackupStatus className="-mb-6" />
 
       <header className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
