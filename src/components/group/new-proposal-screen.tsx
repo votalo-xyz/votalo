@@ -29,6 +29,9 @@ const DURATIONS = [
   { key: "h24", seconds: 86_400 },
   { key: "d3", seconds: 3 * 86_400 },
   { key: "d7", seconds: 7 * 86_400 },
+  // 28 days, not 30: the contract accepts at most block.timestamp + 30 days, and the deadline is set from the
+  // phone's clock. Exactly 30 days can revert if that clock runs ahead, and 28 still covers the judging window.
+  { key: "d28", seconds: 28 * 86_400 },
 ] as const;
 
 type Option = { id: number; text: string };

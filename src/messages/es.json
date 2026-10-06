@@ -545,7 +545,8 @@
       "h1": "1 hora",
       "h24": "1 día",
       "d3": "3 días",
-      "d7": "7 días"
+      "d7": "7 días",
+      "d28": "4 semanas"
     },
     "submit": "Publicar votación",
     "creating": "Confirma con tu huella, Face ID o PIN…",
