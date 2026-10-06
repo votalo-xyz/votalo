@@ -1,18 +1,30 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { Link, usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { cn } from "../ui/cn";
+
+/** `en` lives under `/en`; `es` (the default) lives at the root — see routing.ts. next-intl's
+ * locale-prefix omission only applies to pathnames it recognizes as one of its typed routes; a
+ * pathname with a dynamic segment already filled in (e.g. "/g/0x…") is not one of those, so passing
+ * it through `Link`'s `{ pathname, locale }` form re-adds the "es" prefix. Built by hand instead,
+ * using the one rule the rest of the app already applies (e.g. share-sheet.tsx's `withoutLocale`). */
+function switchHref(pathname: string, query: string, locale: string): string {
+  const withoutEn = pathname.replace(/^\/en(?=\/|$)/, "") || "/";
+  const base = locale === "en" ? (withoutEn === "/" ? "/en" : `/en${withoutEn}`) : withoutEn;
+  return query ? `${base}?${query}` : base;
+}
 
 function Switch({ className }: { className?: string }) {
   const t = useTranslations("Common");
   const active = useLocale();
   const pathname = usePathname();
   const params = useSearchParams();
-  const query = Object.fromEntries(params.entries());
+  const query = params.toString();
 
   return (
     <nav
@@ -22,10 +34,12 @@ function Switch({ className }: { className?: string }) {
       {routing.locales.map((locale) => {
         const current = locale === active;
         return (
-          <Link
+          // The href below already has its final locale prefix (or lack of one), built by hand (see
+          // switchHref). next-intl's own Link re-prefixes any relative href with the page's *current*
+          // locale, which would double it up here; next/link's Link leaves the string exactly as given.
+          <NextLink
             key={locale}
-            href={{ pathname, query }}
-            locale={locale}
+            href={switchHref(pathname, query, locale)}
             hrefLang={locale}
             lang={locale}
             aria-current={current ? "true" : undefined}
@@ -36,7 +50,7 @@ function Switch({ className }: { className?: string }) {
             )}
           >
             {locale}
-          </Link>
+          </NextLink>
         );
       })}
     </nav>

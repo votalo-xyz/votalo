@@ -5,6 +5,8 @@ import { useTranslations } from "next-intl";
 import { ViewTransition, type ReactNode } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Logo, LogoMark } from "../brand/logo";
+import { LanguageSwitch } from "../layout/language-switch";
+import { ThemeToggle } from "../layout/theme-toggle";
 import { InstallCard } from "../pwa/install-card";
 import { cn } from "../ui/cn";
 import { SettingsSheet } from "./settings-sheet";
@@ -64,6 +66,14 @@ function TopBar() {
             </Link>
           ))}
         </nav>
+
+        {/* Desktop: language and theme also sit directly in the bar, in case someone does not notice
+            the settings icon. Phones keep them only in the settings sheet, so the compact top bar
+            does not get crowded. */}
+        <div className="hidden items-center gap-2 md:flex">
+          <LanguageSwitch />
+          <ThemeToggle />
+        </div>
         <SettingsSheet />
       </div>
     </header>
