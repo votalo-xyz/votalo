@@ -11,7 +11,7 @@ type Params = Promise<{ locale: string; groupId: string; proposalId: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const locale = await resolveLocale(params);
-  const { proposalId } = await params;
+  const { groupId, proposalId } = await params;
   const t = await getTranslations({ locale, namespace: "Proposal" });
   const d = await getTranslations({ locale, namespace: "DemoData" });
   // Titles are not stored on chain, so the server only knows the example proposals. Others get a generic card.
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title,
     description: t("ogTagline"),
-    openGraph: { title, description: t("ogTagline"), type: "website" },
+    openGraph: { title, description: t("ogTagline"), type: "website", url: `/${locale}/g/${groupId}/p/${proposalId}` },
     twitter: { card: "summary_large_image", title, description: t("ogTagline") },
   };
 }
