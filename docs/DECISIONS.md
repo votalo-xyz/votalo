@@ -564,3 +564,17 @@ here, not just the last successful run.
     pointing at its own URL and an `og:image` under `https://www.votalo.xyz/`.
   - Redirect: `https://votalo-six.vercel.app/en/stats?x=1` → `308` to `https://www.votalo.xyz/en/stats?x=1`.
     Path and query are kept.
+
+## Real-device gate: PASSED (2026-10-05)
+
+- **Gate:** passkey create and sign-in on a real phone, end to end, on the final domain.
+- **Result:** the user created a group "Open" on `https://www.votalo.xyz` from their phone, with a real
+  passkey bound to RP id `votalo.xyz`. They shared the link, a second person joined from their own device,
+  and both voted on "Vótalo.xyz Will win the metrópolis hackathon?" (Yes: 2 votes).
+- **On-chain check** (read-only, `cast call` on `0x2cd363f9158c82aA3AE8C1F12430dD4Fb4D4f072`, Monad testnet):
+  `totalGroups` = 8, `totalMembers` = 17, `totalProposals` = 4, `totalVotes` = 7. These match the hub's
+  verification. Accented group names were stored correctly.
+- **Desktop without PRF:** a desktop browser without PRF support showed the "can't create your passkey" screen
+  with the QR code, as designed.
+- **Still open before delivery:** remove `src/app/[locale]/test-passkey` (already removed in `95a4843`);
+  Lighthouse on the deployed site.
