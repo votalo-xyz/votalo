@@ -51,7 +51,8 @@
     "terms": "Términos de uso",
     "builtOn": "Hecho sobre",
     "openSource": "Código abierto (MIT)",
-    "copyright": "© 2026 Colaboradores de Votalo"
+    "copyright": "© 2026 Colaboradores de Votalo",
+    "pitch": "Pitch"
   },
   "Legal": {
     "privacy": {
@@ -783,5 +784,191 @@
     "unavailableBody": "Inténtalo de nuevo en un momento.",
     "open": "Abierta",
     "closed": "Cerrada"
+  },
+  "Pitch": {
+    "metaTitle": "Pitch",
+    "metaDescription": "Votalo en 12 diapositivas: decisiones de grupo con tu huella, una persona un voto, resultados que nadie puede borrar.",
+    "deckLabel": "Presentación",
+    "backToSite": "Volver al sitio",
+    "slideOf": "Diapositiva {n} de {total}",
+    "goTo": "Ir a la diapositiva {n}",
+    "progress": "Avance de la presentación",
+    "keys": "Teclas: → ↓ Espacio siguiente · ← ↑ anterior",
+    "sources": "Fuentes",
+    "newTab": "se abre en una pestaña nueva",
+    "s1": {
+      "eyebrow": "Pitch",
+      "title": "Decidan juntos. Sin trampa.",
+      "lead": "Votalo convierte la encuesta del chat en una votación que cualquiera puede comprobar: una persona, un voto, resultados que nadie puede borrar.",
+      "app": "Abrir la app en vivo",
+      "code": "Ver el código en GitHub",
+      "note": "Versión de prueba, en la red de pruebas de Monad."
+    },
+    "s2": {
+      "title": "Las encuestas del chat se pueden manipular",
+      "lead": "Los grupos ya deciden por chat. Las herramientas que usan nunca se hicieron para ser justas.",
+      "items": {
+        "double": "Votos dobles: la misma persona vota dos veces.",
+        "outsiders": "Gente de fuera: cualquiera que reciba el enlace opina.",
+        "edited": "Editadas o borradas: la encuesta cambia cuando el resultado incomoda.",
+        "lost": "Historial perdido: semanas después nadie puede probar qué se decidió."
+      },
+      "link": "Mira cómo Votalo cierra cada hueco"
+    },
+    "s3": {
+      "title": "Tres pasos. Sin app, sin cartera, sin gas.",
+      "items": {
+        "create": "Crea un grupo y escribe la pregunta.",
+        "share": "Comparte el enlace en tu chat.",
+        "vote": "Cada quien vota con su huella."
+      },
+      "note": "Nada que instalar, ninguna cartera que configurar, ninguna comisión que pagar.",
+      "link": "Paso a paso"
+    },
+    "s4": {
+      "title": "Ya funciona",
+      "lead": "Grupos y votos reales en la red de pruebas de Monad. Estos totales se leen directo del contrato; sin datos verás un guion.",
+      "cta": "Crear un grupo",
+      "stats": "Ver todos los números en vivo",
+      "widget": "Widget para incrustar: pon un resultado en vivo en cualquier sitio con una línea de código.",
+      "widgetLink": "Cómo funciona el widget"
+    },
+    "s5": {
+      "title": "Una llave de acceso. Una identidad distinta en cada grupo.",
+      "lead": "Cada grupo tiene su propia clave, derivada de tu llave de acceso con Mera (WebAuthn PRF).",
+      "items": {
+        "inside": "Dentro de un grupo: un miembro, un voto.",
+        "across": "Entre grupos: nadie puede ligar tus identidades.",
+        "stored": "Tus claves por grupo nunca se guardan en nuestros servidores."
+      },
+      "privacy": "Leer los detalles de privacidad",
+      "mera": "Mera en npm",
+      "prf": "Extensión WebAuthn PRF"
+    },
+    "s6": {
+      "title": "El camino de un voto",
+      "lead": "El gas lo paga el relayer, que no guarda nada tuyo.",
+      "nodes": {
+        "passkey": {
+          "name": "Llave de acceso",
+          "note": "Firma en tu dispositivo"
+        },
+        "signature": {
+          "name": "Firma EIP-712",
+          "note": "Un voto legible y firmado"
+        },
+        "relayer": {
+          "name": "Relayer",
+          "note": "Paga el gas, no guarda nada"
+        },
+        "contract": {
+          "name": "Contrato de Votalo",
+          "note": "En Monad, verificado"
+        },
+        "indexer": {
+          "name": "Indexador Envio",
+          "note": "Lee los eventos"
+        },
+        "results": {
+          "name": "Resultados en vivo",
+          "note": "El mismo conteo para todos"
+        }
+      },
+      "diagram": "Diagrama: llave de acceso, firma EIP-712, relayer, contrato de Votalo en Monad, indexador Envio, resultados en vivo.",
+      "linkSignature": "Código de la firma",
+      "linkContract": "Código del contrato",
+      "linkIndexer": "Código del indexador"
+    },
+    "s7": {
+      "title": "Por qué Monad",
+      "lead": "Una confirmación en menos de un segundo hace que votar se sienta como tocar una encuesta. Las comisiones bajas permiten patrocinar cada voto.",
+      "figures": {
+        "block": {
+          "value": "300 ms",
+          "label": "frecuencia de bloques"
+        },
+        "final": {
+          "value": "600 ms",
+          "label": "finalidad"
+        }
+      },
+      "source": "Cifras de docs.monad.xyz",
+      "link": "Documentación de Monad"
+    },
+    "s8": {
+      "title": "Pruebas que puedes comprobar",
+      "items": {
+        "contract": "Contrato verificado en MonadVision",
+        "open": "Código abierto, licencia MIT",
+        "tests": "Pruebas del contrato y de la app en el repositorio",
+        "running": "Funcionando en la red de pruebas de Monad",
+        "ci": "CI en verde en cada envío a main"
+      },
+      "links": {
+        "contract": "Abrir en MonadVision",
+        "open": "Licencia",
+        "tests": "Pruebas del contrato",
+        "running": "Números en vivo",
+        "ci": "Ejecuciones de CI"
+      },
+      "address": "Dirección del contrato"
+    },
+    "s9": {
+      "title": "Para comunidades que se gobiernan solas",
+      "lead": "Votalo es una capa de decisión: el voto es siempre el mismo, el grupo cambia.",
+      "items": {
+        "rules": "Reglas de un juego: quienes juegan deciden cómo funciona.",
+        "feed": "El feed de una comunidad: sus miembros deciden qué se destaca.",
+        "fund": "El fondo de un colectivo: el grupo decide cómo se gasta el dinero común."
+      },
+      "note": "Casos de uso para los que diseñamos, no alianzas.",
+      "cta": "Prueba una con tu grupo"
+    },
+    "s10": {
+      "title": "Salida al mercado: empezar donde ya se decide",
+      "items": {
+        "chats": "Grupos que ya deciden en chats grupales, empezando en México y Latinoamérica.",
+        "link": "Cada voto es un enlace compartido: crecimiento integrado, cada uno muestra Votalo a todo un grupo.",
+        "partners": "Aliados comunitarios que ya manejan sus propios grupos.",
+        "widget": "El widget para incrustar lleva resultados en vivo a otros sitios."
+      },
+      "metricLabel": "Métrica de crecimiento",
+      "metric": "Votantes que después crean su propio grupo.",
+      "widgetLink": "Sobre el widget"
+    },
+    "s11": {
+      "title": "Límites honestos y lo que sigue",
+      "limitsTitle": "Límites hoy",
+      "limits": {
+        "visible": "Los votos son visibles dentro del grupo, con un registro público. No es voto secreto.",
+        "passkeys": "En grupos abiertos nada impide que una persona use varias llaves de acceso; los grupos por invitación lo limitan."
+      },
+      "nextTitle": "Lo que sigue",
+      "next": {
+        "recurring": "Decisiones recurrentes de grupo.",
+        "api": "Una API pública y un paquete ligero para otras apps y bots de chat.",
+        "mainnet": "Lanzamiento en la red principal de Monad."
+      },
+      "link": "Todos los límites, en palabras claras"
+    },
+    "s12": {
+      "title": "Equipo y siguiente paso",
+      "teamTitle": "Equipo",
+      "cta": "Pruébalo: votalo.xyz/create",
+      "ctaButton": "Crear un grupo",
+      "github": "GitHub",
+      "members": {
+        "giovanny": {
+          "name": "Giovanny Amador",
+          "alias": "Vaios",
+          "role": "Producto, contratos inteligentes y backend"
+        },
+        "monserrat": {
+          "name": "Monserrat Mendoza",
+          "alias": "M0nsxx",
+          "role": "Frontend, diseño y UX"
+        }
+      }
+    }
   }
 }

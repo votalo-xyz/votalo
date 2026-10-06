@@ -51,7 +51,8 @@
     "terms": "Terms of use",
     "builtOn": "Built on",
     "openSource": "Open source (MIT)",
-    "copyright": "© 2026 Votalo contributors"
+    "copyright": "© 2026 Votalo contributors",
+    "pitch": "Pitch"
   },
   "Legal": {
     "privacy": {
@@ -783,5 +784,191 @@
     "unavailableBody": "Try again in a moment.",
     "open": "Open",
     "closed": "Closed"
+  },
+  "Pitch": {
+    "metaTitle": "Pitch",
+    "metaDescription": "Votalo in 12 slides: group decisions with your fingerprint, one person one vote, results no one can erase.",
+    "deckLabel": "Pitch deck",
+    "backToSite": "Back to the site",
+    "slideOf": "Slide {n} of {total}",
+    "goTo": "Go to slide {n}",
+    "progress": "Deck progress",
+    "keys": "Keys: → ↓ Space next · ← ↑ previous",
+    "sources": "Sources",
+    "newTab": "opens in a new tab",
+    "s1": {
+      "eyebrow": "Pitch",
+      "title": "Decide together. No one gets to cheat.",
+      "lead": "Votalo turns a group-chat poll into a vote anyone can check: one person, one vote, results no one can erase.",
+      "app": "Open the live app",
+      "code": "See the code on GitHub",
+      "note": "A test version, running on the Monad test network."
+    },
+    "s2": {
+      "title": "Chat polls are easy to game",
+      "lead": "Groups already decide in chat. The tools they use were never built to be fair.",
+      "items": {
+        "double": "Double votes: the same person votes twice.",
+        "outsiders": "Outsiders: anyone who gets the link can weigh in.",
+        "edited": "Edited or deleted: the poll changes once the result is inconvenient.",
+        "lost": "History lost: weeks later nobody can prove what was decided."
+      },
+      "link": "See how Votalo closes each gap"
+    },
+    "s3": {
+      "title": "Three steps. No app, no wallet, no gas.",
+      "items": {
+        "create": "Create a group and ask the question.",
+        "share": "Share the link in your chat.",
+        "vote": "Everyone votes with their fingerprint."
+      },
+      "note": "Nothing to install, no wallet to set up, no fees to pay.",
+      "link": "Step by step"
+    },
+    "s4": {
+      "title": "It works today",
+      "lead": "Real groups and real votes on the Monad test network. These totals are read straight from the contract; without data you see a dash.",
+      "cta": "Create a group",
+      "stats": "See all live numbers",
+      "widget": "Embeddable widget: put a live result on any site with one line of code.",
+      "widgetLink": "How the widget works"
+    },
+    "s5": {
+      "title": "One passkey. A different identity in every group.",
+      "lead": "Each group gets its own key, derived from your passkey with Mera (WebAuthn PRF).",
+      "items": {
+        "inside": "Inside a group: one member, one vote.",
+        "across": "Across groups: no one can link your identities.",
+        "stored": "Your per-group keys are never stored on our servers."
+      },
+      "privacy": "Read the privacy details",
+      "mera": "Mera on npm",
+      "prf": "WebAuthn PRF extension"
+    },
+    "s6": {
+      "title": "How a vote travels",
+      "lead": "Gas is paid by the relayer, which holds nothing of yours.",
+      "nodes": {
+        "passkey": {
+          "name": "Passkey",
+          "note": "Signs on your device"
+        },
+        "signature": {
+          "name": "EIP-712 signature",
+          "note": "A readable, signed vote"
+        },
+        "relayer": {
+          "name": "Relayer",
+          "note": "Pays gas, holds nothing"
+        },
+        "contract": {
+          "name": "Votalo contract",
+          "note": "On Monad, verified"
+        },
+        "indexer": {
+          "name": "Envio indexer",
+          "note": "Reads the events"
+        },
+        "results": {
+          "name": "Live results",
+          "note": "The same count for everyone"
+        }
+      },
+      "diagram": "Diagram: passkey, EIP-712 signature, relayer, Votalo contract on Monad, Envio indexer, live results.",
+      "linkSignature": "Signing code",
+      "linkContract": "Contract source",
+      "linkIndexer": "Indexer source"
+    },
+    "s7": {
+      "title": "Why Monad",
+      "lead": "Confirmation in under a second makes voting feel like tapping a poll. Low fees make it viable to sponsor every vote.",
+      "figures": {
+        "block": {
+          "value": "300 ms",
+          "label": "block frequency"
+        },
+        "final": {
+          "value": "600 ms",
+          "label": "finality"
+        }
+      },
+      "source": "Figures from docs.monad.xyz",
+      "link": "Monad documentation"
+    },
+    "s8": {
+      "title": "Proof you can check",
+      "items": {
+        "contract": "Verified contract on MonadVision",
+        "open": "Open source, MIT license",
+        "tests": "Contract and app tests in the repository",
+        "running": "Running on the Monad test network",
+        "ci": "CI green on every push to main"
+      },
+      "links": {
+        "contract": "Open on MonadVision",
+        "open": "License",
+        "tests": "Contract tests",
+        "running": "Live numbers",
+        "ci": "CI runs"
+      },
+      "address": "Contract address"
+    },
+    "s9": {
+      "title": "For communities that govern themselves",
+      "lead": "Votalo is a decision layer: the vote is always the same, the group changes.",
+      "items": {
+        "rules": "Game rules: the players decide how their game works.",
+        "feed": "A community's feed: members decide what gets featured.",
+        "fund": "A collective's fund: the group decides how shared money is spent."
+      },
+      "note": "Use cases we are designing for, not partnerships.",
+      "cta": "Try one with your group"
+    },
+    "s10": {
+      "title": "Go to market: start where decisions already happen",
+      "items": {
+        "chats": "Groups that already decide in group chats, starting in Mexico and Latin America.",
+        "link": "Every vote is a shared link: built-in growth, each one shows Votalo to a whole group.",
+        "partners": "Community partners who run groups of their own.",
+        "widget": "The embeddable widget puts live results on other sites."
+      },
+      "metricLabel": "Growth metric",
+      "metric": "Voters who go on to create their own group.",
+      "widgetLink": "About the widget"
+    },
+    "s11": {
+      "title": "Honest limits, and what's next",
+      "limitsTitle": "Limits today",
+      "limits": {
+        "visible": "Votes are visible inside the group, with a public record. This is not a secret ballot.",
+        "passkeys": "Open groups can't stop one person from using several passkeys; invite-only groups limit it."
+      },
+      "nextTitle": "Next",
+      "next": {
+        "recurring": "Recurring group decisions.",
+        "api": "A public API and a lightweight package for other apps and chat bots.",
+        "mainnet": "Monad mainnet launch."
+      },
+      "link": "All the limits, in plain words"
+    },
+    "s12": {
+      "title": "Team and next step",
+      "teamTitle": "Team",
+      "cta": "Try it: votalo.xyz/create",
+      "ctaButton": "Create a group",
+      "github": "GitHub",
+      "members": {
+        "giovanny": {
+          "name": "Giovanny Amador",
+          "alias": "Vaios",
+          "role": "Product, smart contracts and backend"
+        },
+        "monserrat": {
+          "name": "Monserrat Mendoza",
+          "alias": "M0nsxx",
+          "role": "Frontend, design and UX"
+        }
+      }
+    }
   }
 }
