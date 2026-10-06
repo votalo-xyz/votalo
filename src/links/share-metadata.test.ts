@@ -1,11 +1,12 @@
 /**
  * What link previews and search engines see. For every page, in both languages: the share address (og:url)
- * is the page's own address and matches the canonical link, Spanish lives at the root and never under /es,
- * the language alternates point at each other (with x-default on Spanish), and the share image exists and
- * is served directly as a 200 PNG. Runs with the crawler: `npm run build && npm run test:links`, or against
- * any server with CRAWL_BASE_URL set.
+ * is the page's own address and matches the canonical link, the default locale (routing.ts) lives at the
+ * root and the other locale under its own prefix, the language alternates point at each other (with
+ * x-default on the default locale), and the share image exists and is served directly as a 200 PNG. Runs
+ * with the crawler: `npm run build && npm run test:links`, or against any server with CRAWL_BASE_URL set.
  */
 import { describe, expect, it } from "vitest";
+import { prefixedLocale, routing } from "../i18n/routing";
 
 const BASE = process.env.CRAWL_BASE_URL;
 const d = BASE ? describe : describe.skip;
@@ -47,6 +48,9 @@ function link(html: string, rel: string, hreflang?: string): string | undefined 
 const norm = (pathname: string) => (pathname.replace(/\/+$/, "") || "/");
 const pathOf = (url: string | undefined) => norm(new URL(url ?? "http://missing.invalid/__missing__").pathname);
 
+/** The address of `path` in locale `loc`: prefixed for `prefixedLocale`, bare for the default locale. */
+const pathFor = (loc: string, p: string) => (loc === prefixedLocale ? (p === "/" ? `/${prefixedLocale}` : `/${prefixedLocale}${p}`) : p);
+
 d("share metadata", { timeout: 180_000 }, () => {
   for (const locale of ["es", "en"] as const) {
     it(`gives every page in ${locale.toUpperCase()} its own address, alternates and image`, async () => {
@@ -54,8 +58,8 @@ d("share metadata", { timeout: 180_000 }, () => {
       const images = new Set<string>();
 
       for (const path of PATHS) {
-        const wanted = norm(locale === "es" ? path : `/en${path === "/" ? "" : path}`);
-        const url = `${BASE}${locale === "es" ? path : `/en${path === "/" ? "" : path}`}`;
+        const wanted = norm(pathFor(locale, path));
+        const url = `${BASE}${pathFor(locale, path)}`;
         const res = await fetch(url);
         const html = await res.text();
         const where = `${locale} ${path.replace(GROUP, "<group>").replace(PROPOSAL, "<proposal>")}`;
@@ -72,16 +76,16 @@ d("share metadata", { timeout: 180_000 }, () => {
         if (!ogUrl) problems.push(`${where}: og:url missing`);
         else if (pathOf(ogUrl) !== wanted) problems.push(`${where}: og:url is ${pathOf(ogUrl)}, expected ${wanted}`);
         if (canonical !== ogUrl) problems.push(`${where}: canonical (${canonical}) differs from og:url (${ogUrl})`);
-        if (/^\/es(\/|$)/.test(pathOf(ogUrl))) problems.push(`${where}: og:url uses /es`);
 
-        const es = link(html, "alternate", "es");
-        const en = link(html, "alternate", "en");
+        const defaultAlt = link(html, "alternate", routing.defaultLocale);
+        const prefixedAlt = link(html, "alternate", prefixedLocale);
         const fallback = link(html, "alternate", "x-default");
-        if (pathOf(es) !== norm(path)) problems.push(`${where}: es alternate is ${pathOf(es)}`);
-        if (pathOf(en) !== norm(path === "/" ? "/en" : `/en${path}`)) problems.push(`${where}: en alternate is ${pathOf(en)}`);
-        if (fallback !== es) problems.push(`${where}: x-default (${fallback}) is not the Spanish address (${es})`);
+        if (pathOf(defaultAlt) !== norm(pathFor(routing.defaultLocale, path)))
+          problems.push(`${where}: ${routing.defaultLocale} alternate is ${pathOf(defaultAlt)}`);
+        if (pathOf(prefixedAlt) !== norm(pathFor(prefixedLocale, path))) problems.push(`${where}: ${prefixedLocale} alternate is ${pathOf(prefixedAlt)}`);
+        if (fallback !== defaultAlt) problems.push(`${where}: x-default (${fallback}) is not the ${routing.defaultLocale} address (${defaultAlt})`);
 
-        const origins = new Set([ogUrl, canonical, es, en, fallback, ogImage].map((u) => (u ? new URL(u).origin : "none")));
+        const origins = new Set([ogUrl, canonical, defaultAlt, prefixedAlt, fallback, ogImage].map((u) => (u ? new URL(u).origin : "none")));
         if (origins.size !== 1) problems.push(`${where}: tags use different origins: ${[...origins].join(", ")}`);
 
         if (meta(html, "name", "twitter:card") !== "summary_large_image") problems.push(`${where}: twitter:card is not summary_large_image`);

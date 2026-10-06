@@ -5,17 +5,18 @@ import NextLink from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { usePathname } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
+import { prefixedLocale, routing } from "@/i18n/routing";
 import { cn } from "../ui/cn";
 
-/** `en` lives under `/en`; `es` (the default) lives at the root — see routing.ts. next-intl's
- * locale-prefix omission only applies to pathnames it recognizes as one of its typed routes; a
- * pathname with a dynamic segment already filled in (e.g. "/g/0x…") is not one of those, so passing
- * it through `Link`'s `{ pathname, locale }` form re-adds the "es" prefix. Built by hand instead,
- * using the one rule the rest of the app already applies (e.g. share-sheet.tsx's `withoutLocale`). */
+/** Only `prefixedLocale` carries a URL prefix — see routing.ts. next-intl's locale-prefix omission
+ * only applies to pathnames it recognizes as one of its typed routes; a pathname with a dynamic
+ * segment already filled in (e.g. "/g/0x…") is not one of those, so passing it through `Link`'s
+ * `{ pathname, locale }` form re-adds the default locale's prefix. Built by hand instead, using the
+ * one rule the rest of the app already applies (e.g. share-sheet.tsx's `withoutLocale`). */
 function switchHref(pathname: string, query: string, locale: string): string {
-  const withoutEn = pathname.replace(/^\/en(?=\/|$)/, "") || "/";
-  const base = locale === "en" ? (withoutEn === "/" ? "/en" : `/en${withoutEn}`) : withoutEn;
+  const prefix = `/${prefixedLocale}`;
+  const withoutPrefix = (pathname.startsWith(`${prefix}/`) ? pathname.slice(prefix.length) : pathname === prefix ? "/" : pathname) || "/";
+  const base = locale === prefixedLocale ? (withoutPrefix === "/" ? prefix : `${prefix}${withoutPrefix}`) : withoutPrefix;
   return query ? `${base}?${query}` : base;
 }
 

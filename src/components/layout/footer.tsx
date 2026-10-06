@@ -67,11 +67,6 @@ export function Footer() {
                   {t("about")}
                 </Link>
               </li>
-              <li>
-                <Link className={linkClass} href="/pitch">
-                  {t("pitch")}
-                </Link>
-              </li>
             </ul>
           </nav>
 

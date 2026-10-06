@@ -1653,6 +1653,15 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
   - The encrypted group vault (`/api/vault/:vaultId`, Vercel Blob) is not in the spec. It was added after the spec.
   - The `/stats` page reads the four totals from the contract, and votes per day from the indexer.
   - The gas limits in the spec's section 6 are set per action (`src/lib/relay/gas.ts`), from the Monad gas report.
+  - **Default language flipped to English (2026-10-06), at the user's request.** The spec's "Languages" line
+    says "UI in Spanish by default with an English toggle"; the site now defaults to English at the root
+    (`/`) with Spanish under `/es`, the reverse of the original layout (which had Spanish at the root and
+    English under `/en`). `src/i18n/routing.ts`'s `defaultLocale` is now `"en"`, and every file that had
+    hardcoded the old "Spanish = root, English = prefixed" assumption (the service worker's offline-page
+    routing, the SEO helper's `x-default` alternate, the pitch page, the global 404 page, and the link-crawler
+    tests) was generalized to derive the prefixed locale from `routing.ts` (`prefixedLocale`) instead of
+    repeating either language's name, so a future language-order change does not need to touch this many
+    files again. The footer's link to `/pitch` was also removed in the same pass, per the user's request.
 - **`docs/FRONTEND.md`** checked: no stale endpoint, no server-side variable exposed as `NEXT_PUBLIC_`, and the vault
   section matches the code. The `/test-passkey` mention is a removal record, kept on purpose.
 - **Not done here**: the orphaned test blobs. The Blob store holds two test blobs (285 and 357 bytes), both written by my

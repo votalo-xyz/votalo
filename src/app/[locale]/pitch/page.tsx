@@ -7,16 +7,19 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { PitchDeck } from "@/components/pitch/pitch-deck";
 import { resolveLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
+import { prefixedLocale } from "@/i18n/routing";
+
+const pitchPath = (locale: string) => (locale === prefixedLocale ? `/${prefixedLocale}/pitch` : "/pitch");
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = await resolveLocale(params);
   const t = await getTranslations({ locale, namespace: "Pitch" });
-  const path = locale === "en" ? "/en/pitch" : "/pitch";
+  const path = pitchPath(locale);
   const title = `${t("metaTitle")} · Votalo`;
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: { canonical: path, languages: { es: "/pitch", en: "/en/pitch" } },
+    alternates: { canonical: path, languages: { es: pitchPath("es"), en: pitchPath("en") } },
     openGraph: {
       type: "website",
       url: path,

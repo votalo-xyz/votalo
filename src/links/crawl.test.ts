@@ -7,9 +7,11 @@
  * (correctly) answer 404 for them. Set CRAWL_EMBED_ID to a real proposal id in that case.
  */
 import { describe, expect, it } from "vitest";
+import { prefixedLocale } from "../i18n/routing";
 import { crawl } from "./crawler";
 
 const BASE = process.env.CRAWL_BASE_URL;
+const PREFIX = `/${prefixedLocale}`;
 const d = BASE ? describe : describe.skip;
 
 // The example group's ids. Its pages load their data in the browser, so the links inside them cannot be
@@ -33,7 +35,7 @@ const APP_ROUTES = [
   `/g/${GROUP}/p/${PROPOSAL}`,
   `/embed/p/${EMBED_ID}`,
 ];
-const seeds = ["/", "/en", ...APP_ROUTES, ...APP_ROUTES.map((r) => `/en${r}`)];
+const seeds = ["/", PREFIX, ...APP_ROUTES, ...APP_ROUTES.map((r) => `${PREFIX}${r}`)];
 
 const csp = async (path: string) => {
   const res = await fetch(BASE! + path, { redirect: "manual" });
@@ -49,17 +51,19 @@ d("link crawl", { timeout: 180_000 }, () => {
   });
 
   it("reaches the four marketing pages and the legal pages in both languages", async () => {
-    const { pages } = await crawl(BASE!, ["/", "/en"]);
-    for (const route of ["/how-it-works", "/privacy", "/proof", "/faq", "/about", "/stats", "/pitch", "/legal/privacy", "/legal/terms", "/create", "/groups", "/me"]) {
-      expect(pages.get(route), `ES ${route}`).toBe(200);
-      expect(pages.get(`/en${route}`), `EN ${route}`).toBe(200);
+    // Seeded directly: /pitch has no link from the footer any more, so a crawl from the home page would not reach it.
+    const routes = ["/how-it-works", "/privacy", "/proof", "/faq", "/about", "/stats", "/pitch", "/legal/privacy", "/legal/terms", "/create", "/groups", "/me"];
+    const { pages } = await crawl(BASE!, ["/", PREFIX, ...routes, ...routes.map((r) => `${PREFIX}${r}`)]);
+    for (const route of routes) {
+      expect(pages.get(route), `default ${route}`).toBe(200);
+      expect(pages.get(`${PREFIX}${route}`), `prefixed ${route}`).toBe(200);
     }
   });
 
   it("serves the widget in both languages", async () => {
-    const { pages } = await crawl(BASE!, [`/embed/p/${EMBED_ID}`, `/en/embed/p/${EMBED_ID}`]);
-    expect(pages.get(`/embed/p/${EMBED_ID}`), "ES widget").toBe(200);
-    expect(pages.get(`/en/embed/p/${EMBED_ID}`), "EN widget").toBe(200);
+    const { pages } = await crawl(BASE!, [`/embed/p/${EMBED_ID}`, `${PREFIX}/embed/p/${EMBED_ID}`]);
+    expect(pages.get(`/embed/p/${EMBED_ID}`), "default widget").toBe(200);
+    expect(pages.get(`${PREFIX}/embed/p/${EMBED_ID}`), "prefixed widget").toBe(200);
   });
 
   it("serves the app install files: manifest, icons, worker and offline pages in both languages", async () => {
@@ -83,15 +87,15 @@ d("link crawl", { timeout: 180_000 }, () => {
     const precached = [...source.matchAll(/url:"([^"]+)"/g)].map((m) => m[1]);
     expect(precached.filter((u) => u.startsWith("/api/")), "api in precache").toEqual([]);
     expect(precached.filter((u) => /embed|branding-votalo/.test(u)), "widget or brand pack in precache").toEqual([]);
-    expect(precached, "offline pages precached").toEqual(expect.arrayContaining(["/offline", "/en/offline"]));
-    for (const path of ["/offline", "/en/offline"]) {
+    expect(precached, "offline pages precached").toEqual(expect.arrayContaining(["/offline", `${PREFIX}/offline`]));
+    for (const path of ["/offline", `${PREFIX}/offline`]) {
       const res = await fetch(BASE! + path, { redirect: "manual" });
       expect(res.status, path).toBe(200);
     }
   });
 
   it("serves the brand pack page with its files, linked from both footers, without a language redirect", async () => {
-    const { pages, broken } = await crawl(BASE!, ["/", "/en"]);
+    const { pages, broken } = await crawl(BASE!, ["/", PREFIX]);
     expect(pages.get("/branding-votalo"), "brand page").toBe(200);
     expect(broken.filter((b) => b.url.startsWith("/branding-votalo")), "brand pack links").toEqual([]);
     // The pack's own downloads were reached through the page's <base href>.
@@ -117,7 +121,7 @@ d("link crawl", { timeout: 180_000 }, () => {
   });
 
   it("answers an unknown address with a branded, server-rendered 404", async () => {
-    for (const path of ["/no-such-page", "/en/no-such-page", "/no/such/deep/page"]) {
+    for (const path of ["/no-such-page", `${PREFIX}/no-such-page`, "/no/such/deep/page"]) {
       const res = await fetch(BASE! + path, { redirect: "manual" });
       expect(res.status, path).toBe(404);
       const html = await res.text();
@@ -126,14 +130,14 @@ d("link crawl", { timeout: 180_000 }, () => {
       expect(body, `${path} should render its heading on the server`).toMatch(/<h1[ >]/);
       expect(body, path).toContain("No encontramos esta página");
       expect(body, path).toContain("We couldn&#x27;t find this page");
-      expect(body, `${path} should link to both home pages`).toContain('href="/en"');
+      expect(body, `${path} should link to both home pages`).toContain(`href="${PREFIX}"`);
       expect(body, path).toContain('href="/"');
     }
   });
 
   it("answers a malformed id inside the app with a real 404 status", async () => {
     // These are matched routes, so Next draws the branded page in the browser; the status is what matters here.
-    for (const path of ["/g/not-an-id", "/en/g/not-an-id", "/legal/not-a-document", `/g/${GROUP}/p/not-an-id`]) {
+    for (const path of ["/g/not-an-id", `${PREFIX}/g/not-an-id`, "/legal/not-a-document", `/g/${GROUP}/p/not-an-id`]) {
       const res = await fetch(BASE! + path, { redirect: "manual" });
       expect(res.status, path).toBe(404);
     }
@@ -143,13 +147,13 @@ d("link crawl", { timeout: 180_000 }, () => {
 d("embeddable widget", { timeout: 180_000 }, () => {
   it("can be framed by any site, and nothing else can", async () => {
     // The widget, including its own 404 (so a bad id still shows its message inside the frame).
-    for (const path of [`/embed/p/${EMBED_ID}`, `/en/embed/p/${EMBED_ID}`, `/embed/p/${EMBED_ID}?theme=light`, "/embed/p/not-an-id", "/en/embed/p/not-an-id"]) {
+    for (const path of [`/embed/p/${EMBED_ID}`, `${PREFIX}/embed/p/${EMBED_ID}`, `/embed/p/${EMBED_ID}?theme=light`, "/embed/p/not-an-id", `${PREFIX}/embed/p/not-an-id`]) {
       const r = await csp(path);
       expect(r.csp, `${path} should allow framing`).toContain("frame-ancestors *");
       expect(r.xfo, `${path} must not send X-Frame-Options`).toBeNull();
     }
     // Everything else: pages, the app, API routes and even a 404 stay frameable only by Votalo itself.
-    for (const path of ["/", "/en", "/groups", "/create", "/about", "/how-it-works", "/legal/terms", `/g/${GROUP}`, `/g/${GROUP}/p/${PROPOSAL}`, "/no-such-page", "/api/stats", "/api/data-mode"]) {
+    for (const path of ["/", PREFIX, "/groups", "/create", "/about", "/how-it-works", "/legal/terms", `/g/${GROUP}`, `/g/${GROUP}/p/${PROPOSAL}`, "/no-such-page", "/api/stats", "/api/data-mode"]) {
       const r = await csp(path);
       expect(r.csp, `${path} should not be frameable by other sites`).toContain("frame-ancestors 'self'");
       expect(r.csp, path).not.toContain("frame-ancestors *");
@@ -171,7 +175,7 @@ d("embeddable widget", { timeout: 180_000 }, () => {
   });
 
   it("answers a malformed id with a 404", async () => {
-    for (const path of ["/embed/p/not-an-id", "/en/embed/p/not-an-id", "/embed/p/0x1234"]) {
+    for (const path of ["/embed/p/not-an-id", `${PREFIX}/embed/p/not-an-id`, "/embed/p/0x1234"]) {
       expect((await fetch(BASE! + path, { redirect: "manual" })).status, path).toBe(404);
     }
   });

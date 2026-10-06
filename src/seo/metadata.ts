@@ -4,7 +4,8 @@ import { getPathname } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { SITE_URL } from "./site";
 
-/** Absolute address of a page in one language. Spanish is at the root, English under /en, never /es. */
+/** Absolute address of a page in one language. The default locale (routing.ts) is at the root, the
+ * other locale under its own prefix (e.g. /es), never both at once. */
 export function pageUrl(path: string, locale: Locale): string {
   return new URL(getPathname({ href: path, locale }), SITE_URL).toString();
 }
@@ -47,7 +48,7 @@ export async function pageMetadata({ locale, path, title, description, image }: 
   return {
     title: title ?? { absolute: t("title") },
     description: shareDescription,
-    alternates: { canonical: url, languages: { es, en, "x-default": es } },
+    alternates: { canonical: url, languages: { es, en, "x-default": pageUrl(path, routing.defaultLocale) } },
     openGraph: {
       type: "website",
       siteName: "Votalo",

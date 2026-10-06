@@ -238,5 +238,6 @@ each verification. Results refresh within seconds of a vote, plus up to the rout
 
 ## Copy and language
 
-UI text is Spanish by default with an English toggle. Never use "wallet", "gas", "transaction", "token",
+UI text is English by default with a Spanish toggle (see `docs/DECISIONS.md` for the deviation from
+`docs/SPEC.md`'s original Spanish-default wording). Never use "wallet", "gas", "transaction", "token",
 or "blockchain" in the main flows. Monad is named only in the footer, About, and docs.

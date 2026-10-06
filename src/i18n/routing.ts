@@ -1,10 +1,13 @@
 import { defineRouting } from "next-intl/routing";
 
-// Spanish lives at the root ("/"), English under "/en". A browser that asks for English is sent to /en.
+// English lives at the root ("/"), Spanish under "/es". A browser that asks for Spanish is sent to /es.
 export const routing = defineRouting({
   locales: ["es", "en"],
-  defaultLocale: "es",
+  defaultLocale: "en",
   localePrefix: "as-needed",
 });
 
 export type Locale = (typeof routing.locales)[number];
+
+/** The one locale that carries a URL prefix under "as-needed" (every locale except the default). */
+export const prefixedLocale: Locale = routing.locales.find((l) => l !== routing.defaultLocale)!;

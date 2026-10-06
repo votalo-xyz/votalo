@@ -1,3 +1,5 @@
+import { prefixedLocale } from "../i18n/routing";
+
 /**
  * A small link crawler for a running Votalo server. It starts from the home pages and a few app routes,
  * fetches each page, follows every internal `<a href>`, and records any link that does not return 200.
@@ -21,7 +23,7 @@ export function anchorsIn(html: string): Anchor[] {
   return out;
 }
 
-const isEnglish = (pathname: string) => pathname === "/en" || pathname.startsWith("/en/");
+const hasPrefix = (pathname: string) => pathname === `/${prefixedLocale}` || pathname.startsWith(`/${prefixedLocale}/`);
 
 /** Static pages that exist once for both languages, so a link to them from an English page is not a language switch. */
 export const isLanguageNeutral = (pathname: string) => pathname === "/branding-votalo" || pathname.startsWith("/branding-votalo/");
@@ -69,7 +71,7 @@ export async function crawl(base: string, seeds: string[], limit = 400): Promise
       if (url.origin !== origin) continue; // external links are not our pages
       const target = url.pathname.replace(/\/$/, "") || "/";
       // The language switch is meant to cross languages; nothing else is, except pages that have no language.
-      if (!hreflang && !isLanguageNeutral(target) && isEnglish(path) !== isEnglish(target)) crossLanguage.push({ from: path, href: target });
+      if (!hreflang && !isLanguageNeutral(target) && hasPrefix(path) !== hasPrefix(target)) crossLanguage.push({ from: path, href: target });
       if (!seen.has(target)) queue.push({ path: target, from: path });
     }
   }

@@ -12,6 +12,7 @@
  *   so nobody is reloaded in the middle of a vote.
  */
 import { CacheFirst, NetworkFirst, NetworkOnly, Serwist, type PrecacheEntry, type RuntimeCaching, type SerwistGlobalConfig } from "serwist";
+import { prefixedLocale } from "@/i18n/routing";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -23,7 +24,8 @@ declare const self: ServiceWorkerGlobalScope;
 
 const isEmbedOrBrand = (pathname: string) =>
   /^\/(en\/|es\/)?embed(\/|$)/.test(pathname) || pathname === "/branding-votalo" || pathname.startsWith("/branding-votalo/");
-const isEnglish = (pathname: string) => pathname === "/en" || pathname.startsWith("/en/");
+// The locale that carries a URL prefix (the offline fallback page differs by language).
+const hasPrefix = (pathname: string) => pathname === `/${prefixedLocale}` || pathname.startsWith(`/${prefixedLocale}/`);
 
 const runtimeCaching: RuntimeCaching[] = [
   { matcher: ({ url }) => url.pathname.startsWith("/api/") || isEmbedOrBrand(url.pathname), handler: new NetworkOnly() },
@@ -44,12 +46,12 @@ const serwist = new Serwist({
   fallbacks: {
     entries: [
       {
-        url: "/en/offline",
-        matcher: ({ request }) => request.destination === "document" && isEnglish(new URL(request.url).pathname) && !isEmbedOrBrand(new URL(request.url).pathname),
+        url: `/${prefixedLocale}/offline`,
+        matcher: ({ request }) => request.destination === "document" && hasPrefix(new URL(request.url).pathname) && !isEmbedOrBrand(new URL(request.url).pathname),
       },
       {
         url: "/offline",
-        matcher: ({ request }) => request.destination === "document" && !isEnglish(new URL(request.url).pathname) && !isEmbedOrBrand(new URL(request.url).pathname),
+        matcher: ({ request }) => request.destination === "document" && !hasPrefix(new URL(request.url).pathname) && !isEmbedOrBrand(new URL(request.url).pathname),
       },
     ],
   },

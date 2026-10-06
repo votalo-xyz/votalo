@@ -24,7 +24,7 @@ const linkClass =
  */
 export default function GlobalNotFound() {
   return (
-    <html lang="es" className={`dark ${bricolage.variable} ${geist.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`dark ${bricolage.variable} ${geist.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME }} />
       </head>
@@ -46,10 +46,10 @@ export default function GlobalNotFound() {
           </section>
           <div className="mt-2 flex flex-wrap gap-3">
             <Link href="/" className={`${linkClass} bg-accent text-accent-fg shadow-card`}>
-              Ir al inicio
-            </Link>
-            <Link href="/en" className={`${linkClass} border border-line-strong bg-surface text-fg`}>
               Go to the home page
+            </Link>
+            <Link href="/es" className={`${linkClass} border border-line-strong bg-surface text-fg`}>
+              Ir al inicio
             </Link>
           </div>
         </main>
