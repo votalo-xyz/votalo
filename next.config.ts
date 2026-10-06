@@ -19,6 +19,13 @@ const nextConfig: NextConfig = {
     // Only /embed/* may be framed by other sites; see src/security/frame-headers.ts.
     return frameHeaders();
   },
+  async rewrites() {
+    // The brand pack is a static folder in public/; Next does not serve a folder's index.html by itself.
+    return [
+      { source: "/branding-votalo", destination: "/branding-votalo/index.html" },
+      { source: "/branding-votalo/", destination: "/branding-votalo/index.html" },
+    ];
+  },
   async redirects() {
     // The old production host keeps working for shared links: permanent (308) redirect to the final
     // domain, same path and query. Preview deployments use their own host names and are not affected.

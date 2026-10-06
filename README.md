@@ -46,6 +46,9 @@ Run the contract tests with `cd contracts && forge test --network monad` (Foundr
 The Votalo logo, as SVG and as transparent PNGs. The `-on-dark` files use the dark-theme colors and a light
 center dot, for dark backgrounds; the others are for light backgrounds.
 
+The full pack (SVG and PNG in every size, avatars, favicons, share banner and a short guide) is at
+[www.votalo.xyz/branding-votalo](https://www.votalo.xyz/branding-votalo); its files live in `public/branding-votalo/`.
+
 | File | Use |
 |---|---|
 | [votalo-logo.svg](public/brand/votalo-logo.svg) | Logo with name (wordmark as outlines, no font needed), light backgrounds |

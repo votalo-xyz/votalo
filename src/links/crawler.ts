@@ -23,6 +23,9 @@ export function anchorsIn(html: string): Anchor[] {
 
 const isEnglish = (pathname: string) => pathname === "/en" || pathname.startsWith("/en/");
 
+/** Static pages that exist once for both languages, so a link to them from an English page is not a language switch. */
+export const isLanguageNeutral = (pathname: string) => pathname === "/branding-votalo" || pathname.startsWith("/branding-votalo/");
+
 export async function crawl(base: string, seeds: string[], limit = 400): Promise<Crawl> {
   const origin = new URL(base).origin;
   const pages = new Map<string, number>();
@@ -52,18 +55,21 @@ export async function crawl(base: string, seeds: string[], limit = 400): Promise
       continue;
     }
 
+    // A page may set <base href>, which changes what its relative links point to (the brand pack page does).
+    const base = new URL(html.match(/<base\s[^>]*href="([^"]*)"/i)?.[1] ?? "", origin + path).href;
+
     for (const { href, hreflang } of anchorsIn(html)) {
       if (/^(mailto:|tel:|javascript:|#)/.test(href)) continue;
       let url: URL;
       try {
-        url = new URL(href, origin + path);
+        url = new URL(href, base);
       } catch {
         continue;
       }
       if (url.origin !== origin) continue; // external links are not our pages
       const target = url.pathname.replace(/\/$/, "") || "/";
-      // The language switch is meant to cross languages; nothing else is.
-      if (!hreflang && isEnglish(path) !== isEnglish(target)) crossLanguage.push({ from: path, href: target });
+      // The language switch is meant to cross languages; nothing else is, except pages that have no language.
+      if (!hreflang && !isLanguageNeutral(target) && isEnglish(path) !== isEnglish(target)) crossLanguage.push({ from: path, href: target });
       if (!seen.has(target)) queue.push({ path: target, from: path });
     }
   }

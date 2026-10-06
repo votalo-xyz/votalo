@@ -14,7 +14,7 @@ export function LogoMark({ className, size = 28 }: { className?: string; size?: 
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" className={className}>
       <g transform="rotate(-90 16 16)" fill="none" strokeWidth="5.5" strokeLinecap="round">
         {arcs.map((a) => {
-          const dash = a.len * c - 3;
+          const dash = a.len * c - 4.6;
           const el = (
             <circle
               key={a.color}
@@ -26,7 +26,7 @@ export function LogoMark({ className, size = 28 }: { className?: string; size?: 
               strokeDashoffset={-offset}
             />
           );
-          offset += a.len * c + 1;
+          offset += a.len * c + 2.6;
           return el;
         })}
       </g>

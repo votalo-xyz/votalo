@@ -669,3 +669,24 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
 - **Known wording choice.** The copy uses "fingerprint" for the passkey as a metaphor and says in the same
   places that Face ID or the phone's PIN work too; the confirm prompts say "your fingerprint" even when the
   person uses Face ID or a PIN.
+
+## Brand pack page and one logo (2026-10-05)
+
+- **The page.** The brand pack made by the Monad team from our logo is published as a static folder:
+  `public/branding-votalo/` (page, README, full ZIP, SVG, PNG), served at `/branding-votalo`. It is one page for
+  both languages (it has its own ES/EN toggle), so it has no `/en` version and the footer link ("Marca" /
+  "Brand") is a plain `<a href="/branding-votalo">`, not the localized `Link`. The files were not edited.
+- **How it is wired.** `next.config.ts` rewrites `/branding-votalo` (and the slash form) to the folder's
+  `index.html`; `src/proxy.ts` excludes `branding-votalo` from the language matcher, otherwise the proxy would
+  redirect it to a locale route. With a trailing slash Next answers its usual 308 to the slash-less address,
+  never to a language. No Content-Security-Policy change was needed: the only policy the site sends is
+  `frame-ancestors`, so the page's inline script and styles are not blocked.
+- **Crawler.** It now honours `<base href>` (the page's relative links only resolve against it) and does not
+  count a link to `/branding-votalo` as a language switch. The static link test allows that one static path.
+  `crawl.test.ts` checks the page, its downloads, the ZIP content type and the no-redirect behaviour.
+- **One logo.** The pack's mark has real gaps between the arcs. `logo.tsx` and the share-card mark
+  (`src/seo/og.tsx`) now use its geometry: each arc is shortened by 4.6 (was 3) and the next arc starts 2.6
+  later (was 1). Both numbers matter: the gap between arcs is their sum minus the round caps, so changing only
+  the first would leave the arcs 1.6 closer than the pack's. The files in `public/brand/` were replaced by
+  the pack's (mark and lockup SVGs, mark PNGs at 512 and 1024, light and dark), keeping their names so the README
+  table and any links keep working. The PNG corners have alpha 0 (checked).

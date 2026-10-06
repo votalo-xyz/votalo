@@ -61,6 +61,27 @@ d("link crawl", { timeout: 180_000 }, () => {
     expect(pages.get(`/en/embed/p/${EMBED_ID}`), "EN widget").toBe(200);
   });
 
+  it("serves the brand pack page with its files, linked from both footers, without a language redirect", async () => {
+    const { pages, broken } = await crawl(BASE!, ["/", "/en"]);
+    expect(pages.get("/branding-votalo"), "brand page").toBe(200);
+    expect(broken.filter((b) => b.url.startsWith("/branding-votalo")), "brand pack links").toEqual([]);
+    // The pack's own downloads were reached through the page's <base href>.
+    for (const file of ["/branding-votalo/votalo-branding-pack.zip", "/branding-votalo/png/logo-primary-light-1024.png", "/branding-votalo/svg/favicon.svg"]) {
+      expect(pages.get(file), file).toBe(200);
+    }
+    const plain = await fetch(BASE! + "/branding-votalo", { redirect: "manual" });
+    expect(plain.status, "/branding-votalo must not redirect to a language").toBe(200);
+    expect(plain.headers.get("content-type") ?? "").toContain("text/html");
+    // With a trailing slash Next answers with its usual redirect to the slash-less address, never to a language.
+    const slash = await fetch(BASE! + "/branding-votalo/", { redirect: "manual" });
+    if (slash.status !== 200) {
+      expect(slash.status).toBe(308);
+      expect(new URL(slash.headers.get("location") ?? "", BASE!).pathname).toBe("/branding-votalo");
+    }
+    const zip = await fetch(BASE! + "/branding-votalo/votalo-branding-pack.zip", { redirect: "manual" });
+    expect(zip.headers.get("content-type")).toBe("application/zip");
+  });
+
   it("keeps each language on its own pages", async () => {
     const { crossLanguage } = await crawl(BASE!, seeds);
     expect(crossLanguage, `links that switch language:\n${crossLanguage.map((c) => `  ${c.href}  (on ${c.from})`).join("\n")}`).toEqual([]);

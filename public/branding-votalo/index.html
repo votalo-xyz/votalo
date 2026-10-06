@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<base href="/branding-votalo/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Votalo — Brand Assets Pack</title>
+<link rel="icon" href="svg/favicon.svg">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('votalo-theme');
+    if(t){ document.documentElement.setAttribute('data-theme', t); }
+  }catch(e){}
+})();
+</script>
+<style>
+  :root{
+    --page-bg:#F7F4EE; --ink:#16131C; --muted:#6B6F7A; --line:#E4E0DA; --panel-bg:#FFFFFF;
+    --navy:#0D0B12; --red:#B85F00; --red-dark:#8A4700;
+  }
+  :root[data-theme="dark"]{ --page-bg:#0B0D14; --ink:#F2F3F6; --muted:#9AA0AE; --line:#262A38; --panel-bg:#12141C; }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --page-bg:#0B0D14; --ink:#F2F3F6; --muted:#9AA0AE; --line:#262A38; --panel-bg:#12141C; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page-bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:0 0 96px;transition:background .15s ease,color .15s ease}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  .topbar{position:sticky;top:0;z-index:10;background:var(--panel-bg);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+  .topbar-inner{max-width:1080px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--ink)}
+  .brand img{width:22px;height:22px}
+  .controls{display:flex;align-items:center;gap:8px}
+  .iconbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;line-height:1}
+  .iconbtn:hover{background:var(--line)}
+  .langpill{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .langpill button{border:none;background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;padding:8px 11px;cursor:pointer}
+  .langpill button[aria-current="true"]{background:var(--red);color:#fff}
+
+  h1{font-size:26px;margin:40px 0 4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px;max-width:680px}
+  .zip-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--navy);color:#fff;border-radius:14px;padding:24px 28px;margin-bottom:40px}
+  .zip-cta .txt b{display:block;font-size:17px;margin-bottom:4px}
+  .zip-cta .txt span{color:#B7BCC8;font-size:13px}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;border:none;border-radius:8px;padding:12px 20px;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;white-space:nowrap}
+  .btn:hover{background:var(--red-dark)}
+
+  h2{font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:44px 0 16px;border-top:1px solid var(--line);padding-top:24px}
+  h2:first-of-type{border-top:none}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .card{background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+  .card.dark{background:#0D0B12;border-color:#2A2533} /* fixed content demo colors — do NOT tie these to the page theme */
+  .thumb{height:90px;display:flex;align-items:center;justify-content:center}
+  .thumb img{max-height:90px;max-width:100%}
+  .meta b{display:block;font-size:13.5px;color:#0E1220}
+  .card.dark .meta b{color:#fff}
+  .meta span{font-size:12px;color:#6B6F7A}
+  .card.dark .meta span{color:#9AA0AE}
+  .dl{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--red);text-decoration:none;border:1px solid #E4E0DA;border-radius:6px;padding:7px 12px;width:100%;justify-content:center}
+  .dl:hover{background:#FDEEEE}
+  .card.dark .dl{border-color:#3A3F52;color:var(--red)}
+  .card.dark .dl:hover{background:#1C2036}
+  .checker{background-image:linear-gradient(45deg,#e6e6e6 25%,transparent 25%),linear-gradient(-45deg,#e6e6e6 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#e6e6e6 75%),linear-gradient(-45deg,transparent 75%,#e6e6e6 75%);background-size:12px 12px;background-position:0 0,0 6px,6px -6px,-6px 0;border-radius:8px}
+  .notes{color:var(--muted);font-size:13.5px;max-width:680px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><img src="svg/favicon.svg" alt=""><span>Votalo Brand Assets</span></div>
+    <div class="controls">
+      <div class="langpill" role="group" aria-label="Language">
+        <button id="langEs" onclick="setLang('es')" aria-current="true">ES</button>
+        <button id="langEn" onclick="setLang('en')" aria-current="false">EN</button>
+      </div>
+      <button class="iconbtn" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9788;</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <h1 data-es="Votalo — Brand Assets Pack" data-en="Votalo — Brand Assets Pack">Votalo — Brand Assets Pack</h1>
+  <p class="sub" data-es="Todo lo necesario para redes, eventos y prensa: vectorial (SVG) y PNG a maxima resolucion. Arrastra el ZIP completo a Drive o descarga los assets que necesites." data-en="Everything you need for social media, events, and press: vector (SVG) and PNG at maximum resolution. Drag the full ZIP into Drive or download whatever assets you need.">Todo lo necesario para redes, eventos y prensa: vectorial (SVG) y PNG a maxima resolucion. Arrastra el ZIP completo a Drive o descarga los assets que necesites.</p>
+
+  <div class="zip-cta">
+    <div class="txt">
+      <b data-es="Pack completo (27 archivos)" data-en="Full pack (27 files)">Pack completo (27 archivos)</b>
+      <span data-es="SVG + PNG en todas las resoluciones, listo para subir tal cual a la carpeta de branding en Drive" data-en="SVG + PNG in every resolution, ready to drop straight into a branding folder on Drive">SVG + PNG en todas las resoluciones, listo para subir tal cual a la carpeta de branding en Drive</span>
+    </div>
+    <a class="btn" href="votalo-branding-pack.zip" download><span data-es="Descargar todo (.zip)" data-en="Download all (.zip)">Descargar todo (.zip)</span></a>
+  </div>
+
+  <!-- SVG SECTION: one card per variant. Typical set — icon light, icon dark,
+       extended/hero variant if any, mono dark, mono light, lockup light,
+       lockup dark, product-specific badge if genuinely useful, favicon. -->
+  <h2 data-es="Vector (SVG) — usar siempre que se pueda, escala sin perder calidad" data-en="Vector (SVG) — use whenever possible, scales without losing quality">Vector (SVG) — usar siempre que se pueda, escala sin perder calidad</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="thumb"><img src="svg/logo-primary-light.svg"></div>
+      <div class="meta"><b data-es="Icono" data-en="Icon">Icono</b><span data-es="fondo claro" data-en="light background">fondo claro</span></div>
+      <a class="dl" href="svg/logo-primary-light.svg" download><span data-es="Descargar .svg" data-en="Download .svg">Descargar .svg</span></a>
+    </div>
+    <div class="card dark">
+      <div class="thumb"><img src="svg/logo-primary-dark.svg"></div>
+      <div class="meta"><b data-es="Icono" data-en="Icon">Icono</b><span data-es="fondo oscuro" data-en="dark background">fondo oscuro</span></div>
+      <a class="dl" href="svg/logo-primary-dark.svg" download><span data-es="Descargar .svg" data-en="Download .svg">Descargar .svg</span></a>
+    </div>
+    <!-- duplicate/remove cards below as the concept actually needs -->
+    <div class="card">
+      <div class="thumb"><img style="width:60px" src="svg/logo-mono-dark.svg"></div>
+      <div class="meta"><b data-es="Un color" data-en="Single color">Un color</b><span data-es="para impresion" data-en="for print">para impresion</span></div>
+      <a class="dl" href="svg/logo-mono-dark.svg" download><span data-es="Descargar .svg" data-en="Download .svg">Descargar .svg</span></a>
+    </div>
+    <div class="card dark">
+      <div class="thumb"><img style="width:60px" src="svg/logo-mono-light.svg"></div>
+      <div class="meta"><b data-es="Un color" data-en="Single color">Un color</b><span data-es="fondo oscuro" data-en="dark background">fondo oscuro</span></div>
+      <a class="dl" href="svg/logo-mono-light.svg" download><span data-es="Descargar .svg" data-en="Download .svg">Descargar .svg</span></a>
+    </div>
+    <div class="card">
+      <div class="thumb"><img style="width:100%" src="svg/lockup-light.svg"></div>
+      <div class="meta"><b>Lockup</b><span data-es="icono + wordmark, claro" data-en="icon + wordmark, light">icono + wordmark, claro</span></div>
+      <a class="dl" href="svg/lockup-light.svg" download><span data-es="Descargar .svg" data-en="Download .svg">Descargar .svg</span></a>
+    </div>
+    <div class="card dark">
+      <div class="thumb"><img style="width:100%" src="svg/lockup-dark.svg"></div>
+      <div class="meta"><b>Lockup</b><span data-es="icono + wordmark, oscuro" data-en="icon + wordmark, dark">icono + wordmark, oscuro</span></div>
+      <a class="dl" href="svg/lockup-dark.svg" download><span data-es="Descargar .svg" data-en="Download .svg">Descargar .svg</span></a>
+    </div>
+    <div class="card">
+      <div class="thumb"><img style="width:50px" src="svg/favicon.svg"></div>
+      <div class="meta"><b data-es="Favicon" data-en="Favicon">Favicon</b><span data-es="simplificado, 16-32px" data-en="simplified, 16-32px">simplificado, 16-32px</span></div>
+      <a class="dl" href="svg/favicon.svg" download><span data-es="Descargar .svg" data-en="Download .svg">Descargar .svg</span></a>
+    </div>
+  </div>
+
+  <h2 data-es="Avatar para redes sociales (PNG, fondo solido)" data-en="Social media avatar (PNG, solid background)">Avatar para redes sociales (PNG, fondo solido)</h2>
+  <div class="grid">
+    <div class="card dark">
+      <div class="thumb"><img style="width:80px;border-radius:50%" src="png/avatar-800.png"></div>
+      <div class="meta"><b>Avatar 800x800</b><span>Twitter/X, Discord, LinkedIn</span></div>
+      <a class="dl" href="png/avatar-800.png" download><span data-es="Descargar .png" data-en="Download .png">Descargar .png</span></a>
+    </div>
+    <div class="card dark">
+      <div class="thumb"><img style="width:80px;border-radius:50%" src="png/avatar-1600.png"></div>
+      <div class="meta"><b>Avatar 1600x1600</b><span data-es="maxima resolucion" data-en="maximum resolution">maxima resolucion</span></div>
+      <a class="dl" href="png/avatar-1600.png" download><span data-es="Descargar .png" data-en="Download .png">Descargar .png</span></a>
+    </div>
+  </div>
+
+  <h2 data-es="Icono transparente (PNG)" data-en="Transparent icon (PNG)">Icono transparente (PNG)</h2>
+  <div class="grid">
+    <div class="card checker"><div class="thumb"><img style="width:70px" src="png/logo-primary-light-512.png"></div><div class="meta"><b>512x512</b></div><a class="dl" href="png/logo-primary-light-512.png" download><span data-es="Descargar .png" data-en="Download .png">Descargar .png</span></a></div>
+    <div class="card checker"><div class="thumb"><img style="width:70px" src="png/logo-primary-light-1024.png"></div><div class="meta"><b>1024x1024</b></div><a class="dl" href="png/logo-primary-light-1024.png" download><span data-es="Descargar .png" data-en="Download .png">Descargar .png</span></a></div>
+    <div class="card checker"><div class="thumb"><img style="width:70px" src="png/logo-primary-light-2048.png"></div><div class="meta"><b>2048x2048</b><span data-es="maxima resolucion" data-en="maximum resolution">maxima resolucion</span></div><a class="dl" href="png/logo-primary-light-2048.png" download><span data-es="Descargar .png" data-en="Download .png">Descargar .png</span></a></div>
+  </div>
+
+  <h2 data-es="Favicon / icono de app (PNG, fondo transparente)" data-en="Favicon / app icon (PNG, transparent background)">Favicon / icono de app (PNG, fondo transparente)</h2>
+  <div class="grid">
+    <div class="card checker"><div class="thumb"><img style="width:16px" src="png/favicon-16.png"></div><div class="meta"><b>16x16</b></div><a class="dl" href="png/favicon-16.png" download><span data-es="Descargar" data-en="Download">Descargar</span></a></div>
+    <div class="card checker"><div class="thumb"><img style="width:32px" src="png/favicon-32.png"></div><div class="meta"><b>32x32</b></div><a class="dl" href="png/favicon-32.png" download><span data-es="Descargar" data-en="Download">Descargar</span></a></div>
+    <div class="card checker"><div class="thumb"><img style="width:48px" src="png/favicon-48.png"></div><div class="meta"><b>48x48</b></div><a class="dl" href="png/favicon-48.png" download><span data-es="Descargar" data-en="Download">Descargar</span></a></div>
+    <div class="card checker"><div class="thumb"><img style="width:64px" src="png/favicon-180.png"></div><div class="meta"><b>180x180</b><span>apple touch icon</span></div><a class="dl" href="png/favicon-180.png" download><span data-es="Descargar" data-en="Download">Descargar</span></a></div>
+    <div class="card checker"><div class="thumb"><img style="width:70px" src="png/favicon-512.png"></div><div class="meta"><b>512x512</b><span>PWA / app icon</span></div><a class="dl" href="png/favicon-512.png" download><span data-es="Descargar" data-en="Download">Descargar</span></a></div>
+  </div>
+
+  <h2 data-es="Logo completo y banner social (PNG, fondo solido)" data-en="Full logo and social banner (PNG, solid background)">Logo completo y banner social (PNG, fondo solido)</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="thumb"><img style="width:100%" src="png/lockup-light-2000.png"></div>
+      <div class="meta"><b>Lockup 2000px</b><span data-es="fondo claro" data-en="light background">fondo claro</span></div>
+      <a class="dl" href="png/lockup-light-2000.png" download><span data-es="Descargar .png" data-en="Download .png">Descargar .png</span></a>
+    </div>
+    <div class="card dark">
+      <div class="thumb"><img style="width:100%" src="png/lockup-dark-2000.png"></div>
+      <div class="meta"><b>Lockup 2000px</b><span data-es="fondo oscuro" data-en="dark background">fondo oscuro</span></div>
+      <a class="dl" href="png/lockup-dark-2000.png" download><span data-es="Descargar .png" data-en="Download .png">Descargar .png</span></a>
+    </div>
+    <div class="card dark">
+      <div class="thumb"><img style="width:100%" src="png/social-banner-1200x630-es.png"></div>
+      <div class="meta"><b data-es="Banner social 1200x630" data-en="Social banner 1200x630">Banner social 1200x630</b><span data-es="preview de link (Twitter/LinkedIn/Slack)" data-en="link preview (Twitter/LinkedIn/Slack)">preview de link (Twitter/LinkedIn/Slack)</span></div>
+      <a class="dl" href="png/social-banner-1200x630-es.png" download>ES .png</a><a class="dl" href="png/social-banner-1200x630-en.png" download>EN .png</a>
+    </div>
+  </div>
+
+  <h2 data-es="Notas" data-en="Notes">Notas</h2>
+  <p class="notes" data-es="El README.txt dentro del ZIP explica que archivo usar en cada caso, pensado para que cualquiera lo entienda sin contexto tecnico. El logo es el mismo anillo que usa la app (tres arcos y un punto: las opciones de una votacion y tu voto), con un ajuste: ahora los arcos tienen separacion real, asi se lee igual en un color y en escala de grises." data-en="The README.txt inside the ZIP explains which file to use for each case, written so anyone can follow it without technical background. The logo is the same ring the app uses (three arcs and a dot: the options of a vote and your vote), with one fix: the arcs now have real gaps, so it reads the same in one color and in grayscale.">El README.txt dentro del ZIP explica que archivo usar en cada caso, pensado para que cualquiera lo entienda sin contexto tecnico. El logo es el mismo anillo que usa la app (tres arcos y un punto: las opciones de una votacion y tu voto), con un ajuste: ahora los arcos tienen separacion real, asi se lee igual en un color y en escala de grises.</p>
+</div>
+
+<script>
+function isDark(){
+  var t = document.documentElement.getAttribute('data-theme');
+  if(t) return t === 'dark';
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function updateThemeIcon(){
+  var btn = document.getElementById('themeToggle');
+  if(btn) btn.innerHTML = isDark() ? '&#9728;' : '&#9789;';
+}
+function toggleTheme(){
+  var next = isDark() ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try{ localStorage.setItem('votalo-theme', next); }catch(e){}
+  updateThemeIcon();
+}
+function setLang(lang){
+  document.querySelectorAll('[data-es]').forEach(function(el){
+    var v = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-es');
+    if(v !== null) el.textContent = v;
+  });
+  document.documentElement.setAttribute('lang', lang);
+  try{ localStorage.setItem('votalo-lang', lang); }catch(e){}
+  var esBtn = document.getElementById('langEs'), enBtn = document.getElementById('langEn');
+  if(esBtn && enBtn){
+    esBtn.setAttribute('aria-current', lang === 'es' ? 'true' : 'false');
+    enBtn.setAttribute('aria-current', lang === 'en' ? 'true' : 'false');
+  }
+}
+(function(){
+  updateThemeIcon();
+  var savedLang = null;
+  try{ savedLang = localStorage.getItem('votalo-lang'); }catch(e){}
+  var lang = savedLang || (navigator.language && navigator.language.toLowerCase().indexOf('en') === 0 ? 'en' : 'es');
+  setLang(lang);
+})();
+</script>
+</body>
+</html>

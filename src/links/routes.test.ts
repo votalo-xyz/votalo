@@ -96,7 +96,9 @@ describe("internal links", () => {
   it("points every internal link at an existing page", () => {
     // Links made with the app's own Link have no language prefix; a plain link may spell out "/en".
     const withoutLocale = (link: string) => link.replace(/^\/en(?=\/|$)/, "") || "/";
-    const dead = links.filter(({ link }) => !pages.some(({ pattern }) => pattern.test(withoutLocale(link))));
+    // Static pages served from public/ (no language, no route file). The crawl test checks that they answer 200.
+    const STATIC = ["/branding-votalo"];
+    const dead = links.filter(({ link }) => !STATIC.includes(link) && !pages.some(({ pattern }) => pattern.test(withoutLocale(link))));
     expect(dead, `dead links:\n${dead.map((d) => `  ${d.link}  (${d.file})`).join("\n")}`).toEqual([]);
   });
 

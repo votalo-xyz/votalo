@@ -14,6 +14,7 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except API routes, Next internals and files with an extension (the `\\.` is a literal dot).
-  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
+  // Everything except API routes, Next internals, the brand pack page (a static folder with no language) and
+  // files with an extension (the `\\.` is a literal dot).
+  matcher: "/((?!api|_next|_vercel|branding-votalo|.*\\..*).*)",
 };

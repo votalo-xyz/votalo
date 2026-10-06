@@ -82,6 +82,14 @@ export function Footer() {
               <li>
                 <External href={DOCS_URL}>{t("docs")}</External>
               </li>
+              <li>
+                {/* A plain link on purpose: the brand pack is one static page for both languages, so it must not get
+                    the /en prefix, and Next's own Link would try a client navigation to a page that has no route. */}
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                <a className={linkClass} href="/branding-votalo">
+                  {t("brand")}
+                </a>
+              </li>
             </ul>
           </nav>
 

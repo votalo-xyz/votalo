@@ -48,7 +48,7 @@ function Mark({ size }: { size: number }) {
       <g transform="rotate(-90 16 16)" fill="none" strokeWidth="5.5" strokeLinecap="round">
         {parts.map((len, i) => {
           const before = parts.slice(0, i).reduce((a, b) => a + b, 0);
-          const dash = len * c - 3;
+          const dash = len * c - 4.6;
           return (
             <circle
               key={i}
@@ -57,7 +57,7 @@ function Mark({ size }: { size: number }) {
               r={r}
               stroke={SEGMENTS[i]}
               strokeDasharray={`${dash} ${c - dash}`}
-              strokeDashoffset={-(before * c + i)}
+              strokeDashoffset={-(before * c + i * 2.6)}
             />
           );
         })}
