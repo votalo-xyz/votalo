@@ -1,14 +1,15 @@
 "use client";
 
-import { motion } from "motion/react";
+import { animate, motion, useMotionValue } from "motion/react";
 import { Check, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useId, useRef, useState } from "react";
-import { HoldButton, type HoldState } from "../brand/hold-button";
+import { useEffect, useId, useRef, useState } from "react";
+import { HoldButton, haptic, type HoldState } from "../brand/hold-button";
 import { LivingRing, segVar, type RingPulse } from "../brand/living-ring";
 import { OptionChip } from "../brand/results-list";
 import { classifyError, type ErrorKey } from "../errors";
 import { cn } from "../ui/cn";
+import { createCardHold, type CardHold } from "./option-hold";
 
 type Flight = { id: number; index: number; from: { x: number; y: number }; to: { x: number; y: number } };
 
@@ -66,9 +67,16 @@ export function VotePanel({ options, counts, myChoice, status, onCast, onConfirm
   }
   const summary = total > 0 ? t("summary", { total, lead }) : lead;
 
-  async function handleComplete() {
-    if (selected === null) return;
-    const picked = selected;
+  function selectOption(index: number) {
+    setSelected(index);
+    setShortPress(false);
+    setErrorKey(null);
+  }
+
+  // Called by the HoldButton with no argument (the selected option), and by a card hold with its own index.
+  async function handleComplete(choiceToCast: number | null = selected) {
+    if (choiceToCast === null) return;
+    const picked = choiceToCast;
     setErrorKey(null);
     setShortPress(false);
     setPhase("working");
@@ -144,60 +152,21 @@ export function VotePanel({ options, counts, myChoice, status, onCast, onConfirm
           <fieldset disabled={locked || phase !== "idle"} className="min-w-0">
             <legend className="sr-only">{t("optionsLegend")}</legend>
             <div className="flex flex-col gap-2.5">
-              {options.map((label, i) => {
-                const n = counts[i] ?? 0;
-                const pct = total > 0 ? Math.round((n / total) * 100) : 0;
-                const checked = choice === i;
-                return (
-                  <label
-                    key={i}
-                    className={cn(
-                      "relative block overflow-hidden rounded-2xl border px-4 py-3 transition-[border-color,background-color,transform] duration-200",
-                      "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--focus)]",
-                      checked ? "border-fg bg-surface-2" : "border-line bg-surface",
-                      !locked && phase === "idle" ? "cursor-pointer hover:border-line-strong active:scale-[0.99]" : "cursor-default",
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      name={name}
-                      value={i}
-                      checked={checked}
-                      onChange={() => {
-                        setSelected(i);
-                        setShortPress(false);
-                        setErrorKey(null);
-                      }}
-                      className="sr-only"
-                    />
-                    <span className="flex items-center gap-3">
-                      <OptionChip index={i} />
-                      <span className="min-w-0 flex-1 break-words font-medium leading-snug">{label}</span>
-                      {alreadyVoted && myChoice === i && (
-                        <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-success/15 text-success-text">
-                          <Check aria-hidden="true" className="size-3.5" strokeWidth={3} />
-                          <span className="sr-only">{t("yourVote")}</span>
-                        </span>
-                      )}
-                      <span className="shrink-0 text-sm tabular-nums text-muted">
-                        <span className="sr-only">{t("optionResult", { votes: n, percent: pct })}</span>
-                        <span aria-hidden="true">
-                          {n} · {pct}%
-                        </span>
-                      </span>
-                    </span>
-                    <span aria-hidden="true" className="mt-2.5 block h-1.5 overflow-hidden rounded-full bg-track">
-                      <motion.span
-                        className="block h-full origin-left rounded-full"
-                        style={{ background: segVar(i) }}
-                        initial={false}
-                        animate={{ scaleX: total > 0 ? n / total : 0 }}
-                        transition={{ type: "spring", stiffness: 90, damping: 18 }}
-                      />
-                    </span>
-                  </label>
-                );
-              })}
+              {options.map((label, i) => (
+                <OptionCard
+                  key={i}
+                  index={i}
+                  label={label}
+                  count={counts[i] ?? 0}
+                  total={total}
+                  name={name}
+                  checked={choice === i}
+                  showMyVote={alreadyVoted && myChoice === i}
+                  interactive={!locked && phase === "idle"}
+                  onSelect={selectOption}
+                  onHoldComplete={handleComplete}
+                />
+              ))}
             </div>
           </fieldset>
 
@@ -257,5 +226,133 @@ export function VotePanel({ options, counts, myChoice, status, onCast, onConfirm
         />
       )}
     </div>
+  );
+}
+
+type OptionCardProps = {
+  index: number;
+  label: string;
+  count: number;
+  total: number;
+  name: string;
+  checked: boolean;
+  showMyVote: boolean;
+  interactive: boolean;
+  onSelect: (index: number) => void;
+  onHoldComplete: (index: number) => void;
+};
+
+/**
+ * One option. A radio for keyboard and screen readers, and a second way to vote: press and hold the card.
+ * A quick tap only selects. The HoldButton is unchanged and still works the same way.
+ */
+function OptionCard({ index, label, count, total, name, checked, showMyVote, interactive, onSelect, onHoldComplete }: OptionCardProps) {
+  const t = useTranslations("Vote");
+  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+  const progress = useMotionValue(0);
+  const [hold] = useState<CardHold>(createCardHold);
+  const raf = useRef(0);
+  // The frame loop outlives renders, so it reads the latest callback through a ref.
+  const onHoldCompleteRef = useRef(onHoldComplete);
+  useEffect(() => {
+    onHoldCompleteRef.current = onHoldComplete;
+  });
+  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+  // Once the card cannot be held any more (a vote is cast, for example) its fill goes back to empty.
+  useEffect(() => {
+    if (!interactive) progress.set(0);
+  }, [interactive, progress]);
+
+  function step(now: number) {
+    const frame = hold.frame(now);
+    progress.set(frame.progress);
+    if (frame.completed) {
+      haptic([14, 40, 28]);
+      onSelect(index);
+      onHoldCompleteRef.current(index);
+    } else if (hold.active) {
+      raf.current = requestAnimationFrame(step);
+    }
+  }
+
+  function endHold() {
+    cancelAnimationFrame(raf.current);
+    hold.release();
+    if (progress.get() > 0) animate(progress, 0, { duration: 0.3, ease: "easeOut" });
+  }
+
+  function handlePointerDown(e: React.PointerEvent<HTMLLabelElement>) {
+    if (!interactive) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    // Pressing does not select: a scroll that starts on a card must not mark it. A tap selects through the
+    // label's native click, and a completed hold selects in step().
+    e.currentTarget.setPointerCapture(e.pointerId);
+    if (hold.start({ x: e.clientX, y: e.clientY, at: performance.now(), pointerType: e.pointerType })) {
+      haptic(8);
+      raf.current = requestAnimationFrame(step);
+    }
+  }
+
+  function handlePointerMove(e: React.PointerEvent<HTMLLabelElement>) {
+    // A touch that starts to scroll cancels the hold.
+    if (hold.move(e.clientX, e.clientY) === "cancelled") endHold();
+  }
+
+  return (
+    <label
+      className={cn(
+        "relative block select-none overflow-hidden rounded-2xl border px-4 py-3 [-webkit-touch-callout:none] transition-[border-color,background-color,transform] duration-200",
+        "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--focus)]",
+        checked ? "border-fg bg-surface-2" : "border-line bg-surface",
+        interactive ? "cursor-pointer hover:border-line-strong active:scale-[0.99]" : "cursor-default",
+      )}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={endHold}
+      onPointerCancel={endHold}
+      onContextMenu={(e) => {
+        // A long press on a card opens the context menu on some phones. Not while the hold is running.
+        if (hold.active) e.preventDefault();
+      }}
+    >
+      <motion.span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 origin-left"
+        style={{ scaleX: progress, background: segVar(index), opacity: 0.22 }}
+      />
+      <input
+        type="radio"
+        name={name}
+        value={index}
+        checked={checked}
+        onChange={() => onSelect(index)}
+        className="sr-only"
+      />
+      <span className="relative flex items-center gap-3">
+        <OptionChip index={index} />
+        <span className="min-w-0 flex-1 break-words font-medium leading-snug">{label}</span>
+        {showMyVote && (
+          <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-success/15 text-success-text">
+            <Check aria-hidden="true" className="size-3.5" strokeWidth={3} />
+            <span className="sr-only">{t("yourVote")}</span>
+          </span>
+        )}
+        <span className="shrink-0 text-sm tabular-nums text-muted">
+          <span className="sr-only">{t("optionResult", { votes: count, percent: pct })}</span>
+          <span aria-hidden="true">
+            {count} · {pct}%
+          </span>
+        </span>
+      </span>
+      <span aria-hidden="true" className="relative mt-2.5 block h-1.5 overflow-hidden rounded-full bg-track">
+        <motion.span
+          className="block h-full origin-left rounded-full"
+          style={{ background: segVar(index) }}
+          initial={false}
+          animate={{ scaleX: total > 0 ? count / total : 0 }}
+          transition={{ type: "spring", stiffness: 90, damping: 18 }}
+        />
+      </span>
+    </label>
   );
 }

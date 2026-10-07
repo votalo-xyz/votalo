@@ -24,7 +24,7 @@ type Props = {
   onShortPress?: () => void;
 };
 
-function haptic(pattern: number | number[]) {
+export function haptic(pattern: number | number[]) {
   try {
     navigator.vibrate?.(pattern);
   } catch {

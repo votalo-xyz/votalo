@@ -1687,3 +1687,20 @@ FCP 1.1–1.3 s, TBT 125–140 ms, CLS 0, on both pages.
   to Spanish lands on English at `/`, and the middleware no longer reads `NEXT_LOCALE`. The cookie write and
   `prefetch={false}` above were removed from the switch, since nothing depends on them now. `src/proxy.ts` no
   longer needs a separate middleware for `/embed` (it existed only to turn detection off there).
+
+## Hold-to-vote on the option card (2026-10-06)
+
+2026-10-06: hold-to-vote on the option card, from community user feedback.
+
+- **Feedback.** On the Frutero Club poll, a voter expected that pressing and holding the option card itself would
+  cast the vote, not the separate fingerprint button.
+- **What changed.** Holding an option for about 0.9 s fills the card in its colour, selects it, and votes, through
+  the same `handleComplete`, haptics and particle as the HoldButton. A quick tap only selects. Pressing alone does
+  not select, so a scroll that starts on a card does not mark it.
+  The HoldButton is unchanged and still works, so this adds a second way to vote and removes nothing.
+- **Touch.** A touch that moves more than 10 px cancels the hold, so scrolling a list does not vote. Long-press
+  menus and text selection are blocked on the cards while they are held.
+- **Accessibility.** Keyboard and screen readers are unchanged: they use the radio and the HoldButton.
+- **Where the rules live.** `src/components/vote/option-hold.ts` holds the gesture rules, with tests in
+  `option-hold.test.ts`. The vitest config only runs `.test.ts` files and this machine has no DOM test setup, so
+  the rules are kept free of React.
