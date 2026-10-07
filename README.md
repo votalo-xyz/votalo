@@ -17,7 +17,7 @@ Best on a phone.
 
 1. Open the live demo vote: https://www.votalo.xyz/g/0x53676d443e295c214fe73175d666a2351887cfb6ea183e90e2aceac3e69732e7/p/0x14cba3ff5e73af97d55adb4080ec1435ee95ee49b37eeef720594cd2af5c1721
 2. Create your passkey with your fingerprint or face. No wallet, no account, no gas.
-3. Pick an option and hold to vote. The vote lands on Monad testnet and the ring updates live.
+3. Pick an option and hold the fingerprint button, or hold the option itself. The vote lands on Monad testnet and the ring updates live.
 4. Optional: start your own group from "Create" and share the link.
 
 The demo vote ("Try Votalo" group, open to anyone) stays open until Nov 3, 2026 (23:34 in Mexico City, which is 05:34 UTC on Nov 4). Each person votes once, and votes can't be edited.
