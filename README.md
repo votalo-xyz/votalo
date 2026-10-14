@@ -1,5 +1,8 @@
 # Votalo
 
+> **Try it now (30 seconds, best on a phone):** https://www.votalo.xyz/g/0x53676d443e295c214fe73175d666a2351887cfb6ea183e90e2aceac3e69732e7/p/0x14cba3ff5e73af97d55adb4080ec1435ee95ee49b37eeef720594cd2af5c1721
+> No wallet, no account, no gas. Create a passkey with your fingerprint or face, pick an option, press and hold to vote.
+
 Votalo ("vote on it") lets any group make decisions together from a shared link. Members vote with a
 passkey (Face ID, fingerprint, or device PIN), with no wallet, seed phrase or app to install.
 
